@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "981008815628",
+    "firebase_url": "https://nandan-petrochem.firebaseio.com",
+    "project_id": "nandan-petrochem",
+    "storage_bucket": "nandan-petrochem.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981008815628:android:2c1c2cfdc24f313f",
+        "android_client_info": {
+          "package_name": "com.npl_seqrloyalty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981008815628-7s3cp6b9fcjbjsm2nbnmv19er2i9pl9k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEhupAbY9VYKB9sbEAsWuGsvyBMX7DyZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "981008815628-7s3cp6b9fcjbjsm2nbnmv19er2i9pl9k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "981008815628-2irebksl5la3k1okf2adt86993fjj52v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.scube.NPL-QRScan"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
