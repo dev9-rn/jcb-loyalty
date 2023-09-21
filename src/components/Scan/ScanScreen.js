@@ -222,6 +222,7 @@ class ScanScreen extends React.Component {
         console.log(lResponseData);
         if (!lResponseData) {
             utilities.showToastMsg('Something went wrong. Please try again later');
+            this.setState({ showCamera: true });
         } else if (lResponseData.status == 500 || lResponseData.status == 400 || lResponseData.status == 422
             || lResponseData.status == 501 ) {
             // utilities.showToastMsg(lResponseData.message);
@@ -250,6 +251,7 @@ class ScanScreen extends React.Component {
 
         } else {
             utilities.showToastMsg('Something went wrong. Please try again later');
+            this.setState({ showCamera: true });
         }
     }
 
