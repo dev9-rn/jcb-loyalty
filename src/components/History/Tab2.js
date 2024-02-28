@@ -10,7 +10,7 @@ import { Dropdown } from 'react-native-material-dropdown';
 import Moment from 'moment';
 var _ = require('lodash');
 import { withNavigation } from 'react-navigation';
-import DatePicker from 'react-native-datepicker'
+import DatePicker from 'react-native-date-picker'
 import { strings } from '../../locales/i18n';
 import { connect } from 'react-redux';
 
@@ -38,7 +38,9 @@ class Tab2 extends Component {
 			noMoreDataError: '',
 			schemes: [],
 			schemesList: [],
-			selectedSchemeId: ''
+			selectedSchemeId: '',			
+			open1:'',
+			open2:''
 		};
 	}
 
@@ -53,33 +55,41 @@ class Tab2 extends Component {
 		this.setState({ isDateTimePickerVisible: false, isDateTimePickerVisible1: false });
 	};
 	handleDatePicked = date => {
-		let a = date;
-		let b = this.state.toDate
-		if (a > b) {
-			this.setState({ fromDateError: 'FromDate cannot be greater than toDate.' })
+		this.setState({ offset: 0, redeemHistoryCashArr: [] })
+		// let a = date;
+		// let b = this.state.toDate
+		console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+		let a = moment(date, 'DD-MM-YYYY');
+		let b = moment(this.state.toDate, 'DD-MM-YYYY');
+
+		if (moment(a).isAfter(b)) {
+			this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open2:false })
 		} else {
 			this.forceUpdate();
-			this.setState({ fromDateError: '', toDateError: '' })
-			this.setState({ frmDate: date })
-			this.callApi();
+			this.setState({ fromDateError: '', toDateError: '', frmDate: a.format("DD-MM-yyyy"), open1: false}, () => {
+				this.callApi();
+			})
 		}
-		this.setState({ frmDate: a })
+		// this.setState({ frmDate: moment(a).format("DD-MM-YYYY") })
 		this.hideDateTimePicker();
 	};
 	handleDatePicked1 = date => {
-		let a = date;
-		let b = this.state.frmDate;
-		let c = moment().format('DD-MM-YYYY')
-		if (a > c) {
-			this.setState({ toDateError: 'ToDate cannot be greater than todays date.' })
-		} else if (a < b) {
-			this.setState({ toDateError: 'ToDate cannot be less than fromDate date.' })
+		this.setState({ offset: 0, redeemHistoryCashArr: [] })
+		// let a = date;
+		// let b = this.state.frmDate;
+		// let c = moment().format('DD-MM-YYYY')
+		let a = moment(date, 'DD-MM-YYYY');
+		// let b = this.state.frmDate;
+		let b = moment(this.state.frmDate, 'DD-MM-YYYY');
+
+		if (a < b) {
+			this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
 		} else {
-			this.setState({ toDateError: '', fromDateError: '' })
-			this.setState({ toDate: date })
-			this.callApi();
+			this.setState({ toDate: a.format("DD-MM-yyyy"), toDateError: '', fromDateError: '',open2:false }, () => {
+				this.callApi();
+			})
 		}
-		this.setState({ toDate: a })
+		// this.setState({ toDate: a })
 		this.hideDateTimePicker();
 	};
 	componentDidMount = async () => {
@@ -246,31 +256,69 @@ class Tab2 extends Component {
 				/>
 				<View style={{ flex: Dimensions.get('window').height * 0.00013 }}>
 					<Grid style={{ margin: 5, }}>
-						<Row style={{ flex: 0.1 }}>
-							<Col size={1.05}>
+						{/* <Row style={{ flex: 0.1 }}> */}
+							<Col>
 								<Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold', height: 30 }}>{strings('login.coupon_history_fromDate')} : </Text>
 							</Col>
-							<Col size={1.05}>
-								<DatePicker date={this.state.frmDate} mode="date" 
+							<Col >
+							<TouchableOpacity style={{}} onPress={() => { this.setState({ open1: true }) }}>
+                             <Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.frmDate}</Text>
+                             </TouchableOpacity>
+                            <DatePicker
+                                modal
+                                mode="date"
+                                open={this.state.open1}
+                                date={new Date()}
+                                color="#000000"
+                                textColor="#000000"
+								maximumDate={new Date()}
+                                onConfirm={(date) => {
+                                    this.handleDatePicked(date) 
+                                }}
+                                onCancel={() => {
+                                // setOpen(false)
+                                this.setState({ open1: false})
+                                }}
+                            />
+								{/* <DatePicker date={this.state.frmDate} mode="date" 
 									locale={moment.locale('en')}
 								format="DD-MM-YYYY" maxDate={moment().format('DD-MM-YYYY')}
 									showIcon={false} confirmBtnText={"Done"} cancelBtnText={"Cancel"} onDateChange={(date) => { this.handleDatePicked(date) }}
 									style={{ width: 90, height: 25, justifyContent: 'center' }}
 									customStyles={{ dateInput: { borderWidth: 0, } }}
-								/>
+								/> */}
 							</Col>
 							<Col>
 								<Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold', height: 30 }}>{strings('login.coupon_history_toDate')} : </Text>
 							</Col>
 							<Col>
-								<DatePicker date={this.state.toDate} mode="date" 
+							<TouchableOpacity style={{ }} onPress={() => { this.setState({ open2: true }) }}>
+                             	<Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.toDate}</Text>
+                            </TouchableOpacity>
+                            <DatePicker
+                                modal
+                                mode="date"
+                                open={this.state.open2}
+                                date={new Date()}
+                                color="#000000"
+								maximumDate={new Date()}
+                                textColor="#000000"
+                                onConfirm={(date) => {
+                                    this.handleDatePicked1(date) 
+                                }}
+                                onCancel={() => {
+                                // setOpen(false)
+                                this.setState({ open2: false})
+                                }}
+                            />
+								{/* <DatePicker date={this.state.toDate} mode="date" 
 									locale={moment.locale('en')}
 								format="DD-MM-YYYY" maxDate={moment().format('DD-MM-YYYY')}
 									showIcon={false} onDateChange={(date) => { this.handleDatePicked1(date) }} style={{ width: 90, height: 25, justifyContent: 'center' }}
 									confirmBtnText={"Done"} cancelBtnText={"Cancel"} customStyles={{ dateInput: { borderWidth: 0, } }}
-								/>
+								/> */}
 							</Col>
-						</Row>
+						{/* </Row> */}
 					</Grid>
 				</View>
 				<View>

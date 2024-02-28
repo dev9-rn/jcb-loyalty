@@ -1,11 +1,57 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+require_relative '../node_modules/react-native-permissions/scripts/setup'
 
 platform :ios, '11.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'npl_seqrloyalty' do
   config = use_native_modules!
+
+
+  setup_permissions([
+    # 'AppTrackingTransparency',
+    # 'BluetoothPeripheral',
+    # 'Calendars',
+    # 'Camera',
+    # 'Contacts',
+    # 'FaceID',
+    # 'LocationAccuracy',
+    # 'LocationAlways',
+    # 'LocationWhenInUse',
+    # 'MediaLibrary',
+    # 'Microphone',
+    # 'Motion',
+    'Notifications',
+    # 'PhotoLibrary',
+    # 'PhotoLibraryAddOnly',
+    # 'Reminders',
+    # 'Siri',
+    # 'SpeechRecognition',
+    # 'StoreKit',
+  ])
+  
+  
+  pod 'react-native-torch', :path => '../node_modules/react-native-torch'
+  
+  pod 'react-native-fingerprint-scanner', :path => '../node_modules/react-native-fingerprint-scanner'
+  pod 'RNI18n', :path => '../node_modules/react-native-i18n'
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'react-native-camera', path: '../node_modules/react-native-camera'
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
+
+  pod 'Firebase', :modular_headers => true 
+  pod 'FirebaseCoreInternal', :modular_headers => true 
+  pod 'GoogleUtilities', :modular_headers => true 
+  pod 'FirebaseCore', :modular_headers => true 
+  pod 'FirebaseCoreExtension', :modular_headers => true 
+  pod 'FirebaseInstallations', :modular_headers => true 
+  pod 'GoogleDataTransport', :modular_headers => true 
+  pod 'nanopb', :modular_headers => true
+
 
   # Flags change depending on the env values.
   flags = get_default_flags()

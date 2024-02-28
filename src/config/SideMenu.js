@@ -5,11 +5,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { Alert, ScrollView, View, StyleSheet, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Icon, Accordion, Text,Card } from "native-base";
 import LoginService from '../services/LoginService/LoginService';
-import * as app from '../../App';
+// import * as app from '../../App';
 import * as utilities from '../Utility/utilities';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import RNFS from 'react-native-fs';
-import { APIKEY } from '../App'
+import { APIKEY, FCMTOKEN } from '../App'
 import FileViewer from 'react-native-file-viewer';
 import Loader from '../Utility/Loader';
 import { strings } from '../locales/i18n';
@@ -188,12 +188,14 @@ class SideMenu extends Component {
     ;
     const formData = new FormData();
     formData.append('distributorId', this.distributorId);
-    formData.append('deviceToken', app.FCMTOKEN);
+    formData.append('deviceToken', FCMTOKEN);
+    // formData.append('deviceToken', app.FCMTOKEN);
+    // console.log("========logout",JSON.stringify(formData,null,2))
     var loginApiObj = new LoginService();
     this.setState({ loading: true });
     await loginApiObj.logOut(formData);
     var lResponseData = loginApiObj.getRespData();
-    ;
+    
     this.closeActivityIndicator();
     console.log(lResponseData);
 

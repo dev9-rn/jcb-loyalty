@@ -17,14 +17,14 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
-import io.invertase.firebase.RNFirebasePackage;
-import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; 
-import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+// import io.invertase.firebase.RNFirebasePackage;
+// import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; 
+// import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
-import io.invertase.firebase.auth.RNFirebaseAuthPackage;
+// import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import com.rnfs.RNFSPackage;
 import com.emekalites.react.compress.image.ImageCompressPackage;
 import cl.json.RNSharePackage; 
@@ -45,9 +45,9 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
-          packages.add(new RNFirebaseMessagingPackage()); 
-          packages.add(new RNFirebaseNotificationsPackage());
-          packages.add(new RNFirebaseAuthPackage());
+          // packages.add(new RNFirebaseMessagingPackage()); 
+          // packages.add(new RNFirebaseNotificationsPackage());
+          // packages.add(new RNFirebaseAuthPackage());
           return packages;
         }
 

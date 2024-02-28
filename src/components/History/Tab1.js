@@ -10,9 +10,10 @@ import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../App';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { Col, Grid } from "react-native-easy-grid";
 import { ScrollView } from 'react-native-gesture-handler';
-import DatePicker from 'react-native-datepicker'
+import DatePicker from 'react-native-date-picker'
 import { strings } from '../../locales/i18n';
 import { connect } from 'react-redux';
+import { TouchableOpacity } from 'react-native';
 
 class Tab1 extends React.Component {
 
@@ -38,7 +39,9 @@ class Tab1 extends React.Component {
 			redeemHistoryCashArr: [],
 			loaderText: 'Please wait...',
 			offset: 0,
-			noMoreDataError: ''
+			noMoreDataError: '',
+			open1:'',
+			open2:''
 		};
 	}
 
@@ -52,36 +55,46 @@ class Tab1 extends React.Component {
 	hideDateTimePicker = () => {
 		this.setState({ isDateTimePickerVisible: false, isDateTimePickerVisible1: false });
 	};
+
 	handleDatePicked = date => {
-		let a = date;
-		let b = this.state.toDate
-		if (a > b) {
-			this.setState({ fromDateError: 'FromDate cannot be greater than toDate.' })
+		this.setState({ offset: 0, redeemHistoryCashArr: [] })
+		// let a = date;
+		// let b = this.state.toDate
+		console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+		let a = moment(date, 'DD-MM-YYYY');
+		let b = moment(this.state.toDate, 'DD-MM-YYYY');
+
+		if (moment(a).isAfter(b)) {
+			this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open2:false })
 		} else {
 			this.forceUpdate();
-			this.setState({ fromDateError: '', toDateError: '' })
-			this.setState({ frmDate: date })
-			this.callApi();
+			this.setState({ fromDateError: '', toDateError: '', frmDate: a.format("DD-MM-yyyy"), open1: false}, () => {
+				this.callApi();
+			})
 		}
-		this.setState({ frmDate: a })
+		// this.setState({ frmDate: moment(a).format("DD-MM-YYYY") })
 		this.hideDateTimePicker();
 	};
 	handleDatePicked1 = date => {
-		let a = date;
-		let b = this.state.frmDate;
-		let c = moment().format('DD-MM-YYYY')
-		if (a > c) {
-			this.setState({ toDateError: 'ToDate cannot be greater than todays date.' })
-		} else if (a < b) {
-			this.setState({ toDateError: 'ToDate cannot be less than fromDate date.' })
+		this.setState({ offset: 0, redeemHistoryCashArr: [] })
+		// let a = date;
+		// let b = this.state.frmDate;
+		// let c = moment().format('DD-MM-YYYY')
+		let a = moment(date, 'DD-MM-YYYY');
+		// let b = this.state.frmDate;
+		let b = moment(this.state.frmDate, 'DD-MM-YYYY');
+
+		if (a < b) {
+			this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
 		} else {
-			this.setState({ toDateError: '', fromDateError: '' })
-			this.setState({ toDate: date })
-			this.callApi();
+			this.setState({ toDate: a.format("DD-MM-yyyy"), toDateError: '', fromDateError: '',open2:false }, () => {
+				this.callApi();
+			})
 		}
-		this.setState({ toDate: a })
+		// this.setState({ toDate: a })
 		this.hideDateTimePicker();
 	};
+
 	componentDidMount = () => {
 		this._getAsyncData();
 	}
@@ -277,7 +290,26 @@ class Tab1 extends React.Component {
 								alignSelf:'center', fontWeight: 'bold' }}>{strings('login.report_history_fromDate')} : </Text>
 						</Col>
 						<Col size={3} >
-							<DatePicker
+							<TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open1: true }) }}>
+                             	<Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.frmDate}</Text>
+                             </TouchableOpacity>
+                            <DatePicker
+                                modal
+                                mode="date"
+                                open={this.state.open1}
+                                date={new Date()}
+                                color="#000000"
+                                textColor="#000000"
+								maximumDate={new Date()}
+                                onConfirm={(date) => {
+                                    this.handleDatePicked(date) 
+                                }}
+                                onCancel={() => {
+                                // setOpen(false)
+                                this.setState({ open1: false})
+                                }}
+                            />
+							{/* <DatePicker
 								date={this.state.frmDate}
 								confirmBtnText={"Done"}
 								cancelBtnText={"Cancel"}
@@ -293,13 +325,32 @@ class Tab1 extends React.Component {
 										borderWidth: 0,
 									}
 								}}
-							/>
+							/> */}
 						</Col>
 						<Col size={2}>
 							<Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold' }}>{strings('login.report_history_toDate')} : </Text>
 						</Col>
 						<Col size={3}>
-							<DatePicker
+							<TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open2: true }) }}>
+                             	<Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.toDate}</Text>
+                            </TouchableOpacity>
+                            <DatePicker
+                                modal
+                                mode="date"
+                                open={this.state.open2}
+                                date={new Date()}
+                                color="#000000"
+								maximumDate={new Date()}
+                                textColor="#000000"
+                                onConfirm={(date) => {
+                                    this.handleDatePicked1(date) 
+                                }}
+                                onCancel={() => {
+                                // setOpen(false)
+                                this.setState({ open2: false})
+                                }}
+                            />
+							{/* <DatePicker
 								date={this.state.toDate}
 								confirmBtnText={"Done"}
 								cancelBtnText={"Cancel"}
@@ -315,7 +366,7 @@ class Tab1 extends React.Component {
 										borderWidth: 0,
 									}
 								}}
-							/>
+							/> */}
 						</Col>
 					</Grid>
 					{this.state.fromDateError ?

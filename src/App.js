@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppRegistry, Platform } from 'react-native';
+import { AppRegistry, PermissionsAndroid, Platform } from 'react-native';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import { store, persistor } from './config/store';
@@ -8,10 +8,12 @@ import { Root } from "native-base";
 import { MenuProvider } from 'react-native-popup-menu';
 import * as utilities from '../src/Utility/utilities';
 import Route from '../src/config/Route';
-import firebase from 'react-native-firebase';
-import type, { Notification, NotificationOpen } from 'react-native-firebase';
+// import firebase from 'react-native-firebase';
+import messaging from '@react-native-firebase/messaging';
+// import type, { Notification, NotificationOpen } from 'react-native-firebase';
 import { createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
 import NotificationScreen from './components/Home/NotificationScreen';
+import { RESULTS, checkNotifications, requestNotifications } from 'react-native-permissions';
 
 const AppNavigator = createStackNavigator({
   DemoNotificationScreen: { screen: NotificationScreen, navigationOptions: { header: null } },
@@ -26,8 +28,8 @@ export default class App extends React.Component {
     }
   }
   componentWillUnmount() {
-    this.removeNotificationListener();
-    this.removeNotificationOpenedListener();
+    // this.removeNotificationListener();
+    // this.removeNotificationOpenedListener();
     // NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
   }
   // componentWillMount() {
@@ -44,37 +46,35 @@ export default class App extends React.Component {
     }
   };
 
-  getFireBaseToken = () => {
-    //Check permission
-    firebase.messaging().hasPermission()
-      .then(enabled => {
-        if (enabled) {
-          console.log("has permission");
-
-          //Get Token
-          firebase.messaging().getToken()
-            .then(fcmToken => {
-              if (fcmToken) {
-                console.log(fcmToken);
-                FCMTOKEN = fcmToken;
-                AsyncStorage.setItem('FCMTOKEN', JSON.stringify({ fcmToken: fcmToken }));
-              } else {
-                alert("No firebase token please check.")
-              }
-            });
-        } else {
-          console.log("no permission -----------------------");
-          this._getPermission()
+  getFireBaseToken = async () => {
+    await messaging().getToken()
+    .then(fcmToken => {
+      FCMTOKEN = fcmToken;
+      console.log('------fcmToken' ,fcmToken)
+      AsyncStorage.setItem('FCMTOKEN', JSON.stringify({ fcmToken: fcmToken }));
+    });
+    
+    await checkNotifications().then(async ({status, settings}) => {
+      if (status !== RESULTS.GRANTED) {
+        if(Platform.OS === 'android'){
+          await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+        }else{
+          requestNotifications(['alert', 'sound']).then(({status, settings}) => {
+            console.log("====requestNotifications",status)
+          });
         }
-      });
+      }
+    });
   }
-  _getPermission = () => {
-    firebase.messaging()
-      .requestPermission()
-      .catch(error => {
-        alert("No permission for firebase")
-      });
-  }
+  // _getPermission = () => {
+  //   firebase.messaging()
+  //     .requestPermission()
+  //     .catch(error => {
+  //       alert("No permission for firebase")
+  //     });
+  // }
   async getAsyncData() {
     await AsyncStorage.multiGet(['ACCESSTOKEN'], (err, result) => {
       var lData = JSON.parse(result[0][1]);
@@ -86,38 +86,39 @@ export default class App extends React.Component {
   }
   componentDidMount = () => {
     this.getAsyncData();
-    this.getFireBaseToken();
-    this.removeNotificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
-      console.log("hua open");
-      this.setState({ showHideNotifyScreen: true })
-      this.navigator && this.navigator.dispatch({ type: 'Navigate', routeName: "DemoNotificationScreen", pramas: "bangdu" });
-      // this.props.navigation.navigate('NotificationScreen');
-    });
+    
+    // this.removeNotificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
+    //   console.log("hua open");
+    //   this.setState({ showHideNotifyScreen: true })
+    //   this.navigator && this.navigator.dispatch({ type: 'Navigate', routeName: "DemoNotificationScreen", pramas: "bangdu" });
+    //   // this.props.navigation.navigate('NotificationScreen');
+    // });
 
-    this.removeNotificationListener = firebase.notifications().onNotification((notification: Notification) => {
-      if (notification) {
-        const { title, body } = notification;
-        const channelId = new firebase.notifications.Android.Channel('Default', 'Default', firebase.notifications.Android.Importance.High);
-        firebase.notifications().android.createChannel(channelId);
-        let notification_to_be_displayed = new firebase.notifications.Notification({
-          data: notification.android._notification._data,
-          sound: 'default',
-          show_in_foreground: true,
-          lights: true,
-          title: title,
-          body: body
-        });
-        if (Platform.OS == 'android') {
-          notification_to_be_displayed
-            .android.setPriority(firebase.notifications.Android.Priority.High)
-            .android.setChannelId('Default')
-            .android.setVibrate(1000)
-        }
-        firebase.notifications()
-          .displayNotification(notification_to_be_displayed)
-          .catch(err => console.log(err))
-      }
-    });
+    // this.removeNotificationListener = firebase.notifications().onNotification((notification: Notification) => {
+    //   if (notification) {
+    //     const { title, body } = notification;
+    //     const channelId = new firebase.notifications.Android.Channel('Default', 'Default', firebase.notifications.Android.Importance.High);
+    //     firebase.notifications().android.createChannel(channelId);
+    //     let notification_to_be_displayed = new firebase.notifications.Notification({
+    //       data: notification.android._notification._data,
+    //       sound: 'default',
+    //       show_in_foreground: true,
+    //       lights: true,
+    //       title: title,
+    //       body: body
+    //     });
+    //     if (Platform.OS == 'android') {
+    //       notification_to_be_displayed
+    //         .android.setPriority(firebase.notifications.Android.Priority.High)
+    //         .android.setChannelId('Default')
+    //         .android.setVibrate(1000)
+    //     }
+    //     firebase.notifications()
+    //       .displayNotification(notification_to_be_displayed)
+    //       .catch(err => console.log(err))
+    //   }
+    // });
+    this.getFireBaseToken();
   }
   render() {
     return (

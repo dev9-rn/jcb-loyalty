@@ -6,7 +6,7 @@ import * as utilities from '../Utility/utilities';
 import moment from 'moment';
 import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../src/App';
 import { Col, Grid } from "react-native-easy-grid";
-import DatePicker from 'react-native-datepicker'
+import DatePicker from 'react-native-date-picker'
 import { strings } from '../locales/i18n';
 import { connect } from 'react-redux';
 var _ = require('lodash');
@@ -56,7 +56,9 @@ class CashBatchesScreen extends Component {
             selectedYear: new Date().getFullYear(),
             selectedMonthName: '',
             isModalVisible: false,
-            dataToShowOnModal: {}
+            dataToShowOnModal: {},
+            open1:false,
+            open2:false
         };
     }
     _getYearList = () => {
@@ -354,10 +356,10 @@ class CashBatchesScreen extends Component {
         let b = moment(this.state.toDate, 'DD-MM-YYYY');
         this.setState({ redeemHistoryCashArr: [] }, () => {
             if (moment(a).isAfter(b)) {
-                this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '' })
+                this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open1:false })
             } else {
                 this.forceUpdate();
-                this.setState({ fromDateError: '', toDateError: '', frmDate: date, frmDatePass: date }, () => {
+                this.setState({ fromDateError: '', toDateError: '', frmDate: a.format("DD-MM-yyyy"), frmDatePass: date,open1:false }, () => {
                     this.callApi();
                 })
             }
@@ -370,9 +372,9 @@ class CashBatchesScreen extends Component {
             let a = moment(date, 'DD-MM-YYYY');
             let b = moment(this.state.frmDate, 'DD-MM-YYYY');
             if (a < b) {
-                this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '' })
+                this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
             } else {
-                this.setState({ toDate: date, toDateError: '', fromDateError: '', toDatePass: date }, () => {
+                this.setState({ toDate: a.format("DD-MM-yyyy"), toDateError: '', fromDateError: '', toDatePass: date,open2:false }, () => {
                     this.callApi();
                 })
             }
@@ -414,10 +416,29 @@ class CashBatchesScreen extends Component {
                 <StatusBar backgroundColor="#0000FF" barStyle="light-content" />
 
                 <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                    <View style={{ flexDirection: "row" }}>
+                    <View style={{ flexDirection: "row" ,alignItems : 'center'}}>
                         <Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black', marginTop: 13 }}>{strings('login.coupon_history_fromDate')} : </Text>
-                        <View style={{ marginTop: 5, backgroundColor: "red" }}>
+                        <View style={{ marginTop: 13 }}>
+                            <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open1: true }) }}>
+                                <Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.frmDate}</Text>
+                             </TouchableOpacity>
                             <DatePicker
+                                modal
+                                mode="date"
+                                open={this.state.open1}
+                                date={new Date()}
+                                maximumDate={new Date()}
+                                color="#000000"
+                                textColor="#000000"
+                                onConfirm={(date) => {
+                                    this.handleDatePicked(date) 
+                                }}
+                                onCancel={() => {
+                                // setOpen(false)
+                                this.setState({ open1: false})
+                                }}
+                            />
+                            {/* <DatePicker
                                 date={this.state.frmDate}
                                 confirmBtnText="Select"
                                 cancelBtnText="Cancel"
@@ -436,13 +457,33 @@ class CashBatchesScreen extends Component {
                                     }
                                 }}
                                 style={{ width: 100 }}
-                            />
+                            /> */}
                         </View>
                     </View>
                     <View style={{ flexDirection: "row" }}>
                         <Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black', marginTop: 13 }}>{strings('login.coupon_history_toDate')} : </Text>
-                        <View style={{ marginTop: 5, backgroundColor: "red" }}>
+                        <View style={{ marginTop: 13}}>
+                            <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open2: true }) }}>
+                                <Text style={{ color:"#000000"}}>{this.state.toDate}</Text>
+                            </TouchableOpacity>
                             <DatePicker
+                                modal
+                                mode="date"
+                                open={this.state.open2}
+                                date={new Date()}
+                                maximumDate={new Date()}
+                                color="#000000"
+                                textColor="#000000"
+                                onConfirm={(date) => {
+
+                                    this.handleDatePicked1(date) 
+                                }}
+                                onCancel={() => {
+                                // setOpen(false)
+                                this.setState({ open2: false})
+                                }}
+                            />
+                            {/* <DatePicker
                                 date={this.state.toDate}
                                 confirmBtnText="Select"
                                 cancelBtnText="Cancel"
@@ -462,7 +503,7 @@ class CashBatchesScreen extends Component {
                                     }
                                 }}
                                 style={{ width: 100 }}
-                            />
+                            /> */}
                         </View>
                     </View>
                 </View>

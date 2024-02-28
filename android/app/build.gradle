@@ -1,5 +1,8 @@
 apply plugin: "com.android.application"
-
+//=== To do firebase
+apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.firebase.crashlytics"
+//====
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -154,8 +157,8 @@ android {
         applicationId "com.npl_seqrloyalty"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4194319
-        versionName "2.2"
+        versionCode 4194321
+        versionName "2.3.1"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
@@ -297,15 +300,22 @@ dependencies {
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-image-picker')
     implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-firebase')
+    // implementation project(':react-native-firebase')
     implementation project(':react-native-camera')
     implementation project(':react-native-android-open-settings')
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.google.firebase:firebase-core:16.0.9"
     implementation "com.google.android.gms:play-services-base:16.1.0"
 //    implementation "com.google.firebase:firebase-messaging:18.0.0"
+    // implementation "com.google.firebase:firebase-messaging:17.3.3"
+    //=== To do firebase add below 2 line 
+    implementation platform('com.google.firebase:firebase-bom:32.5.0') 
+    implementation("com.google.firebase:firebase-crashlytics")
     implementation "com.google.firebase:firebase-messaging:17.3.3"
-    implementation 'com.google.firebase:firebase-iid'
+    //=====
+    //=== To do firebase add :+ end of the firebase-iid
+    implementation 'com.google.firebase:firebase-iid:+'
+    //=====
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
     implementation project(':react-native-i18n')
     implementation project(':react-native-restart')
@@ -321,7 +331,9 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-
+    //=== To do firebase
+    implementation 'com.google.firebase:firebase-analytics'
+    //====
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
