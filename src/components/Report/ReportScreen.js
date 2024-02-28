@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { View, Button, Image, ScrollView, TouchableOpacity, TextInput, Platform ,Alert} from 'react-native';
+import { View, Button, Image, ScrollView, TouchableOpacity, TextInput, Platform ,Alert, PermissionsAndroid, BackHandler, Linking} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import IMG from '../../images/camera1.png'
-import ImagePicker from 'react-native-image-picker';
 import { Header, Left, Body, Title, Icon, Label } from 'native-base';
 import { URL, APIKEY, ACCESSTOKEN } from '../../App';
 import Loader from '../../Utility/Loader';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { strings } from '../../locales/i18n';
 import { connect } from 'react-redux';
+import AndroidOpenSettings from 'react-native-android-open-settings';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { PERMISSIONS, request } from 'react-native-permissions';
 
 class ReportScreen extends Component {
     state = {
@@ -18,7 +20,8 @@ class ReportScreen extends Component {
         Description: '',
         distributorId: '',
         loaderText: 'Loading...',
-        showHideLoading: false
+        showHideLoading: false,
+        isPermissionGranted : false,
     }
     getDataFromAPi = () => {
         AsyncStorage.getItem('USERDATA')
@@ -29,19 +32,120 @@ class ReportScreen extends Component {
             })
     }
 
-    imagePickerHandler = () => {
-        ImagePicker.showImagePicker({ title: "Pick an image" }, res => {
-            if (res.didCancel) {
-                // alert("u have cancelled.")
-            } else if (res.error) {
-                alert("u have an error.")
-            } else {
-                this.setState({
-                    isImage: true,
-                    pickedImage: { uri: res.uri }
-                })
+    imagePickerHandler = async(type) => {
+        try{
+            if(this.state.isPermissionGranted){
+                if(type == "capture"){
+                    await launchCamera({
+                        saveToPhotos: true,
+                        mediaType: 'photo',
+                        includeBase64: false,
+                        includeExtra: true,
+                    } , res =>{ 
+                        console.log("===result res" , JSON.stringify(res , null,2))
+                        if (res.didCancel) {
+                            // alert("u have cancelled.")
+                        } else if (res.error) {
+                            console.log("image pucker" , res.error)
+                            alert("u have an error.")
+                        } else {
+                            this.setState({
+                                isImage: true,
+                                pickedImage: { uri: res?.assets[0].uri }
+                            })
+                        }
+                    });
+                }else{
+                    await launchImageLibrary({
+                        selectionLimit: 0,
+                        mediaType: 'photo',
+                        includeBase64: false,
+                        includeExtra: true,
+                    } , res =>{ 
+                        console.log("===result res" , JSON.stringify(res , null,2))
+                        if (res.didCancel) {
+                            // alert("u have cancelled.")
+                        } else if (res.error) {
+                            console.log("image pucker" , res.error)
+                            alert("u have an error.")
+                        } else {
+                            this.setState({
+                                isImage: true,
+                                pickedImage: { uri: res?.assets[0].uri }
+                            })
+                        }
+                    });
+                }
+            }else{
+                Alert.alert('Need Camera Persmission ', '', [
+                    {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                    },
+                    {
+                      text: 'Open Setting',
+                      onPress: () => {this._openSettings()},
+                    },
+            
+                  ])
             }
+            
+        }catch(e){
+            console.log(e)
+        }
+        
+        // console.log("===result" , result)
+        // ImagePicker.showImagePicker({ title: "Pick an image" }, res => {
+        //     if (res.didCancel) {
+        //         // alert("u have cancelled.")
+        //     } else if (res.error) {
+        //         console.log("image pucker" , res.error)
+        //         alert("u have an error.")
+        //     } else {
+        //         this.setState({
+        //             isImage: true,
+        //             pickedImage: { uri: res.uri }
+        //         })
+        //     }
+        // });
+    }
+
+    _openSettings() {
+        if (Platform.OS == 'ios') {
+            Linking.canOpenURL('app-settings:').then(supported => {
+                if (!supported) {
+                    console.log('Can\'t handle settings url');
+                } else {
+                    return Linking.openURL('app-settings:');
+                }
+            }).catch(err => console.error('An error occurred', err));
+        } else {
+            AndroidOpenSettings.generalSettings();
+        }
+    }
+
+    componentDidMount() {
+        this._requestPermission();
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+
+    handleBackPress = () => {
+        this.props.navigation.navigate('HomeScreen');
+        return true;
+    }
+
+    _requestPermission = async () =>{
+        request(Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA).then((result) => {
+            if(result == "granted"){
+                this.setState({isPermissionGranted : true})
+            }
+            console.log(result)
         });
+    
     }
     _onPressSendButton = (distributorId) => {
         this.setState({ showHideLoading: true })
@@ -110,7 +214,7 @@ class ReportScreen extends Component {
                             </TouchableOpacity>
                         </Col>
                         <Col size={15} style={{ justifyContent: 'center', paddingRight: 20 }}>
-                            <Title style={{ color: '#FFFFFF' }}>{strings('login.report_screen_title')}</Title>
+                            <Title style={{ color: '#FFFFFF' }}>{strings('login.report_screen_titled')}</Title>
                         </Col>
                     </Grid>
                 </Header>
@@ -134,7 +238,22 @@ class ReportScreen extends Component {
         return (
             <ScrollView keyboardShouldPersistTaps="handled">
                 {this._showHeader()}
-                <TouchableOpacity onPress={this.imagePickerHandler} style={{ alignItems: 'center', padding: 0, margin: 0 }}>
+                <TouchableOpacity onPress={()=>{
+                    Alert.alert('Pick an image ', '', [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                        },
+                        {
+                          text: 'Take Photo..',
+                          onPress: () => this.imagePickerHandler('capture'),
+                        },
+                        {
+                            text: 'choose from Gallery...', 
+                            onPress: () => this.imagePickerHandler('gellery')
+                        },
+                      ])
+                }} style={{ alignItems: 'center', padding: 0, margin: 0 }}>
                     <Image source={this.state.pickedImage} style={{ width: 200, height: 200, marginTop: 25, resizeMode: 'contain' }} />
                 </TouchableOpacity>
 

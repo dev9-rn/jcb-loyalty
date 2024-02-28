@@ -352,14 +352,19 @@ class CashBatchesScreen extends Component {
     }
 
     handleDatePicked = date => {
-        let a = moment(date, 'DD-MM-YYYY');
-        let b = moment(this.state.toDate, 'DD-MM-YYYY');
+        let a = moment(date).format("DD-MM-YYYY");
+        let b = this.state.toDate;
+
+        let fromDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
+        let toDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
+
+        console.log(fromDate , fromDate)
         this.setState({ redeemHistoryCashArr: [] }, () => {
-            if (moment(a).isAfter(b)) {
+            if (fromDate.isAfter(toDate)) {
                 this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open1:false })
             } else {
                 this.forceUpdate();
-                this.setState({ fromDateError: '', toDateError: '', frmDate: a.format("DD-MM-yyyy"), frmDatePass: date,open1:false }, () => {
+                this.setState({ fromDateError: '', toDateError: '', frmDate: a, frmDatePass: date,open1:false }, () => {
                     this.callApi();
                 })
             }
@@ -369,12 +374,20 @@ class CashBatchesScreen extends Component {
         console.log(date);
         console.log("=-=-=-=-=-=-=-=-=-=-=-=----=-======-=-=-=-=-=-=-=-==-=-=-=-=-=");
         this.setState({ redeemHistoryCashArr: [] }, () => {
-            let a = moment(date, 'DD-MM-YYYY');
-            let b = moment(this.state.frmDate, 'DD-MM-YYYY');
-            if (a < b) {
+
+            // let a = moment(date, 'DD-MM-YYYY');
+            // let b = moment(this.state.frmDate, 'DD-MM-YYYY');
+
+            let a = moment(date).format("DD-MM-YYYY");
+            let b = this.state.frmDate;
+
+            let fromDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
+            let toDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
+
+            if (toDate.isBefore(fromDate)) {
                 this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
             } else {
-                this.setState({ toDate: a.format("DD-MM-yyyy"), toDateError: '', fromDateError: '', toDatePass: date,open2:false }, () => {
+                this.setState({ toDate: a, toDateError: '', fromDateError: '', toDatePass: date,open2:false }, () => {
                     this.callApi();
                 })
             }
@@ -426,7 +439,7 @@ class CashBatchesScreen extends Component {
                                 modal
                                 mode="date"
                                 open={this.state.open1}
-                                date={new Date()}
+                                date={new Date(moment(`${this.state.frmDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
                                 maximumDate={new Date()}
                                 color="#000000"
                                 textColor="#000000"
@@ -470,7 +483,7 @@ class CashBatchesScreen extends Component {
                                 modal
                                 mode="date"
                                 open={this.state.open2}
-                                date={new Date()}
+                                date={new Date(moment(`${this.state.toDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
                                 maximumDate={new Date()}
                                 color="#000000"
                                 textColor="#000000"

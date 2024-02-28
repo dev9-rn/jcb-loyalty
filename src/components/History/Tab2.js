@@ -55,43 +55,47 @@ class Tab2 extends Component {
 		this.setState({ isDateTimePickerVisible: false, isDateTimePickerVisible1: false });
 	};
 	handleDatePicked = date => {
-		this.setState({ offset: 0, redeemHistoryCashArr: [] })
-		// let a = date;
-		// let b = this.state.toDate
-		console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-		let a = moment(date, 'DD-MM-YYYY');
-		let b = moment(this.state.toDate, 'DD-MM-YYYY');
+        let a = moment(date).format("DD-MM-YYYY");
+        let b = this.state.toDate;
 
-		if (moment(a).isAfter(b)) {
-			this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open2:false })
-		} else {
-			this.forceUpdate();
-			this.setState({ fromDateError: '', toDateError: '', frmDate: a.format("DD-MM-yyyy"), open1: false}, () => {
-				this.callApi();
-			})
-		}
-		// this.setState({ frmDate: moment(a).format("DD-MM-YYYY") })
-		this.hideDateTimePicker();
-	};
-	handleDatePicked1 = date => {
-		this.setState({ offset: 0, redeemHistoryCashArr: [] })
-		// let a = date;
-		// let b = this.state.frmDate;
-		// let c = moment().format('DD-MM-YYYY')
-		let a = moment(date, 'DD-MM-YYYY');
-		// let b = this.state.frmDate;
-		let b = moment(this.state.frmDate, 'DD-MM-YYYY');
+        let fromDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
+        let toDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
 
-		if (a < b) {
-			this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
-		} else {
-			this.setState({ toDate: a.format("DD-MM-yyyy"), toDateError: '', fromDateError: '',open2:false }, () => {
-				this.callApi();
-			})
-		}
-		// this.setState({ toDate: a })
-		this.hideDateTimePicker();
-	};
+        console.log(fromDate , fromDate)
+        this.setState({ redeemHistoryCashArr: [] }, () => {
+            if (fromDate.isAfter(toDate)) {
+                this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open1:false })
+            } else {
+                this.forceUpdate();
+                this.setState({ fromDateError: '', toDateError: '', frmDate: a, frmDatePass: date,open1:false }, () => {
+                    this.callApi();
+                })
+            }
+        })
+    };
+    handleDatePicked1 = date => {
+        console.log(date);
+        console.log("=-=-=-=-=-=-=-=-=-=-=-=----=-======-=-=-=-=-=-=-=-==-=-=-=-=-=");
+        this.setState({ redeemHistoryCashArr: [] }, () => {
+
+            // let a = moment(date, 'DD-MM-YYYY');
+            // let b = moment(this.state.frmDate, 'DD-MM-YYYY');
+
+            let a = moment(date).format("DD-MM-YYYY");
+            let b = this.state.frmDate;
+
+            let fromDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
+            let toDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
+
+            if (toDate.isBefore(fromDate)) {
+                this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
+            } else {
+                this.setState({ toDate: a, toDateError: '', fromDateError: '', toDatePass: date,open2:false }, () => {
+                    this.callApi();
+                })
+            }
+        })
+    };
 	componentDidMount = async () => {
 		await this._getAsyncData();
 	}
@@ -268,7 +272,7 @@ class Tab2 extends Component {
                                 modal
                                 mode="date"
                                 open={this.state.open1}
-                                date={new Date()}
+                                date={new Date(moment(`${this.state.frmDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
                                 color="#000000"
                                 textColor="#000000"
 								maximumDate={new Date()}
@@ -293,13 +297,13 @@ class Tab2 extends Component {
 							</Col>
 							<Col>
 							<TouchableOpacity style={{ }} onPress={() => { this.setState({ open2: true }) }}>
-                             	<Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.toDate}</Text>
+                             	<Text onPress={() => { this.setState({ open2: true })} }  style={{ color:"#000000"}}>{this.state.toDate}</Text>
                             </TouchableOpacity>
                             <DatePicker
                                 modal
                                 mode="date"
                                 open={this.state.open2}
-                                date={new Date()}
+                                date={new Date(moment(`${this.state.toDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
                                 color="#000000"
 								maximumDate={new Date()}
                                 textColor="#000000"
