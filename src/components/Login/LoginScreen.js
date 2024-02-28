@@ -299,6 +299,7 @@ import MyColors from '../../Utility/Colors';
                       ...styles.inputs
                     }}
                     value={this.state.mobileNumber}
+                    placeholderTextColor='#757575'
                     keyboardType='number-pad'
                     maxLength={10}
                     placeholder={strings('login.paymentOptions_screen_placeholder_mobileno')}
@@ -412,6 +413,7 @@ const styles = StyleSheet.create({
     height: 45,
     marginLeft: 5,
     borderBottomWidth: 1,
+    color: '#000000',
     // backgroundColor: 'lightgreen'    
   },
   buttonLogin: {
