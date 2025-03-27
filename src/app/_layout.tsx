@@ -21,13 +21,13 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <GestureHandlerRootView>
           <KeyboardProvider>
-            <UserProvider>
-              <AuthProvider>
-                <ToastProvider
-                  offsetBottom={40}
-                  swipeEnabled={true}
-                  renderToast={(props) => <ToastNotification toastData={props} />}
-                >
+            <ToastProvider
+              offsetBottom={40}
+              swipeEnabled={true}
+              renderToast={(props) => <ToastNotification toastData={props} />}
+            >
+              <UserProvider>
+                <AuthProvider>
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen
                       name="(auth)"
@@ -39,9 +39,9 @@ export default function RootLayout() {
                       options={{ headerShown: false }}
                     />
                   </Stack>
-                </ToastProvider>
-              </AuthProvider>
-            </UserProvider>
+                </AuthProvider>
+              </UserProvider>
+            </ToastProvider>
           </KeyboardProvider>
         </GestureHandlerRootView>
       </SafeAreaProvider>

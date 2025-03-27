@@ -7,6 +7,7 @@ import { USER_LOGIN, USER_LOGOUT, VERIFY_OTP } from '@/utils/routes'
 import { storageService, tokenStorageService } from '@/utils/storageService'
 import { STORAGE_KEYS } from '@/libs/constants'
 import useUser from '@/hooks/useUser'
+import { useToast } from 'react-native-toast-notifications'
 
 type Props = {
     children: React.ReactNode
@@ -20,6 +21,7 @@ const AuthProvider = ({ children }: Props) => {
     const [userAuthToken, setUserAuthToken] = useState<string>("");
 
     const router = useRouter();
+    const toast = useToast();
 
     useEffect(() => {
         getLocalUser()
@@ -94,7 +96,15 @@ const AuthProvider = ({ children }: Props) => {
         try {
             const response = await axiosInstance.post(USER_LOGOUT, logoutFormData);
 
-            console.log(response.data)
+            if (response.data.status != 200) {
+                toast.show(response.data.message, {
+                    data: response
+                })
+            };
+
+            toast.show(response.data.message, {
+                data: response
+            })
         } catch (error) {
             console.log(error, "LOGOUT_ERROR");
         }
