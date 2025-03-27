@@ -30,9 +30,20 @@ const DrawerLayout = ({ }: Props) => {
             drawerContent={(props) => <CustomDrawerContent {...props} />}
         >
             <Drawer.Screen
+                name="profile" // This is the name of the page and must match the url from root
+                options={{
+                    drawerLabel: 'Profile',
+                    title: 'Profile',
+                    drawerIcon: ({ focused, color }) => (
+                        <UserIcon color={focused ? "#FFF" : color} />
+                    )
+                }}
+            />
+
+            <Drawer.Screen
                 name="index" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Home',
+                    drawerLabel: 'Dashboard',
                     title: 'Dashboard',
                     headerRight: ({ tintColor }) => (
                         <Button variant={"ghost"} size={"icon"} onPress={() => router.navigate("/(root)/(stack)/notification")}>
@@ -48,20 +59,9 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name='camera'
                 options={{
-                    drawerLabel: 'Camera',
+                    drawerLabel: 'Scan Coupons',
                     drawerIcon: ({ focused, color }) => (
                         <QrCodeIcon color={focused ? "#FFF" : color} />
-                    )
-                }}
-            />
-
-            <Drawer.Screen
-                name="profile" // This is the name of the page and must match the url from root
-                options={{
-                    drawerLabel: 'Profile',
-                    title: 'Profile',
-                    drawerIcon: ({ focused, color }) => (
-                        <UserIcon color={focused ? "#FFF" : color} />
                     )
                 }}
             />
