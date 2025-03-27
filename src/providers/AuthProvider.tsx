@@ -4,7 +4,7 @@ import AuthContext from '@/context/AuthContext'
 import { useRouter } from 'expo-router'
 import axiosInstance from '@/utils/axiosInstance'
 import { USER_LOGIN, USER_LOGOUT, VERIFY_OTP } from '@/utils/routes'
-import { storageService, tokenStorageService } from '@/utils/storageService'
+import { storage, storageService, tokenStorage, tokenStorageService } from '@/utils/storageService'
 import { STORAGE_KEYS } from '@/libs/constants'
 import useUser from '@/hooks/useUser'
 import { useToast } from 'react-native-toast-notifications'
@@ -102,6 +102,8 @@ const AuthProvider = ({ children }: Props) => {
                 })
             };
 
+            tokenStorage.clearAll();
+            storage.clearAll();
             toast.show(response.data.message, {
                 data: response
             })

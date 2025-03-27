@@ -1,11 +1,11 @@
 import { MMKV } from 'react-native-mmkv';
 
-const tokenStorage = new MMKV({
+export const tokenStorage = new MMKV({
     id: "daewoo-auth",
     encryptionKey: "daewoo-token"
 });
 
-const storage = new MMKV();
+export const storage = new MMKV();
 
 export const tokenStorageService = {
     setAuthToken: (tokenKey: string, tokenValue: string) => {
