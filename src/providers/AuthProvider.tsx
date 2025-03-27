@@ -48,7 +48,7 @@ const AuthProvider = ({ children }: Props) => {
             console.log(response.data, "LOGIN_RES");
 
             if (!response.data?.success || response.data.status > 200) {
-                console.log(response.data?.message, "SVR_ERR");
+                return response.data
             };
 
             router.navigate({
@@ -58,7 +58,7 @@ const AuthProvider = ({ children }: Props) => {
                 }
             });
         } catch (error) {
-            console.log(error, "SOMETHIGN_WENT_WRONG_LOGIN");
+            return error
         }
     };
 

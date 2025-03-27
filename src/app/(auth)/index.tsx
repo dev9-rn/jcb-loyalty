@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import axios, { AxiosResponse } from 'axios';
 
 type Props = {}
 
@@ -37,7 +38,22 @@ const SignInScreen = ({ }: Props) => {
 
         loginFormData.append("mobileNo", formData.userPhone);
 
-        login(loginFormData);
+        const loginResponse: AxiosResponse = await login(loginFormData);
+
+        if (axios.isAxiosError(loginResponse)) {
+            setError("userPhone", {
+                type: loginResponse.response?.data.satus,
+                message: loginResponse.response?.data.message,
+            })
+        }
+
+        if (loginResponse.data.status != 200) {
+            setError("root.serverError", {
+                type: loginResponse.data.satus,
+                message: loginResponse.data.message,
+            })
+        }
+
     };
 
     return (
@@ -61,12 +77,12 @@ const SignInScreen = ({ }: Props) => {
                         <Controller
                             control={control}
                             rules={{
-                                required: true,
+                                required: "Please enter your phone number",
                                 maxLength: 10
                             }}
                             render={({ field: { onBlur, onChange, value } }) => (
                                 <Input
-                                    className='rounded-lg'
+                                    className={`rounded-lg ${errors.userPhone && "border-red-500 border-2"}`}
                                     placeholder='Phone Number'
                                     onBlur={onBlur}
                                     onChangeText={onChange}
@@ -75,6 +91,8 @@ const SignInScreen = ({ }: Props) => {
                             )}
                             name='userPhone'
                         />
+
+                        {errors.userPhone && <Text className='text-red-500 font-medium'>{errors.userPhone?.message?.toString()}</Text>}
                     </View>
 
                     <Button

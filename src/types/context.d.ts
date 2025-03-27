@@ -1,8 +1,9 @@
+import { AxiosResponse } from "axios";
 import { Dispatch } from "react";
 
 interface IAuthContext {
     isAuthenticated: boolean;
-    login: (loginFormData: FormData) => void;
+    login: (loginFormData: FormData) => Promise<AxiosResponse>;
     logout: () => void;
     verify: (verifyFormData: FormData) => void;
 };
