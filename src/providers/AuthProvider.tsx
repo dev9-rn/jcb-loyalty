@@ -47,7 +47,7 @@ const AuthProvider = ({ children }: Props) => {
 
             console.log(response.data, "LOGIN_RES");
 
-            if (!response.data?.success || response.data.status > 200) {
+            if (response.data.status > 200) {
                 return response.data
             };
 
