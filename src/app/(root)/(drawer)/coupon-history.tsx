@@ -5,7 +5,7 @@ type Props = {}
 
 const CouponHistoryScreen = ({ }: Props) => {
     return (
-        <View>
+        <View className='flex-1 p-4'>
             <Text>CouponHistoryScreen</Text>
         </View>
     )

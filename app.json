@@ -24,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.daewoo_lube"
+      "package": "com.daewoo.seqrloyalty"
     },
     "web": {
       "bundler": "metro",
@@ -64,6 +64,12 @@
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
     ],
