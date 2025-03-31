@@ -31,7 +31,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 403 && !error.config?.url?.includes("/lƒogin")) {
+        if (error.response?.status === 403 && !error.config?.url?.includes("/login")) {
             tokenStorage.clearAll();
             storage.clearAll();
             router.replace("/(auth)")
