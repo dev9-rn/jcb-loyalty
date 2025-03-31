@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Image } from 'react-native'
+import { View, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
 
@@ -26,12 +26,13 @@ type ReportFormData = {
 const ReportCouponScreen = ({ }: Props) => {
 
     const [pickedCouponImage, setPickedCouponImage] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const { userDetails } = useUser();
 
     const toast = useToast();
 
-    const { control, handleSubmit, formState: { errors } } = useForm<ReportFormData | FieldValues>({
+    const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<ReportFormData | FieldValues>({
         defaultValues: {
             couponSerial: '',
             couponDescription: ''
@@ -48,29 +49,38 @@ const ReportCouponScreen = ({ }: Props) => {
         uploadReportFormData.append('couponFile', {
             uri: pickedCouponImage,
             type: 'image/jpeg',
-            name: "abc.jpeg"
+            name: new Date().toJSON()
         });
 
         try {
+            setIsSubmitting(true);
             const response = await axiosInstance.post(POST_REPORT_COUPON, uploadReportFormData);
 
             if (response.data.status != 200) {
+                setIsSubmitting(false)
                 toast.show(response.data.message, {
                     data: response
                 });
             };
+
             toast.show(response.data.message, {
                 data: response
-            })
+            });
+            reset();
+            setIsSubmitting(false);
         } catch (error) {
             if (axios.isAxiosError(error)) {
+                setError("couponSerial", {
+                    type: error.response?.data.status,
+                    message: error.response?.data.message
+                });
+                setIsSubmitting(false)
                 return toast.show(error.response?.data.message, {
                     data: error.response
                 });
             }
-
+            setIsSubmitting(false)
             toast.show(error?.message);
-            console.log(error, "SOMETHING_WENT_WRONG");
         }
     };
 
@@ -166,11 +176,20 @@ const ReportCouponScreen = ({ }: Props) => {
                     </View>
                 </View>
 
-                <Button className='my-6' onPress={handleSubmit(handleCouponReportSubmit)}>
-                    <Text>Submit Report</Text>
+                <Button className='my-6 flex-row items-center' onPress={handleSubmit(handleCouponReportSubmit)} disabled={isSubmitting}>
+                    {isSubmitting ? (
+                        <>
+                            <ActivityIndicator className='mr-2' color={"#FFF"} />
+                            <Text>Submitting report</Text>
+                        </>
+                    ) : (
+                        <Text>
+                            Submit Report
+                        </Text>
+                    )}
                 </Button>
             </KeyboardAwareScrollView>
-        </View>
+        </View >
     )
 }
 

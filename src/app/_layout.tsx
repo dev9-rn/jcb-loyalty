@@ -18,9 +18,9 @@ if (__DEV__) {
 export default function RootLayout() {
   return (
     <>
-      <SafeAreaProvider>
-        <GestureHandlerRootView>
-          <KeyboardProvider>
+      <KeyboardProvider>
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
             <ToastProvider
               offsetBottom={40}
               swipeEnabled={true}
@@ -42,10 +42,10 @@ export default function RootLayout() {
                 </AuthProvider>
               </UserProvider>
             </ToastProvider>
-          </KeyboardProvider>
-        </GestureHandlerRootView>
-      </SafeAreaProvider>
-      <PortalHost />
+            <PortalHost />
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </KeyboardProvider>
     </>
   );
 }

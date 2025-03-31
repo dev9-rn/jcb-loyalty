@@ -1,4 +1,4 @@
-import { View, Image, ScrollView } from 'react-native'
+import { View, Image, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import useAuth from '@/hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,6 +20,7 @@ type FormData = {
 const SignInScreen = ({ }: Props) => {
 
     const [selectedSignInType, setSelectedSignInType] = useState<string>("distributor");
+    const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
     const { login } = useAuth();
 
@@ -38,8 +39,9 @@ const SignInScreen = ({ }: Props) => {
 
         loginFormData.append("mobileNo", formData.userPhone);
 
+        setIsLoggingIn(true);
         const loginResponse: AxiosResponse = await login(loginFormData);
-
+        setIsLoggingIn(false);
         if (axios.isAxiosError(loginResponse)) {
             setError("userPhone", {
                 type: loginResponse.response?.data.satus,
@@ -48,12 +50,11 @@ const SignInScreen = ({ }: Props) => {
         }
 
         if (loginResponse.data.status != 200) {
-            setError("root.serverError", {
+            setError("userPhone", {
                 type: loginResponse.data.satus,
                 message: loginResponse.data.message,
             })
         }
-
     };
 
     return (
@@ -66,7 +67,11 @@ const SignInScreen = ({ }: Props) => {
                     </View>
 
                     <View>
-                        <Text className='text-3xl font-medium'>Sign in as {selectedSignInType}</Text>
+                        <Text className='text-3xl font-medium'>Sign in as{" "}
+                            <Text className='text-3xl font-medium capitalize'>
+                                {selectedSignInType}
+                            </Text>
+                        </Text>
                     </View>
                 </View>
 
@@ -78,11 +83,18 @@ const SignInScreen = ({ }: Props) => {
                             control={control}
                             rules={{
                                 required: "Please enter your phone number",
-                                maxLength: 10
+                                maxLength: {
+                                    value: 10,
+                                    message: "Please enter a 10-digit phone number"
+                                },
+                                minLength: {
+                                    value: 10,
+                                    message: "Please enter a 10-digit phone number"
+                                }
                             }}
                             render={({ field: { onBlur, onChange, value } }) => (
                                 <Input
-                                    className={`rounded-lg ${errors.userPhone && "border-red-500 border-2"}`}
+                                    className={`rounded-lg focus:border-2 focus:border-primary ${errors.userPhone && "border-red-500 border-2"}`}
                                     placeholder='Phone Number'
                                     onBlur={onBlur}
                                     onChangeText={onChange}
@@ -98,8 +110,18 @@ const SignInScreen = ({ }: Props) => {
                     <Button
                         className='my-4'
                         onPress={handleSubmit(handleUserLogin)}
+                        disabled={isLoggingIn}
                     >
-                        <Text>Login</Text>
+                        {isLoggingIn ? (
+                            <View className='flex-row gap-2'>
+                                <ActivityIndicator color={"#FFF"} />
+                                <Text>
+                                    Logging In
+                                </Text>
+                            </View>
+                        ) : (
+                            <Text>Login</Text>
+                        )}
                     </Button>
 
                     <View className='flex-row items-center gap-2'>
@@ -122,7 +144,7 @@ const SignInScreen = ({ }: Props) => {
                     </Button>
                 </View>
             </KeyboardAwareScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 

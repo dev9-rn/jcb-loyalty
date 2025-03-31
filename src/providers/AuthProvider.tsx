@@ -36,7 +36,7 @@ const AuthProvider = ({ children }: Props) => {
         setUserDetails(JSON.parse(localUserDetails));
         setUserAuthToken(localAuthToken);
         setIsAuthenticated(true);
-        router.replace("/(drawer)"); // ✅ Redirect to home tab
+        router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
     }
 
     // ✅ Login function (Redirect to OTP Verification)
@@ -80,7 +80,7 @@ const AuthProvider = ({ children }: Props) => {
             tokenStorageService.setAuthToken(STORAGE_KEYS.AUTH_TOKEN, response.data?.data?.accesstoken);
 
             setIsAuthenticated(true);
-            router.replace("/(drawer)"); // ✅ Redirect to home tab
+            router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
         } catch (error) {
             console.log(error, "ERROR_VERIFY");
         }

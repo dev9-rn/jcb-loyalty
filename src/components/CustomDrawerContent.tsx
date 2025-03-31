@@ -35,13 +35,13 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                     {...props}
                 />
 
-                <DrawerItem
+                {/* <DrawerItem
                     label="Manual"
                     icon={({ color, focused }) => (
                         <FileDownIcon color={focused ? "#FFF" : color} />
                     )}
                     onPress={() => Linking.openURL('https://mywebsite.com/help')}
-                />
+                /> */}
 
                 <DrawerItem
                     label="Logout"

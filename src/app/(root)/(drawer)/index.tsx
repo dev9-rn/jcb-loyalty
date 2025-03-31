@@ -63,7 +63,7 @@ const HomeScreen = ({ }: Props) => {
 	return (
 		<View className='p-4 flex-1 bg-white'>
 			<View className='gap-8'>
-				<View className="flex-row flex-wrap gap-4">
+				<View className="flex-row flex-wrap justify-between gap-2 xs:gap-3">
 					<Card className="w-[48%]">
 						<CardHeader className='gap-2'>
 							<CardTitle>Coupon Scanned</CardTitle>
@@ -124,10 +124,6 @@ const HomeScreen = ({ }: Props) => {
 					<Text>Scan</Text>
 				</Button>
 
-				{/* <Button className='flex-row gap-4' size={"lg"} onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-					<QrCodeIcon className='text-white' />
-					<Text>Toggle</Text>
-				</Button> */}
 			</View>
 		</View>
 	)

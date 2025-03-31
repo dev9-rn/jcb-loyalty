@@ -1,6 +1,7 @@
 import axios from "axios";
-import { tokenStorageService } from "./storageService";
+import { storage, tokenStorage, tokenStorageService } from "./storageService";
 import { STORAGE_KEYS } from "@/libs/constants";
+import { router } from "expo-router";
 
 export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 export const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
@@ -30,8 +31,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            console.warn('Unauthorized! Token may be invalid or expired.');
+        if (error.response?.status === 403 && !error.config?.url?.includes("/lƒogin")) {
+            tokenStorage.clearAll();
+            storage.clearAll();
+            router.replace("/(auth)")
             // Optionally: Trigger logout or token refresh
         }
         return Promise.reject(error);

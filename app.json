@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "DemoSeQr_Loyalty",
-    "slug": "DemoSeQr_Loyalty",
+    "name": "Daewoo SeQR Loyalty",
+    "slug": "daewoo-seqr-loyalty",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
@@ -24,7 +24,11 @@
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.daewoo.seqrloyalty"
+      "package": "com.daewoo.seqrloyalty",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -75,6 +79,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5390f040-20ce-47a1-bdd8-0a60d5da2a6b"
+      }
+    },
+    "owner": "kaustubh-scube"
   }
 }
