@@ -14,12 +14,17 @@ const AuthLayout = ({ }: Props) => {
 
             <Stack.Screen
                 name='sign-up'
-                options={{ headerShown: false }}
+                options={{
+                    headerTitle: "Sign Up",
+                    headerTitleAlign: 'center',
+                }}
             />
 
             <Stack.Screen
                 name='otp-verify'
-                options={{ headerShown: false }}
+                options={{
+                    headerTitle: "Verify Otp"
+                }}
             />
         </Stack>
     )

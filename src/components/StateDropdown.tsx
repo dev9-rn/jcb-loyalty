@@ -40,7 +40,7 @@ const StateDropdown = ({ setSelectedState, stateList, onValueChange }: Props) =>
     return (
         <Select
             onValueChange={(id) => {
-                onValueChange(id)
+                onValueChange(id?.value)
                 setSelectedState({ id: id?.value, name: id?.label })
             }}
         >

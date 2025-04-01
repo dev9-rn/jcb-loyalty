@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import axios, { AxiosResponse } from 'axios';
+import { router } from 'expo-router';
 
 type Props = {}
 
@@ -128,7 +129,7 @@ const SignInScreen = ({ }: Props) => {
                         <Text>
                             Don't have an account?
                         </Text>
-                        <Button variant={"link"} size={"sm"} className='p-0'>
+                        <Button variant={"link"} size={"sm"} className='p-0' onPress={() => router.navigate("/(auth)/sign-up")}>
                             <Text>Sign Up</Text>
                         </Button>
                     </View>

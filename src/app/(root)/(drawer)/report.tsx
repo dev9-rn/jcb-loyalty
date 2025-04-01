@@ -74,6 +74,16 @@ const ReportCouponScreen = ({ }: Props) => {
                     type: error.response?.data.status,
                     message: error.response?.data.message
                 });
+                if (error.response?.data.status === 422) {
+                    setError("couponSerial", {
+                        type: error.response?.data.status,
+                        message: error.response?.data.message
+                    });
+                    setError("couponDescription", {
+                        type: error.response?.data.status,
+                        message: error.response?.data.message
+                    });
+                }
                 setIsSubmitting(false)
                 return toast.show(error.response?.data.message, {
                     data: error.response

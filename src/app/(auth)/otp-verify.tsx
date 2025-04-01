@@ -9,6 +9,7 @@ import { Text } from '@/components/ui/text';
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import useAuth from '@/hooks/useAuth';
 import useUser from '@/hooks/useUser';
+import axios, { AxiosResponse } from 'axios';
 
 type Props = {}
 
@@ -18,12 +19,12 @@ type FormData = {
 
 const OtpVerificationScreen = ({ }: Props) => {
 
-    const { verify } = useAuth();
+    const { verify, login } = useAuth();
     const { userFirebaseToken } = useUser()
 
     const { userPhone } = useLocalSearchParams();
 
-    const { control, handleSubmit, formState: { errors } } = useForm<FormData | FieldValues>({
+    const { control, handleSubmit, setError, formState: { errors } } = useForm<FormData | FieldValues>({
         defaultValues: {
             userOtp: ""
         }
@@ -33,16 +34,53 @@ const OtpVerificationScreen = ({ }: Props) => {
 
         const verifyOtpFormData = new FormData();
 
-        verifyOtpFormData.append("mobileNo", userPhone);
+        verifyOtpFormData.append("mobileNo", userPhone as string);
         verifyOtpFormData.append("otp", formData.userOtp);
-        verifyOtpFormData.append('deviceToken', userFirebaseToken);
+        verifyOtpFormData.append('deviceToken', userFirebaseToken as string);
         verifyOtpFormData.append('deviceType', Platform.OS);
 
-        verify(verifyOtpFormData)
+        const verifyResponse: AxiosResponse = await verify(verifyOtpFormData)
+
+        if (axios.isAxiosError(verifyResponse)) {
+            setError("userOtp", {
+                type: verifyResponse.response?.data.satus,
+                message: verifyResponse.response?.data.message,
+            })
+        }
+
+        if (verifyResponse.data.status != 200) {
+            setError("userOtp", {
+                type: verifyResponse.data.satus,
+                message: verifyResponse.data.message,
+            })
+        }
+    };
+
+    const handleResendCode = async () => {
+        const resendFormData = new FormData();
+
+        resendFormData.append("mobileNo", userPhone as string);
+
+        // setIsLoggingIn(true);
+        const loginResponse: AxiosResponse = await login(resendFormData);
+        // setIsLoggingIn(false);
+        if (axios.isAxiosError(loginResponse)) {
+            setError("userPhone", {
+                type: loginResponse.response?.data.satus,
+                message: loginResponse.response?.data.message,
+            })
+        }
+
+        if (loginResponse.data.status != 200) {
+            setError("userPhone", {
+                type: loginResponse.data.satus,
+                message: loginResponse.data.message,
+            })
+        }
     }
 
     return (
-        <SafeAreaView className='flex-1'>
+        <SafeAreaView className='flex-1 bg-white'>
 
             <View className='p-4 flex-1'>
                 <Text className='text-3xl font-semibold'>
@@ -69,15 +107,16 @@ const OtpVerificationScreen = ({ }: Props) => {
                                 onBlur={onBlur}
                                 theme={{
                                     containerStyle: styles.container,
-                                    pinCodeContainerStyle: styles.pinCodeContainer,
+                                    pinCodeContainerStyle: errors.userOtp ? { ...styles.pinCodeContainer, borderColor: "#ef4444", borderWidth: 2 } : styles.pinCodeContainer,
                                 }}
                             />
                         )}
                     />
+                    {errors.userOtp && <Text className='text-red-500 font-medium'>{errors.userOtp.message?.toString()}</Text>}
                 </View>
 
                 <View className='gap-4'>
-                    <Button variant={"outline"}>
+                    <Button variant={"outline"} onPress={() => handleResendCode()}>
                         <Text>Resend code via SMS</Text>
                     </Button>
                     <Button onPress={handleSubmit(handleUserVerification)}>

@@ -41,7 +41,7 @@ const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange }: Props) =
     return (
         <Select
             onValueChange={(id) => {
-                onValueChange(id)
+                onValueChange(id?.value)
                 setSelectedCity(id)
             }}
         >

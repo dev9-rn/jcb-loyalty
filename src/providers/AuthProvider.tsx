@@ -45,12 +45,10 @@ const AuthProvider = ({ children }: Props) => {
         try {
             const response = await axiosInstance.post(USER_LOGIN, formData);
 
-            console.log(response.data, "LOGIN_RES");
-
             if (response.data.status > 200) {
                 return response.data
             };
-
+            
             router.navigate({
                 pathname: "/(auth)/otp-verify",
                 params: {
@@ -68,8 +66,8 @@ const AuthProvider = ({ children }: Props) => {
         try {
             const response = await axiosInstance.post(VERIFY_OTP, verifyFormData);
 
-            if (response.data.message != "success") {
-                console.log(response.data.message);
+            if (response.data.status != 200) {
+                return response.data
             };
 
             setUserAuthToken(response.data?.data?.accesstoken);
@@ -82,7 +80,7 @@ const AuthProvider = ({ children }: Props) => {
             setIsAuthenticated(true);
             router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
         } catch (error) {
-            console.log(error, "ERROR_VERIFY");
+            return error
         }
     }
 

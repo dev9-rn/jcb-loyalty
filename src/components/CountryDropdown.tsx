@@ -1,5 +1,5 @@
 import { FlatList, Platform, TextInput, View } from 'react-native'
-import React, { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
     Select,
@@ -17,13 +17,20 @@ type Props = {
     onValueChange: (...event: any[]) => void,
     setSelectedCountry: Dispatch<SetStateAction<ILocationData | undefined>>
     countryList: ILocationData[]
+    userDefaultCountryId?: string | undefined;
 }
 
-const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange }: Props) => {
+const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userDefaultCountryId }: Props) => {
 
     const [searchQuery, setSearchQuery] = useState<string>("");
+    const [userDefaultValue, setUserDefaultValue] = useState<ILocationData | undefined>(undefined)
 
     const insets = useSafeAreaInsets();
+
+    useEffect(() => {
+        const userDefaultCountry = countryList.find((country) => country.id === userDefaultCountryId);
+        setUserDefaultValue(userDefaultCountry);
+    }, []);
 
     const contentInsets = {
         top: insets.top,
@@ -38,13 +45,16 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange }: Pro
         );
     }, [searchQuery, countryList]);
 
-
     return (
         <Select
             onValueChange={(id) => {
-                console.log(id, "ONCHANGE");
-                onValueChange(id)
+                console.log(id?.value, "ONCHANGE");
+                onValueChange(id?.value)
                 setSelectedCountry({ id: id?.value, name: id?.label })
+            }}
+            defaultValue={{
+                value: userDefaultValue?.id as string,
+                label: userDefaultValue?.name as string
             }}
         >
             <SelectTrigger className=''>

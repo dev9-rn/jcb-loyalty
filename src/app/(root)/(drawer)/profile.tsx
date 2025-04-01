@@ -22,7 +22,7 @@ type Props = {}
 
 // 0 = des, 1 = mech, 2 = delearde
 
-const dealerFormSchema = z.object({
+export const dealerFormSchema = z.object({
     dealerName: z.string({
         required_error: "Please enter your full name",
     }).nonempty({
@@ -45,15 +45,17 @@ const dealerFormSchema = z.object({
     dealerCompanyName: z.string({
         required_error: "Please enter your company's name",
     }),
-    dealerPanNumber: z.string({
-        required_error: "Please enter your PAN Number"
-    }).refine((value) => /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value ?? ""), {
-        message: "Please enter a valid PAN Number"
-    }),
+    dealerPanNumber: z.string()
+        .optional()
+        .refine((value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value), {
+            message: "Please enter a valid PAN Number"
+        }),
     dealerGstNumber: z.string({
         required_error: "Please enter your GST Number"
     }),
-    dealerBrand: z.string(),
+    dealerBrand: z.string({
+        required_error: "Please select your brand"
+    }).nonempty(),
     dealerStreet: z.string({
         required_error: "Please enter your street address"
     }).nonempty(),
@@ -109,7 +111,7 @@ const ProfileScreen = ({ }: Props) => {
         fetchCitiesList();
     }, [selectedState]);
 
-    const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm<z.infer<typeof dealerFormSchema>>({
+    const { control, handleSubmit, reset, setValue, formState: { errors, isDirty } } = useForm<z.infer<typeof dealerFormSchema>>({
         resolver: zodResolver(dealerFormSchema),
         defaultValues: {
             dealerName: profileDetails?.name,
@@ -263,7 +265,7 @@ const ProfileScreen = ({ }: Props) => {
             };
 
             const currentUserBrand = response.data.brands.find((brand) => brand.id === profileDetails?.brand_id);
-            const brandName = currentUserBrand ? currentUserBrand?.name : "Unknown Brand";
+            const brandName = currentUserBrand ? currentUserBrand.name : "Unknown Brand";
             setUserBrand(brandName);
             setValue("dealerBrand", brandName)
         } catch (error) {
@@ -476,6 +478,7 @@ const ProfileScreen = ({ }: Props) => {
                                         onValueChange={onChange}
                                         setSelectedCountry={setSelectedCountry}
                                         countryList={countryList}
+                                        userDefaultCountryId={profileDetails?.country_id}
                                     />
                                 )}
                             />
@@ -538,7 +541,10 @@ const ProfileScreen = ({ }: Props) => {
                     </View>
 
                     <View className='my-6'>
-                        <Button onPress={handleSubmit(handleProfileSubmit)}>
+                        <Button
+                            onPress={handleSubmit(handleProfileSubmit)}
+                            disabled={!isDirty}
+                        >
                             <Text>Submit</Text>
                         </Button>
                     </View>
