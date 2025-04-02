@@ -3,14 +3,14 @@ import { Dispatch } from "react";
 
 interface IAuthContext {
     isAuthenticated: boolean;
-    login: (loginFormData: FormData) => Promise<AxiosResponse>;
+    login: (endpoint: string, loginFormData: FormData, userType: string) => Promise<AxiosResponse>;
     logout: () => void;
-    verify: (verifyFormData: FormData) => Promise<AxiosResponse>;
+    verify: (endpoint: string, verifyFormData: FormData, useType: string) => Promise<AxiosResponse>;
 };
 
 interface IUserContext {
     userFirebaseToken: string | null;
     setUserFirebaseToken: Dispatch<SetStateAction<string | null>>
-    userDetails: IUserDetails | undefined;
-    setUserDetails: Dispatch<SetStateAction<IUserDetails | undefined>>
+    userDetails: IUserDetails & IMechanicDetails | undefined;
+    setUserDetails: Dispatch<SetStateAction<IUserDetails & IMechanicDetails | undefined>>
 };

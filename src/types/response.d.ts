@@ -22,6 +22,35 @@ interface IUserDetails {
     userType: number;
 };
 
+interface IMechanicDetails {
+    id: string;
+    full_name: string;
+    mobile_no: string;
+    shop_name: string;
+    retailer_name: string | null;
+    distributor_name: string | null;
+    state_id: string;
+    country_id: string | null;
+    city_id: string;
+    pin_code: string;
+    pan_no: string;
+    payment_option: string;
+    beneficiary_name: string | null;
+    account_no: string | null;
+    ifsc_code: string | null;
+    paytm_reg_no: string | null;
+    is_valid_payment_data_mobile: string;
+    is_valid_payment_data_bank: string;
+    payment_resp_msg: string | null;
+    loyalty_points_wallet: string;
+    publish: string;
+    status: string;
+    created_date: string;
+    updated_date: string | null;
+    accesstoken: string;
+    userType: number;
+}
+
 interface IDashboardData {
     status: number;
     message: string;
@@ -148,4 +177,9 @@ interface IDistributorProfileDetails {
 interface ILocationData {
     id: string,
     name: string,
+};
+
+interface IBrandsDetails {
+    id: string;
+    name: string;
 }

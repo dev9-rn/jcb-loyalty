@@ -10,6 +10,7 @@ import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form
 import useAuth from '@/hooks/useAuth';
 import useUser from '@/hooks/useUser';
 import axios, { AxiosResponse } from 'axios';
+import { VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER } from '@/utils/routes';
 
 type Props = {}
 
@@ -22,13 +23,25 @@ const OtpVerificationScreen = ({ }: Props) => {
     const { verify, login } = useAuth();
     const { userFirebaseToken } = useUser()
 
-    const { userPhone } = useLocalSearchParams();
+    const { userPhone, userType } = useLocalSearchParams();
 
     const { control, handleSubmit, setError, formState: { errors } } = useForm<FormData | FieldValues>({
         defaultValues: {
             userOtp: ""
         }
     });
+
+    const getVerifyEndpoint = () => {
+        if (userType === "mechanic") {
+            return VERIFY_MECHANIC
+        };
+
+        if (userType === "distributor") {
+            return VERIFY_OTP
+        };
+
+        return VERIFY_RETAILER
+    };
 
     const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (formData) => {
 
@@ -39,7 +52,7 @@ const OtpVerificationScreen = ({ }: Props) => {
         verifyOtpFormData.append('deviceToken', userFirebaseToken as string);
         verifyOtpFormData.append('deviceType', Platform.OS);
 
-        const verifyResponse: AxiosResponse = await verify(verifyOtpFormData)
+        const verifyResponse: AxiosResponse = await verify(getVerifyEndpoint(), verifyOtpFormData, userType as string)
 
         if (axios.isAxiosError(verifyResponse)) {
             setError("userOtp", {

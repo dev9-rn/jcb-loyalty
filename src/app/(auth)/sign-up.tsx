@@ -1,45 +1,237 @@
 import { View } from 'react-native'
-import React from 'react'
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { dealerFormSchema } from '../(root)/(drawer)/profile';
-import CountryDropdown from '@/components/CountryDropdown';
-import { Input } from '@/components/ui/input';
-import StateDropdown from '@/components/StateDropdown';
-import CitiesDropdown from '@/components/CitiesDropdown';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller';
-import { z } from 'zod';
-import { Text } from '@/components/ui/text';
-import SelectBrandDropdown from '@/components/SelectBrandDropdown';
+import React, { useEffect, useState } from 'react'
+import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Text } from '@/components/ui/text'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import axiosInstance from '@/utils/axiosInstance'
+import { GET_BRANDS_BY_IDS, GET_CITIES_LIST, GET_COUNTRY_LIST, GET_STATE_LIST, REGISTER_DISTRIBUTOR } from '@/utils/routes'
+import SelectBrandDropdown from '@/components/SelectBrandDropdown'
+import CountryDropdown from '@/components/CountryDropdown'
+import StateDropdown from '@/components/StateDropdown'
+import CitiesDropdown from '@/components/CitiesDropdown'
+import { useToast } from 'react-native-toast-notifications'
+import axios from 'axios'
+import { router, useLocalSearchParams } from 'expo-router'
 
 type Props = {}
 
+const signUpForm = z.object({
+    userName: z.string().nonempty({
+        message: "Please enter your full name"
+    }).refine((value) => /^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/.test(value ?? ""), {
+        message: "Name should only contain letters"
+    }),
+    userPhoneNumber: z.string().nonempty({
+        message: "Please enter your phone number"
+    }).refine((value) => /^[0-9]{10}$/.test(value), {
+        message: "Enter a valid 10-digit phone number"
+    }),
+    userEmail: z.string().nonempty({
+        message: "Please enter your email address",
+    }).email({
+        message: "Please enter a valid email address"
+    }),
+    userCompanyName: z.string(),
+    userPanNumber: z.string().optional().refine((value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value), {
+        message: "Please enter a valid PAN Number"
+    }),
+    userGstNumber: z.string(),
+    userBrand: z.object({
+        id: z.string({
+            message: "Please select a brand id"
+        }).nonempty(),
+        name: z.string({
+            message: "Please select a brand name"
+        }).nonempty(),
+    }),
+    userStreet: z.string({
+        required_error: "Please enter your street address"
+    }).nonempty(),
+    userPincode: z.string({
+        required_error: "Please enter a pincode"
+    }).nonempty().refine((value) => /^[0-9]{6}$/.test(value), {
+        message: "Please enter a valid 6-digit pincode"
+    }),
+    userCountry: z.string({
+        required_error: "Please select your country",
+    }).nonempty(),
+    userState: z.string({
+        required_error: "Please select your state",
+    }).nonempty(),
+    userCity: z.string({
+        required_error: "Please select your city",
+    }).nonempty(),
+});
+
 const SignUpScreen = ({ }: Props) => {
 
-    const { control, handleSubmit, reset, setValue, formState: { errors, isDirty } } = useForm<z.infer<typeof dealerFormSchema>>({
-        resolver: zodResolver(dealerFormSchema),
+    const toast = useToast();
+
+    const { userType } = useLocalSearchParams();
+
+    const [brands, setBrands] = useState<IBrandsDetails[]>();
+    const [userBrand, setUserBrand] = useState();
+    const [countryList, setCountryList] = useState<ILocationData[]>([]);
+    const [selectedCountry, setSelectedCountry] = useState<ILocationData | undefined>(undefined);
+    const [stateList, setStateList] = useState<ILocationData[]>([]);
+    const [selectedState, setSelectedState] = useState<ILocationData | undefined>(undefined);
+    const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
+    const [selectedCity, setSelectedCity] = useState<ILocationData | undefined>(undefined);
+
+    useEffect(() => {
+        fetchCountryList();
+        fetchBrands();
+    }, []);
+
+    useEffect(() => {
+        if (!selectedCountry) return;
+
+        fetchStateList();
+    }, [selectedCountry]);
+
+    useEffect(() => {
+        if (!selectedState) return;
+
+        fetchCitiesList();
+    }, [selectedState]);
+
+    const { control, handleSubmit, reset, setValue, formState: { errors, isDirty } } = useForm<z.infer<typeof signUpForm>>({
+        resolver: zodResolver(signUpForm),
         defaultValues: {
-            dealerName: "",
-            dealerCompanyName: "",
-            dealerEmail: "",
-            dealerPhoneNumber: "",
-            dealerGstNumber: "",
-            dealerPanNumber: "",
-            dealerAddress: "",
-            dealerPincode: "",
-            dealerStreet: "",
-            dealerBrand: "",
-            dealerCityId: "",
-            dealerCountryId: "",
-            dealerStateId: "",
-        }
+            userBrand: {
+                id: "",
+                name: ""
+            },
+            userCompanyName: "",
+            userEmail: "",
+            userGstNumber: "",
+            userName: "",
+            userPanNumber: "",
+            userPhoneNumber: ""
+        },
     });
 
-    const handleProfileSubmit: SubmitHandler<z.infer<typeof dealerFormSchema>> = async (formData) => {
-        console.log(formData, "FORM_DATA");
-    }
+    /**
+     * Get brands
+     */
+    const fetchBrands = async () => {
+
+        try {
+            const response = await axiosInstance.post(GET_BRANDS_BY_IDS);
+
+            if (response.data.status != 200) {
+                console.log(response.data.message);
+            };
+
+            setBrands(response.data.brands);
+        } catch (error) {
+            console.log(error, "ERROR_MSG");
+        }
+    };
+
+    const fetchCountryList = async () => {
+        try {
+            const response = await axiosInstance.post(GET_COUNTRY_LIST);
+
+            if (response.data.status != 200) {
+                console.log(response.data.message)
+            };
+
+            setCountryList(response.data.countries);
+        } catch (error) {
+            console.log(error, "COUNTRY_GET_ERROR");
+        }
+    };
+
+    const fetchStateList = async () => {
+
+        const stateListFormData = new FormData();
+        stateListFormData.append("countryId", selectedCountry?.id)
+
+        try {
+            const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
+
+            if (response.data.status != 200) {
+                console.log(response.data.message)
+            };
+
+            setStateList(response.data.states);
+        } catch (error) {
+            console.log(error)
+        };
+    };
+
+    const fetchCitiesList = async () => {
+
+        const citiesFormData = new FormData();
+        citiesFormData.append("stateId", selectedState?.id)
+
+        try {
+            const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
+
+            if (response.data.success != 200) {
+                console.log(response.data.message);
+            };
+
+            setCitiesList(response.data.cities);
+
+        } catch (error) {
+
+        };
+    };
+
+    const handleProfileSubmit: SubmitHandler<z.infer<typeof signUpForm>> = async (formData) => {
+
+        const registerFormData = new FormData();
+
+        registerFormData.append('name', formData.userName);
+        registerFormData.append('mobileNo', formData.userPhoneNumber);
+        registerFormData.append('emailId', formData.userEmail);
+        registerFormData.append('address', formData.userEmail);
+        registerFormData.append('street', formData.userStreet);
+        registerFormData.append('pinCode', formData.userPincode);
+        registerFormData.append('brandId', formData.userBrand.id);
+        registerFormData.append('countryId', formData.userCountry);
+        registerFormData.append('stateId', formData.userState);
+        registerFormData.append('cityId', formData.userCity);
+        registerFormData.append('companyName', formData.userCompanyName);
+        registerFormData.append('panNo', formData.userPanNumber);
+        registerFormData.append('gstNo', formData.userGstNumber);
+
+        try {
+            const response = await axiosInstance.post(REGISTER_DISTRIBUTOR, registerFormData);
+
+            if (response.data.status != 200) {
+                toast.show(response.data.message, {
+                    data: response
+                });
+                reset();
+                return;
+            };
+
+            toast.show(response.data.message, {
+                data: response
+            });
+            router.navigate({
+                pathname: '/(auth)/otp-verify',
+                params: {
+                    userPhone: formData.userPhoneNumber,
+                    userType
+                }
+            })
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                })
+            }
+        }
+    };
 
     return (
         <>
@@ -56,10 +248,10 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerName'
+                                name='userName'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerName && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userName && "border-red-500"}`}
                                         placeholder='Enter full name'
                                         value={value}
                                         onChangeText={onChange}
@@ -67,7 +259,7 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerName && <Text className='text-red-500 font-medium'>{errors.dealerName.message}</Text>}
+                            {errors.userName && <Text className='text-red-500 font-medium'>{errors.userName.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -75,10 +267,10 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerPhoneNumber'
+                                name='userPhoneNumber'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerPhoneNumber && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userPhoneNumber && "border-red-500"}`}
                                         placeholder='Enter phone number'
                                         value={value}
                                         onChangeText={onChange}
@@ -87,7 +279,7 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerPhoneNumber && <Text className='text-red-500 font-medium'>{errors.dealerPhoneNumber.message}</Text>}
+                            {errors.userPhoneNumber && <Text className='text-red-500 font-medium'>{errors.userPhoneNumber.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -95,10 +287,10 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerEmail'
+                                name='userEmail'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerEmail && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userEmail && "border-red-500"}`}
                                         placeholder='Enter email address'
                                         value={value}
                                         onChangeText={onChange}
@@ -106,7 +298,7 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerEmail && <Text className='text-red-500 font-medium'>{errors.dealerEmail.message}</Text>}
+                            {errors.userEmail && <Text className='text-red-500 font-medium'>{errors.userEmail.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -114,10 +306,10 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerCompanyName'
+                                name='userCompanyName'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerCompanyName && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userCompanyName && "border-red-500"}`}
                                         placeholder='Enter company name'
                                         value={value}
                                         onChangeText={onChange}
@@ -133,10 +325,10 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerPanNumber'
+                                name='userPanNumber'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerPanNumber && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userPanNumber && "border-red-500"}`}
                                         placeholder='Ex. AXNP7853G'
                                         value={value}
                                         onChangeText={onChange}
@@ -144,7 +336,7 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerPanNumber && <Text className='text-red-500 font-medium'>{errors.dealerPanNumber.message}</Text>}
+                            {errors.userPanNumber && <Text className='text-red-500 font-medium'>{errors.userPanNumber.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -152,10 +344,10 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerGstNumber'
+                                name='userGstNumber'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerGstNumber && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userGstNumber && "border-red-500"}`}
                                         placeholder='Enter company name'
                                         value={value}
                                         onChangeText={onChange}
@@ -164,46 +356,64 @@ const SignUpScreen = ({ }: Props) => {
                                 )}
                             />
 
-                            {errors.dealerGstNumber && <Text className='text-red-500 font-medium'>{errors.dealerGstNumber.message}</Text>}
+                            {errors.userGstNumber && <Text className='text-red-500 font-medium'>{errors.userGstNumber.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Selecte Brand</Text>
+                            <Text>Select Brand</Text>
 
                             <Controller
                                 control={control}
-                                name='dealerBrand'
+                                name='userBrand'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <SelectBrandDropdown
                                         onValueChange={onChange}
-                                        
+                                        brands={brands}
                                     />
                                 )}
                             />
 
-                            {errors.dealerBrand && <Text className='text-red-500 font-medium'>{errors.dealerBrand.message}</Text>}
+                            {errors.userBrand && <Text className='text-red-500 font-medium'>{errors.userBrand.id?.message}</Text>}
                         </View>
+
+                        {/* <View className='gap-1'>
+                            <Text>Dealer Brand</Text>
+
+                            <Controller
+                                control={control}
+                                name='userBrand'
+                                render={({ field: { onBlur, onChange, value } }) => (
+                                    <Input
+                                        className={`focus:border-2 focus:border-primary ${errors.userBrand && "border-red-500"}`}
+                                        placeholder='Enter company name'
+                                        value={value}
+                                        onChangeText={onChange}
+                                        onBlur={onBlur}
+                                        editable={false}
+                                    />
+                                )}
+                            />
+
+                            {errors.userBrand && <Text className='text-red-500 font-medium'>{errors.userBrand.message}</Text>}
+                        </View> */}
                     </View>
 
-                    {/* 
-                        Address Information
-                     */}
                     <View className='py-4'>
                         <Text className='font-semibold text-lg xs:text-xl'>Address Information</Text>
                         <Text className='text-xs xs:text-sm text-gray-500'>Enter the details as per the ID Proof.</Text>
                     </View>
 
-                    {/* <View className='gap-3'>
+                    <View className='gap-3'>
 
                         <View className='gap-1'>
                             <Text>Street</Text>
 
                             <Controller
                                 control={control}
-                                name='dealerStreet'
+                                name='userStreet'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerStreet && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userStreet && "border-red-500"}`}
                                         placeholder='Enter street'
                                         value={value}
                                         onChangeText={onChange}
@@ -211,7 +421,7 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerStreet && <Text className='text-red-500 font-medium'>{errors.dealerStreet.message}</Text>}
+                            {errors.userStreet && <Text className='text-red-500 font-medium'>{errors.userStreet.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -219,10 +429,10 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerPincode'
+                                name='userPincode'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerPincode && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userPincode && "border-red-500"}`}
                                         placeholder='Enter your pincode'
                                         keyboardType='numeric'
                                         value={value}
@@ -231,7 +441,7 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerPincode && <Text className='text-red-500 font-medium'>{errors.dealerPincode.message}</Text>}
+                            {errors.userPincode && <Text className='text-red-500 font-medium'>{errors.userPincode.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -239,17 +449,16 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerCountryId'
+                                name='userCountry'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CountryDropdown
                                         onValueChange={onChange}
                                         setSelectedCountry={setSelectedCountry}
                                         countryList={countryList}
-                                        userDefaultCountryId={profileDetails?.country_id}
                                     />
                                 )}
                             />
-                            {errors.dealerCountryId && <Text className='text-red-500 font-medium'>{errors.dealerCountryId.message}</Text>}
+                            {errors.userCountry && <Text className='text-red-500 font-medium'>{errors.userCountry.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -257,7 +466,7 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerStateId'
+                                name='userState'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <StateDropdown
                                         onValueChange={onChange}
@@ -266,7 +475,7 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerStateId && <Text className='text-red-500 font-medium'>{errors.dealerStateId.message}</Text>}
+                            {errors.userState && <Text className='text-red-500 font-medium'>{errors.userState?.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -274,7 +483,7 @@ const SignUpScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerCityId'
+                                name='userCity'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CitiesDropdown
                                         onValueChange={onChange}
@@ -283,29 +492,9 @@ const SignUpScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerCityId && <Text className='text-red-500 font-medium'>{errors.dealerCityId.message}</Text>}
+                            {errors.userCity && <Text className='text-red-500 font-medium'>{errors.userCity?.message}</Text>}
                         </View>
-
-                        <View className='gap-1'>
-                            <Text>Address</Text>
-
-                            <Controller
-                                control={control}
-                                name='dealerAddress'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Textarea
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerAddress && "border-red-500"}`}
-                                        placeholder='Enter your full address'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    />
-                                )}
-                            />
-
-                            {errors.dealerAddress && <Text className='text-red-500 font-medium'>{errors.dealerAddress.message}</Text>}
-                        </View>
-                    </View> */}
+                    </View>
 
                     <View className='my-6'>
                         <Button

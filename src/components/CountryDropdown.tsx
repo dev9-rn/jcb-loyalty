@@ -15,7 +15,7 @@ import { Input } from './ui/input';
 
 type Props = {
     onValueChange: (...event: any[]) => void,
-    setSelectedCountry: Dispatch<SetStateAction<ILocationData | undefined>>
+    setSelectedCountry?: Dispatch<SetStateAction<ILocationData | undefined>>
     countryList: ILocationData[]
     userDefaultCountryId?: string | undefined;
 }
@@ -48,13 +48,8 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
     return (
         <Select
             onValueChange={(id) => {
-                console.log(id?.value, "ONCHANGE");
-                onValueChange(id?.value)
+                onValueChange(id?.value);
                 setSelectedCountry({ id: id?.value, name: id?.label })
-            }}
-            defaultValue={{
-                value: userDefaultValue?.id as string,
-                label: userDefaultValue?.name as string
             }}
         >
             <SelectTrigger className=''>

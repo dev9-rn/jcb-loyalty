@@ -11,6 +11,7 @@ import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import axios, { AxiosResponse } from 'axios';
 import { router } from 'expo-router';
+import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN } from '@/utils/routes';
 
 type Props = {}
 
@@ -35,13 +36,25 @@ const SignInScreen = ({ }: Props) => {
         setSelectedSignInType((prevType) => (prevType === "distributor" ? "mechanic" : "distributor"));
     };
 
+    const getLoginEndpoint = () => {
+        if (selectedSignInType === "mechanic") {
+            return MECHANIC_LOGIN
+        };
+
+        if (selectedSignInType === "distributor") {
+            return USER_LOGIN
+        };
+
+        return RETAILER_LOGIN
+    }
+
     const handleUserLogin: SubmitHandler<FormData | FieldValues> = async (formData) => {
         const loginFormData = new FormData();
 
         loginFormData.append("mobileNo", formData.userPhone);
 
         setIsLoggingIn(true);
-        const loginResponse: AxiosResponse = await login(loginFormData);
+        const loginResponse: AxiosResponse = await login(getLoginEndpoint(), loginFormData, selectedSignInType);
         setIsLoggingIn(false);
         if (axios.isAxiosError(loginResponse)) {
             setError("userPhone", {
@@ -129,7 +142,17 @@ const SignInScreen = ({ }: Props) => {
                         <Text>
                             Don't have an account?
                         </Text>
-                        <Button variant={"link"} size={"sm"} className='p-0' onPress={() => router.navigate("/(auth)/sign-up")}>
+                        <Button
+                            variant={"link"}
+                            size={"sm"}
+                            className='p-0'
+                            onPress={() => router.navigate({
+                                pathname: "/(auth)/sign-up",
+                                params: {
+                                    userType: selectedSignInType
+                                }
+                            })}
+                        >
                             <Text>Sign Up</Text>
                         </Button>
                     </View>

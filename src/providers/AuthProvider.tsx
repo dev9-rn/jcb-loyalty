@@ -40,19 +40,20 @@ const AuthProvider = ({ children }: Props) => {
     }
 
     // ✅ Login function (Redirect to OTP Verification)
-    const login = async (formData: FormData) => {
+    const login = async (endpoint: string, formData: FormData, userType: string) => {
 
         try {
-            const response = await axiosInstance.post(USER_LOGIN, formData);
+            const response = await axiosInstance.post(endpoint, formData);
 
             if (response.data.status > 200) {
                 return response.data
             };
-            
+
             router.navigate({
                 pathname: "/(auth)/otp-verify",
                 params: {
-                    userPhone: formData.get("mobileNo")
+                    userPhone: formData.get("mobileNo"),
+                    userType
                 }
             });
         } catch (error) {
@@ -61,10 +62,10 @@ const AuthProvider = ({ children }: Props) => {
     };
 
     // Veriy user after receiving the OTP (Redirect to HOME / DASHBOARD)
-    const verify = async (verifyFormData: FormData) => {
+    const verify = async (endpoint: string, verifyFormData: FormData) => {
 
         try {
-            const response = await axiosInstance.post(VERIFY_OTP, verifyFormData);
+            const response = await axiosInstance.post(endpoint, verifyFormData);
 
             if (response.data.status != 200) {
                 return response.data
@@ -90,6 +91,7 @@ const AuthProvider = ({ children }: Props) => {
 
         logoutFormData.append("distributorId", userDetails?.id);
         logoutFormData.append("deviceToken", userFirebaseToken);
+        logoutFormData.append("userType", userDetails?.userType);
 
         try {
             const response = await axiosInstance.post(USER_LOGOUT, logoutFormData);

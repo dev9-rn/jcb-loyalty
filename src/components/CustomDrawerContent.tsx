@@ -28,7 +28,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
                     <View className='items-center'>
                         <Text className='text-lg font-medium'>Welcome!</Text>
-                        <Text className='text-xl font-semibold text-primary'>{userDetails?.name}</Text>
+                        <Text className='text-xl font-semibold text-primary'>{userDetails?.name || userDetails?.full_name}</Text>
                     </View>
                 </View>
                 <DrawerItemList

@@ -1,5 +1,6 @@
 export const USER_LOGIN = "/api/login";
 export const VERIFY_OTP = "/api/verifyOtp";
+export const REGISTER_DISTRIBUTOR = "/api/register"
 export const GET_DASHBOARD_DATA = "/api/getDashboard";
 export const CHECK_COUPON = "/api/checkCoupon";
 export const REDEEM_COUPON = "/api/redeemCouponV1";
@@ -18,3 +19,15 @@ export const GET_COUNTRY_LIST = "/api/getCountries";
 export const GET_STATE_LIST = "/api/getStatesByCountry";
 export const GET_CITIES_LIST = "/api/getCitiesByState";
 export const GET_BRANDS_BY_IDS = "/api/getBrands";
+
+/* 
+** Mechanic URLs
+*/
+export const MECHANIC_LOGIN = "/api/loginMechanic";
+export const VERIFY_MECHANIC = "/api/verifyOtpMechanic";
+export const MECHANIC_DASHBOARD = "/api/getMechanicDashboard" 
+
+// Retailer Login
+export const RETAILER_LOGIN = "/api/loginDealer";
+export const VERIFY_RETAILER = "/api/verifyOtpDealer";
+export const RETAILER_DASHBOARD = "/"

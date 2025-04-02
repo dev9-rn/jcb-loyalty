@@ -10,7 +10,7 @@ type Props = {
 const UserProvider = ({ children }: Props) => {
 
     const [userFirebaseToken, setUserFirebaseToken] = useState<string | null>("");
-    const [userDetails, setUserDetails] = useState<IUserDetails | undefined>(undefined);
+    const [userDetails, setUserDetails] = useState<IUserDetails & IMechanicDetails | undefined>(undefined);
 
     useEffect(() => {
         fetchUserFcmToken();
