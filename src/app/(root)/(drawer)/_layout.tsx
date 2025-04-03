@@ -13,20 +13,25 @@ import { HistoryIcon } from '@/libs/icons/HistoryIcon';
 import { ClipboardList } from '@/libs/icons/ClipboardList';
 import { ClipboardPlusIcon } from '@/libs/icons/ClipboardPlus';
 import { FileClockIcon } from '@/libs/icons/FileClockIcon';
+import useUser from '@/hooks/useUser';
 
 type Props = {}
 
 const DrawerLayout = ({ }: Props) => {
+
+    const { userDetails } = useUser();
+
     return (
         <Drawer
-            screenOptions={{
+            screenOptions={({ route }) => ({
                 headerTitleAlign: "center",
                 drawerActiveTintColor: "#FFF",
                 drawerActiveBackgroundColor: "#144799",
                 drawerItemStyle: {
-                    borderRadius: 8
+                    borderRadius: 8,
+                    display: ["cash-batch", "report", "report-history"].includes(route.name) && userDetails?.userType != 0 ? "none" : "flex"
                 }
-            }}
+            })}
             drawerContent={(props) => <CustomDrawerContent {...props} />}
         >
             <Drawer.Screen

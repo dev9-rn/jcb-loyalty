@@ -7,7 +7,7 @@ import { Text } from '@/components/ui/text';
 
 import { CalendarIcon } from "@/libs/icons/CalendarIcon"
 import axiosInstance from '@/utils/axiosInstance';
-import { GET_REDEEM_HISTORY } from '@/utils/routes';
+import { GET_MECHANIC_PASSBOOK, GET_REDEEM_HISTORY, GET_RETAILER_COUPON_HISTORY } from '@/utils/routes';
 import useUser from '@/hooks/useUser';
 import { Separator } from '@/components/ui/separator';
 
@@ -42,6 +42,35 @@ const CouponHistoryScreen = ({ }: Props) => {
 
     useEffect(() => {
         fetchCouponHistories({ offset: 0 });
+    }, [selectedFromDate, selctedToDate]);
+
+    const renderMechanicPassbook = useCallback(({ item, index }: { item: IMechanicPassbook, index: number }) => {
+        return (
+            <View className='py-2' key={index}>
+                <View className='flex-row items-center justify-between'>
+                    <Text className='text-lg'>
+                        Name:{" "}
+                        <Text className='text-lg font-medium'>{item.full_name}</Text>
+                    </Text>
+                    <Text className='text-lg font-semibold'>
+                        ₹ {item.loyalty_points_wallet}
+                    </Text>
+                </View>
+                <Text className='text-lg'>
+                    Reference ID:{" "}
+                    <Text className='text-lg font-medium'>{item.reference_id}</Text>
+                </Text>
+                <Text className='text-lg'>
+                    Redeemed Date:{" "}
+                    <Text className='text-lg font-medium'>{new Date(item.date).toLocaleString()}</Text>
+                </Text>
+
+                <Text className='text-lg'>
+                    Type:{" "}
+                    <Text className='text-green-600 text-lg font-medium capitalize'>{item.type}</Text>
+                </Text>
+            </View>
+        )
     }, [selectedFromDate, selctedToDate]);
 
     const renderCouponItem = useCallback(({ item, index }: { item: IRedeemedCoupon, index: number }) => {
@@ -89,21 +118,42 @@ const CouponHistoryScreen = ({ }: Props) => {
         setSelectedToDate(date as Date);
     };
 
+    const getCouponHistoryEndpoint = () => {
+        if (userDetails?.userType === 0) {
+            return {
+                endpoint: GET_REDEEM_HISTORY,
+                user_id: "distributorId"
+            };
+        };
+
+        if (userDetails?.userType === 1) {
+            return {
+                endpoint: GET_MECHANIC_PASSBOOK,
+                user_id: "mechanicId"
+            };
+        };
+
+        return {
+            endpoint: GET_RETAILER_COUPON_HISTORY,
+            user_id: "dealerId"
+        }
+    }
+
     const fetchCouponHistories = async ({ offset = undefined }: { offset: number | undefined }) => {
 
         if ((couponHistoryData && couponHistoryData?.status != 200) || offset != 0) return;
 
         const redeemHistoryFormData = new FormData();
-        redeemHistoryFormData.append('distributorId', userDetails?.id);
-        redeemHistoryFormData.append('fromDate', selectedFromDate.toLocaleDateString());
-        redeemHistoryFormData.append('toDate', selctedToDate.toLocaleDateString());
+        redeemHistoryFormData.append(getCouponHistoryEndpoint().user_id, userDetails?.id);
+        redeemHistoryFormData.append('fromDate', selectedFromDate.toDateString());
+        redeemHistoryFormData.append('toDate', selctedToDate.toDateString());
         redeemHistoryFormData.append('offset', offset ? offset.toString() : "0");
         redeemHistoryFormData.append('redeemType', 'Cash');
         redeemHistoryFormData.append('userType', userDetails?.userType);
 
         try {
             setLoading(true)
-            const response = await axiosInstance.post(GET_REDEEM_HISTORY, redeemHistoryFormData);
+            const response = await axiosInstance.post(getCouponHistoryEndpoint().endpoint, redeemHistoryFormData);
 
             if (response.data.status != 200) {
                 console.log(response.data, "GET_COUPON_HISTORY");
@@ -173,7 +223,7 @@ const CouponHistoryScreen = ({ }: Props) => {
             <FlatList
                 contentContainerClassName='p-4'
                 data={couponHistoryData?.redeemHistory}
-                renderItem={renderCouponItem}
+                renderItem={userDetails?.userType != 1 ? renderCouponItem : renderMechanicPassbook}
                 ItemSeparatorComponent={() => <Separator />}
                 ListFooterComponent={loading ? <ActivityIndicator size="large" color="blue" /> : null}
                 ListEmptyComponent={() => (

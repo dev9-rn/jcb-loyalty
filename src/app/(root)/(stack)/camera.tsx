@@ -12,8 +12,10 @@ import { ZapOffIcon } from '@/libs/icons/ZapIconOff';
 import { ZapIcon } from '@/libs/icons/ZapIcon';
 import useUser from '@/hooks/useUser';
 import axiosInstance from '@/utils/axiosInstance';
-import { CHECK_COUPON, REDEEM_COUPON } from '@/utils/routes';
+import { CHECK_COUPON, REDEEM_COUPON, REDEEM_MECHANIC_COUPON } from '@/utils/routes';
 import CouponRedeemedDialog from '@/components/CouponRedeemedDialog';
+import axios from 'axios';
+import CouponErrorDialog from '@/components/CouponErrorDialog';
 
 type Props = {}
 
@@ -29,6 +31,7 @@ const CameraScreen = ({ }: Props) => {
     const [flashMode, setFlashMode] = useState<boolean>(false);
     const [scanned, setScanned] = useState(false);
     const [couponValidationData, setCouponValidationData] = useState<IValidCoupon | undefined>(undefined);
+    const [isCouponInvalid, setIsCouponInvalid] = useState<boolean>(false);
     const [isCouponRedeemed, setIsCouponRedeem] = useState<boolean>(false);
     const [coupondRedeemedData, setCouponRedeemedData] = useState<IRedeemedCoupon | undefined>(undefined);
 
@@ -67,8 +70,50 @@ const CameraScreen = ({ }: Props) => {
         requestPermission();
     }, []);
 
+    const getRedeemCouponEndpoint = () => {
+        if (userDetails?.userType === 0) {
+            return {
+                endpoint: REDEEM_COUPON,
+                user_id: "distributorId"
+            }
+        };
+
+        if (userDetails?.userType === 1) {
+            return {
+                endpoint: REDEEM_MECHANIC_COUPON,
+                user_id: "mechanicId"
+            }
+        };
+
+        return {
+            endpoint: REDEEM_MECHANIC_COUPON,
+            user_id: "mechanicId"
+        }
+    };
+
+    const getCheckCouponEndpoint = () => {
+        if (userDetails?.userType === 0) {
+            return {
+                endpoint: CHECK_COUPON,
+                user_id: "distributorId"
+            };
+        };
+
+        if (userDetails?.userType === 1) {
+            return {
+                endpoint: CHECK_COUPON,
+                user_id: "mechanicId"
+            };
+        };
+
+        return {
+            endpoint: CHECK_COUPON,
+            user_id: "dealerId"
+        };
+    }
+
     const handleBarCodeScanned = ({ bounds, data }: BarcodeScanningResult) => {
-        if (scanned || isCouponRedeemed) return;
+        if (scanned || isCouponRedeemed || isCouponInvalid) return;
 
         setScanned(true);
         fetchBarCodeDataValidation(data);
@@ -81,7 +126,7 @@ const CameraScreen = ({ }: Props) => {
         const barCodeFormData = new FormData();
 
         barCodeFormData.append('qrText', data);
-        barCodeFormData.append('distributorId', userDetails?.id);
+        barCodeFormData.append(getCheckCouponEndpoint().user_id, userDetails?.id);
         barCodeFormData.append('userType', userDetails?.userType);
 
         try {
@@ -89,30 +134,40 @@ const CameraScreen = ({ }: Props) => {
 
             if (response.data.stauts != 200) {
                 setCouponValidationData(response.data);
-                fetchCouponRedeemResults(data);
-            }
+                setIsCouponInvalid(true);
+                toast.show(response.data.message, {
+                    data: response
+                });
+            };
+
+            setCouponValidationData(response.data);
+            fetchCouponRedeemResults(data);
 
         } catch (error) {
-            toast.show(error.response?.data?.message || error.message, {
-                data: error.response?.data || error.message
-            });
+            if (axios.isAxiosError(error)) {
+                setCouponValidationData(error.response?.data);
+                setIsCouponInvalid(true);
+                // toast.show(error.response?.data?.message || error.message, {
+                //     data: error.response?.data || error.message
+                // });
+            };
             setTimeout(() => setScanned(false), 2000);
         }
     };
 
     // Check if the coupon can be redeemed and offer type
     const fetchCouponRedeemResults = async (data: string) => {
-        if (!couponValidationData) return;
+        if (couponValidationData?.status != 200) return;
 
         const redeemFormData = new FormData();
 
+        redeemFormData.append(getRedeemCouponEndpoint().user_id, userDetails?.id as string);
         redeemFormData.append('qrText', data);
-        redeemFormData.append('distributorId', userDetails?.id as string);
         redeemFormData.append('redeemType', couponValidationData.redeemMethods[0].redeem_type);
         redeemFormData.append('userType', userDetails?.userType);
 
         try {
-            const response = await axiosInstance.post(REDEEM_COUPON, redeemFormData);
+            const response = await axiosInstance.post(getRedeemCouponEndpoint().endpoint, redeemFormData);
 
             if (response.data.status != 200) {
                 toast.show(response.data.message, {
@@ -123,9 +178,11 @@ const CameraScreen = ({ }: Props) => {
             setCouponRedeemedData(response.data)
             setIsCouponRedeem(true);
         } catch (error) {
-            toast.show(error.response?.data?.message || error.message, {
-                data: error.response?.data || error.message
-            });
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data?.message || error.message, {
+                    data: error.response?.data || error.message
+                });
+            };
             setTimeout(() => setScanned(false), 2000);
         }
     }
@@ -161,6 +218,14 @@ const CameraScreen = ({ }: Props) => {
                     showAnimatedLine={false}
                     edgeRadius={8}
                 />
+
+                {couponValidationData?.status != 200 && (
+                    <CouponErrorDialog
+                        isCouponInvalid={isCouponInvalid}
+                        validationData={couponValidationData}
+                        setIsCouponInvalid={setIsCouponInvalid}
+                    />
+                )}
 
                 {isCouponRedeemed && (
                     <CouponRedeemedDialog

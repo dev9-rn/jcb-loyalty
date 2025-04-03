@@ -7,7 +7,18 @@ import axiosInstance from '@/utils/axiosInstance'
 import useUser from '@/hooks/useUser'
 import { z } from "zod";
 
-import { GET_BRANDS_BY_IDS, GET_CITIES_LIST, GET_COUNTRY_LIST, GET_DISTRIBUTOR_PROFILE, GET_STATE_LIST, UPDATE_DISTRIBUTOR_PROFILE } from '@/utils/routes'
+import {
+    GET_BRANDS_BY_IDS,
+    GET_CITIES_LIST,
+    GET_COUNTRY_LIST,
+    GET_DISTRIBUTOR_PROFILE,
+    GET_MECHANIC_PROFILE,
+    GET_RETAILER_PROFILE,
+    GET_STATE_LIST,
+    UPDATE_DISTRIBUTOR_PROFILE,
+    UPDATE_MECHANIC_PROFILE,
+    UPDATE_RETAILER_PROFILE
+} from '@/utils/routes'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from '@/components/ui/button'
@@ -30,9 +41,9 @@ export const dealerFormSchema = z.object({
     }).refine((value) => /^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/.test(value ?? ""), {
         message: "Name should only contain letters"
     }),
-    dealerPhoneNumber: z.string().nonempty({
-        message: "Please enter your phone number"
-    }).refine((value) => /^[0-9]{10}$/.test(value), {
+    dealerPhoneNumber: z.string({
+        required_error: "Please enter your phone number"
+    }).nonempty().refine((value) => /^[0-9]{10}$/.test(value), {
         message: "Enter a valid 10-digit phone number"
     }),
     dealerEmail: z.string({
@@ -96,7 +107,6 @@ const ProfileScreen = ({ }: Props) => {
     useEffect(() => {
         fetchUserProfile();
         fetchCountryList();
-        fetchBrandById();
     }, []);
 
     useEffect(() => {
@@ -126,9 +136,30 @@ const ProfileScreen = ({ }: Props) => {
         }
     });
 
+    const getUpdateProfileEnpoint = () => {
+        if (userDetails?.userType === 0) {
+            return {
+                endpoint: UPDATE_DISTRIBUTOR_PROFILE,
+                user_id: "distributorId"
+            }
+        };
+
+        if (userDetails?.userType === 1) {
+            return {
+                endpoint: UPDATE_MECHANIC_PROFILE,
+                user_id: "mechanicId"
+            }
+        };
+
+        return {
+            endpoint: UPDATE_RETAILER_PROFILE,
+            user_id: "dealerId"
+        };
+    };
+
     const handleProfileSubmit: SubmitHandler<z.infer<typeof dealerFormSchema>> = async (formData) => {
         const updateProfileFormData = new FormData();
-        updateProfileFormData.append('distributorId', userDetails?.id)
+        updateProfileFormData.append(getUpdateProfileEnpoint().user_id, userDetails?.id)
         updateProfileFormData.append('name', formData.dealerName);
         updateProfileFormData.append('mobileNo', formData.dealerPhoneNumber);
         updateProfileFormData.append('emailId', formData.dealerEmail);
@@ -145,7 +176,7 @@ const ProfileScreen = ({ }: Props) => {
 
         console.log(updateProfileFormData, "FORM_DATA");
         try {
-            const response = await axiosInstance.post(UPDATE_DISTRIBUTOR_PROFILE, updateProfileFormData);
+            const response = await axiosInstance.post(getUpdateProfileEnpoint().endpoint, updateProfileFormData);
 
             if (response.data.status != 200) {
                 toast.show(response.data.message)
@@ -160,13 +191,34 @@ const ProfileScreen = ({ }: Props) => {
         };
     }
 
+    const getProfileEndpoint = () => {
+        if (userDetails?.userType === 0) {
+            return {
+                endpoint: GET_DISTRIBUTOR_PROFILE,
+                user_id: "distributorId"
+            };
+        };
+
+        if (userDetails?.userType === 1) {
+            return {
+                endpoint: GET_MECHANIC_PROFILE,
+                user_id: "mechanicId"
+            };
+        };
+
+        return {
+            endpoint: GET_RETAILER_PROFILE,
+            user_id: "dealerId"
+        }
+    };
+
     const fetchUserProfile = async () => {
 
         const profileFormData = new FormData();
-        profileFormData.append("distributorId", userDetails.id);
+        profileFormData.append(getProfileEndpoint().user_id, userDetails.id);
 
         try {
-            const response = await axiosInstance.post(GET_DISTRIBUTOR_PROFILE, profileFormData);
+            const response = await axiosInstance.post(getProfileEndpoint().endpoint, profileFormData);
 
             if (response.data.status != 200) {
                 toast.show(response.data.message, {
@@ -175,6 +227,7 @@ const ProfileScreen = ({ }: Props) => {
             };
 
             setProfileDetails(response.data.data);
+            fetchBrandById();
             reset({
                 dealerName: response.data.data.name,
                 dealerCompanyName: response.data.data.company_name,
@@ -189,8 +242,6 @@ const ProfileScreen = ({ }: Props) => {
                 dealerCityId: response.data.data.state_id,
                 dealerStateId: response.data.data.city_id
             });
-
-            console.log(response.data, "PROFILE_DATA");
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 toast.show(error.response?.data.message, {
@@ -284,7 +335,7 @@ const ProfileScreen = ({ }: Props) => {
 
                     <View className='mt-4 gap-3'>
                         <View className='gap-1'>
-                            <Text>Full Name</Text>
+                            <Text>Full Name <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -303,7 +354,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Phone Number</Text>
+                            <Text>Phone Number <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -323,7 +374,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Email Address</Text>
+                            <Text>Email Address <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -400,7 +451,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Dealer Brand</Text>
+                            <Text>Brand</Text>
 
                             <Controller
                                 control={control}
@@ -429,7 +480,7 @@ const ProfileScreen = ({ }: Props) => {
                     <View className='gap-3'>
 
                         <View className='gap-1'>
-                            <Text>Street</Text>
+                            <Text>Street <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -448,7 +499,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Pincode</Text>
+                            <Text>Pincode <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -468,7 +519,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Select Country</Text>
+                            <Text>Select Country <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -486,7 +537,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Select State</Text>
+                            <Text>Select State <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -503,7 +554,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Select City</Text>
+                            <Text>Select City <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -520,7 +571,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Address</Text>
+                            <Text>Address <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}

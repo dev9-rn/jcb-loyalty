@@ -76,7 +76,7 @@ const AuthProvider = ({ children }: Props) => {
 
             // Set user details to local storage to maintain the seesion
             storageService.setItem(STORAGE_KEYS.LOCAL_USER, JSON.stringify(response.data?.data));
-            tokenStorageService.setAuthToken(STORAGE_KEYS.AUTH_TOKEN, response.data?.data?.accesstoken);
+            tokenStorageService.setAuthToken(STORAGE_KEYS.AUTH_TOKEN, response.data?.data?.accesstoken || response.headers.accesstoken);
 
             setIsAuthenticated(true);
             router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab

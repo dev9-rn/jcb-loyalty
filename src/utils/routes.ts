@@ -10,11 +10,7 @@ export const GET_REDEEM_HISTORY = "/api/getRedeemHistory";
 export const GET_REPORTED_COUPON_HISTORY = "/api/getReportedCouponHistory";
 export const GET_CASH_BATCH_REPORTS = "/api/getCashBatches";
 export const GET_DISTRIBUTOR_PROFILE = "/api/getDistributorProfile";
-export const GET_MEHANIC_PROFILE = "/api/getMechanicProfile";
-export const GET_RETAILER_PROFILE = "/api/getDealerProfile";
 export const UPDATE_DISTRIBUTOR_PROFILE = "/api/updateProfile";
-export const UPDATE_MECHANIC_PROFILE = "/api/updateProfileMechanic";
-export const UPDATE_RETAILER_PROFILE = "/api/updateProfileDealer";
 export const GET_COUNTRY_LIST = "/api/getCountries";
 export const GET_STATE_LIST = "/api/getStatesByCountry";
 export const GET_CITIES_LIST = "/api/getCitiesByState";
@@ -25,9 +21,16 @@ export const GET_BRANDS_BY_IDS = "/api/getBrands";
 */
 export const MECHANIC_LOGIN = "/api/loginMechanic";
 export const VERIFY_MECHANIC = "/api/verifyOtpMechanic";
-export const MECHANIC_DASHBOARD = "/api/getMechanicDashboard" 
+export const GET_MECHANIC_DASHBOARD = "/api/getMechanicDashboard";
+export const GET_MECHANIC_PROFILE = "/api/getMechanicProfile";
+export const REDEEM_MECHANIC_COUPON = "/api/mechanicRedeemCouponV1";
+export const UPDATE_MECHANIC_PROFILE = "/api/updateProfileMechanic";
+export const GET_MECHANIC_PASSBOOK = "/api/getMechanicRedemptionPassbook"
 
 // Retailer Login
 export const RETAILER_LOGIN = "/api/loginDealer";
 export const VERIFY_RETAILER = "/api/verifyOtpDealer";
-export const RETAILER_DASHBOARD = "/"
+export const GET_RETAILER_DASHBOARD = "/api/getDashboardDealer"
+export const GET_RETAILER_PROFILE = "/api/getDealerProfile";
+export const UPDATE_RETAILER_PROFILE = "/api/updateProfileDealer";
+export const GET_RETAILER_COUPON_HISTORY = "/api/getScannedHistory";

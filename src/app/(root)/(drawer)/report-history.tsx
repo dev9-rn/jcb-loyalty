@@ -65,8 +65,8 @@ const ReportHistory = ({ }: Props) => {
 
         const reportedCouponHistoryFormData = new FormData();
         reportedCouponHistoryFormData.append('distributorId', userDetails?.id);
-        reportedCouponHistoryFormData.append('fromDate', selectedFromDate.toLocaleDateString());
-        reportedCouponHistoryFormData.append('toDate', selctedToDate.toLocaleDateString());
+        reportedCouponHistoryFormData.append('fromDate', selectedFromDate.toDateString());
+        reportedCouponHistoryFormData.append('toDate', selctedToDate.toDateString());
         reportedCouponHistoryFormData.append('offset', "0");
 
         try {

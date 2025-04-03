@@ -58,6 +58,9 @@ interface IDashboardData {
     totalAmountRedeemed: number;
     totalCouponsRedeemedCash: number;
     totalCouponsRedeemedFOC: number;
+    totalBalancedPoint: string;
+    totalCouponsRedeemedPoint: number;
+    totalCouponsRedeemedCount: number;
 };
 
 interface IValidCoupon {
@@ -182,4 +185,13 @@ interface ILocationData {
 interface IBrandsDetails {
     id: string;
     name: string;
+};
+
+interface IMechanicPassbook {
+    full_name: string;
+    loyalty_points_wallet: string;
+    reference_id: string;
+    type: "credit" | "debit"; // Assuming it can only be "credit" or "debit"
+    date: string; // Consider using `Date` if you'll parse it
+    mechanic_id: string;
 }

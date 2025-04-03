@@ -10,7 +10,7 @@ import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form
 import useAuth from '@/hooks/useAuth';
 import useUser from '@/hooks/useUser';
 import axios, { AxiosResponse } from 'axios';
-import { VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER } from '@/utils/routes';
+import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER } from '@/utils/routes';
 
 type Props = {}
 
@@ -69,13 +69,25 @@ const OtpVerificationScreen = ({ }: Props) => {
         }
     };
 
+    const getLoginEndpoint = () => {
+        if (userType === "mechanic") {
+            return MECHANIC_LOGIN
+        };
+
+        if (userType === "distributor") {
+            return USER_LOGIN
+        };
+
+        return RETAILER_LOGIN
+    };
+
     const handleResendCode = async () => {
         const resendFormData = new FormData();
 
         resendFormData.append("mobileNo", userPhone as string);
 
         // setIsLoggingIn(true);
-        const loginResponse: AxiosResponse = await login(resendFormData);
+        const loginResponse: AxiosResponse = await login(getLoginEndpoint(), resendFormData, userType as string);
         // setIsLoggingIn(false);
         if (axios.isAxiosError(loginResponse)) {
             setError("userPhone", {

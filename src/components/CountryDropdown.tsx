@@ -1,5 +1,5 @@
 import { FlatList, Platform, TextInput, View } from 'react-native'
-import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
     Select,
@@ -40,10 +40,16 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
     };
 
     const filteredOptions = useMemo(() => {
+        if (!searchQuery) return countryList;
         return countryList.filter((country) =>
             country.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [searchQuery, countryList]);
+
+    // Prevent unnecessary re-renders by memoizing input handler
+    const handleSearchChange = useCallback((text: string) => {
+        setSearchQuery(text);
+    }, []);
 
     return (
         <Select
@@ -67,7 +73,7 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
                     <Input
                         placeholder='Search by Country'
                         value={searchQuery}
-                        onChangeText={setSearchQuery}
+                        onChangeText={handleSearchChange}
                     />
                 </View>
                 <ScrollView className='max-h-48'>

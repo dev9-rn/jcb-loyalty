@@ -17,7 +17,10 @@ type Props = {}
 
 type FormData = {
     userPhone: string;
-}
+};
+
+const USER_TYPES = ["distributor", "mechanic", "retailer"];
+
 
 const SignInScreen = ({ }: Props) => {
 
@@ -33,7 +36,11 @@ const SignInScreen = ({ }: Props) => {
     });
 
     const toggleSignInType = () => {
-        setSelectedSignInType((prevType) => (prevType === "distributor" ? "mechanic" : "distributor"));
+        setSelectedSignInType((prevType) => {
+            const currentIndex = USER_TYPES.indexOf(prevType);
+            const nextIndex = (currentIndex + 1) % USER_TYPES.length; // Cycle to the next type
+            return USER_TYPES[nextIndex];
+        });
     };
 
     const getLoginEndpoint = () => {
@@ -46,7 +53,7 @@ const SignInScreen = ({ }: Props) => {
         };
 
         return RETAILER_LOGIN
-    }
+    };
 
     const handleUserLogin: SubmitHandler<FormData | FieldValues> = async (formData) => {
         const loginFormData = new FormData();
@@ -164,11 +171,13 @@ const SignInScreen = ({ }: Props) => {
                     </View>
 
                     <Button onPress={() => toggleSignInType()}>
-                        <Text>Switch to {selectedSignInType === "distributor" ? "mechanic" : "distributor"}</Text>
+                        <Text>
+                            <Text>Switch to {USER_TYPES[(USER_TYPES.indexOf(selectedSignInType) + 1) % USER_TYPES.length]}</Text>
+                        </Text>
                     </Button>
                 </View>
             </KeyboardAwareScrollView>
-        </SafeAreaView >
+        </SafeAreaView>
     )
 }
 
