@@ -7,12 +7,16 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { CalendarIcon } from "@/libs/icons/CalendarIcon"
 import axiosInstance from '@/utils/axiosInstance';
 import { GET_CASH_BATCH_REPORTS } from '@/utils/routes';
+import { useToast } from 'react-native-toast-notifications';
+import axios from 'axios';
 
 type Props = {}
 
 const CashBatchScreen = ({ }: Props) => {
 
     const { userDetails } = useUser();
+
+    const toast = useToast();
 
     const [cashBatchReportData, setCashBatchReportData] = useState();
     // Mananging user's date selection
@@ -49,10 +53,20 @@ const CashBatchScreen = ({ }: Props) => {
         try {
             const response = await axiosInstance.post(GET_CASH_BATCH_REPORTS, cashBatchReportsFormData);
 
-            console.log(response.data)
+            if (response.data.status !== 200) {
+                toast.show(response.data.message, {
+                    data: response
+                })
+            };
+
+            setCashBatchReportData(response.data.batchesData)
         } catch (error) {
-            console.log(error, "SOMETHING_WENT_WRONG_CASH_BATCH");
-        }
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            };
+        };
     }
 
     return (

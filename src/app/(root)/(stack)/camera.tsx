@@ -116,54 +116,53 @@ const CameraScreen = ({ }: Props) => {
         if (scanned || isCouponRedeemed || isCouponInvalid) return;
 
         setScanned(true);
-        fetchBarCodeDataValidation(data);
+        fetchCouponRedeemResults(data);
 
         setTimeout(() => setScanned(false), 2000); // Enable scanning after 2 seconds
     };
 
     // Check if the coupon is valid via API
-    const fetchBarCodeDataValidation = async (data: string) => {
-        const barCodeFormData = new FormData();
+    // const fetchBarCodeDataValidation = async (data: string) => {
+    //     const barCodeFormData = new FormData();
 
-        barCodeFormData.append('qrText', data);
-        barCodeFormData.append(getCheckCouponEndpoint().user_id, userDetails?.id);
-        barCodeFormData.append('userType', userDetails?.userType);
+    //     barCodeFormData.append('qrText', data);
+    //     barCodeFormData.append(getCheckCouponEndpoint().user_id, userDetails?.id);
+    //     barCodeFormData.append('userType', userDetails?.userType);
 
-        try {
-            const response = await axiosInstance.post(CHECK_COUPON, barCodeFormData);
+    //     try {
+    //         const response = await axiosInstance.post(CHECK_COUPON, barCodeFormData);
 
-            if (response.data.stauts != 200) {
-                setCouponValidationData(response.data);
-                setIsCouponInvalid(true);
-                toast.show(response.data.message, {
-                    data: response
-                });
-            };
+    //         if (response.data.stauts != 200) {
+    //             setCouponValidationData(response.data);
+    //             setIsCouponInvalid(true);
+    //             toast.show(response.data.message, {
+    //                 data: response
+    //             });
+    //         };
 
-            setCouponValidationData(response.data);
-            fetchCouponRedeemResults(data);
-
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                setCouponValidationData(error.response?.data);
-                setIsCouponInvalid(true);
-                // toast.show(error.response?.data?.message || error.message, {
-                //     data: error.response?.data || error.message
-                // });
-            };
-            setTimeout(() => setScanned(false), 2000);
-        }
-    };
+    //         setCouponValidationData(response.data);
+    //         fetchCouponRedeemResults(data);
+    //     } catch (error) {
+    //         if (axios.isAxiosError(error)) {
+    //             setCouponValidationData(error.response?.data);
+    //             setIsCouponInvalid(true);
+    //             toast.show(error.response?.data?.message || error.message, {
+    //                 data: error.response || error.message
+    //             });
+    //         };
+    //         setTimeout(() => setScanned(false), 2000);
+    //     }
+    // };
 
     // Check if the coupon can be redeemed and offer type
     const fetchCouponRedeemResults = async (data: string) => {
-        if (couponValidationData?.status != 200) return;
+        // if (couponValidationData?.status != 200) return;
 
         const redeemFormData = new FormData();
 
         redeemFormData.append(getRedeemCouponEndpoint().user_id, userDetails?.id as string);
         redeemFormData.append('qrText', data);
-        redeemFormData.append('redeemType', couponValidationData.redeemMethods[0].redeem_type);
+        redeemFormData.append('redeemType', 0);
         redeemFormData.append('userType', userDetails?.userType);
 
         try {
@@ -179,9 +178,11 @@ const CameraScreen = ({ }: Props) => {
             setIsCouponRedeem(true);
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data?.message || error.message, {
-                    data: error.response?.data || error.message
-                });
+                setCouponValidationData(error.response?.data);
+                setIsCouponInvalid(true);
+                // toast.show(error.response?.data?.message || error.message, {
+                //     data: error.response || error.message
+                // });
             };
             setTimeout(() => setScanned(false), 2000);
         }

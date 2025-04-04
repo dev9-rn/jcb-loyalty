@@ -49,7 +49,7 @@ const ReportCouponScreen = ({ }: Props) => {
         uploadReportFormData.append('couponFile', {
             uri: pickedCouponImage,
             type: 'image/jpeg',
-            name: new Date().toJSON()
+            name: "abc.jpeg",
         });
 
         try {

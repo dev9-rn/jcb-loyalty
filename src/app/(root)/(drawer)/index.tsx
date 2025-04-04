@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import useAuth from '@/hooks/useAuth'
 
 import {
@@ -12,7 +12,7 @@ import {
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { QrCodeIcon } from '@/libs/icons/QrCodeIcon';
-import { router, useNavigation } from 'expo-router';
+import { router, useFocusEffect, useNavigation } from 'expo-router';
 import useUser from '@/hooks/useUser';
 import axiosInstance from '@/utils/axiosInstance';
 import { GET_DASHBOARD_DATA, GET_MECHANIC_DASHBOARD, GET_RETAILER_DASHBOARD } from '@/utils/routes';
@@ -26,9 +26,11 @@ const HomeScreen = ({ }: Props) => {
 
 	const [dashboardData, setDashboardData] = useState<IDashboardData | undefined>(undefined);
 
-	useEffect(() => {
-		fetchDashboardData();
-	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			fetchDashboardData();
+		}, [])
+	);
 
 	const getDashboardEndpoints = () => {
 		if (userDetails?.userType === 0) {
