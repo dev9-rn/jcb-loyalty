@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, FlatList } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import useUser from '@/hooks/useUser';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -9,6 +9,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { GET_CASH_BATCH_REPORTS } from '@/utils/routes';
 import { useToast } from 'react-native-toast-notifications';
 import axios from 'axios';
+import { Separator } from '@rn-primitives/select';
 
 type Props = {}
 
@@ -28,6 +29,35 @@ const CashBatchScreen = ({ }: Props) => {
     useEffect(() => {
         fetchCachBatchReports();
     }, [selectedFromDate, selctedToDate]);
+
+    const renderItem = useCallback(({ item, index }: { item: ICashBatchReports, index: number }) => {
+        return (
+            <View className='py-2' key={index}>
+                <View className='flex-row items-center justify-between'>
+                    <Text className='text-lg'>
+                        Total Coupons Scanned:{" "}
+                        <Text className='text-lg font-medium'>{item.batch_number}</Text>
+                    </Text>
+                    <Text className='text-lg font-semibold'>
+                        ₹ {item.total_amount}
+                    </Text>
+                </View>
+                <Text className='text-lg'>
+                    Batch ID:{" "}
+                    <Text className='text-lg font-medium'>{item.batch_id}</Text>
+                </Text>
+                <Text className='text-lg'>
+                    End Date:{" "}
+                    <Text className='text-lg font-medium'>{new Date(item.end_date).toLocaleDateString()}</Text>
+                </Text>
+
+                <Text className='text-lg'>
+                    Status:{" "}
+                    <Text className='text-primary text-lg font-medium capitalize'>{item.status}</Text>
+                </Text>
+            </View>
+        )
+    }, [])
 
     const onFromDateChange = (event?: DateTimePickerEvent, date?: Date) => {
         const currentDate = date;
@@ -108,8 +138,16 @@ const CashBatchScreen = ({ }: Props) => {
                             />
                         )}
                     </View>
+
                 </View>
             </View>
+
+            <FlatList
+                contentContainerClassName='p-4'
+                data={cashBatchReportData}
+                renderItem={renderItem}
+                ItemSeparatorComponent={() => <Separator />}
+            />
         </View>
     )
 }

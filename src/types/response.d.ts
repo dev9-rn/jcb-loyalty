@@ -194,4 +194,17 @@ interface IMechanicPassbook {
     type: "credit" | "debit"; // Assuming it can only be "credit" or "debit"
     date: string; // Consider using `Date` if you'll parse it
     mechanic_id: string;
-}
+};
+
+interface ICashBatchReports {
+    batch_number: string;
+    start_date: string;
+    end_date: string;
+    batch_id: string;
+    total_coupons_scanned: string;
+    total_amount: string;
+    status: "Pending" | "Approved" | "Rejected"; // Adjust based on possible statuses
+    credit_note_no: string | null;
+    credit_note_date: string | null;
+    credit_note_value: string | null;
+};
