@@ -19,6 +19,7 @@ export const GET_BRANDS_BY_IDS = "/api/getBrands";
 /* 
 ** Mechanic URLs
 */
+export const REGISTER_MECHANIC = "/api/registerMechanic"
 export const MECHANIC_LOGIN = "/api/loginMechanic";
 export const VERIFY_MECHANIC = "/api/verifyOtpMechanic";
 export const GET_MECHANIC_DASHBOARD = "/api/getMechanicDashboard";
@@ -28,6 +29,7 @@ export const UPDATE_MECHANIC_PROFILE = "/api/updateProfileMechanic";
 export const GET_MECHANIC_PASSBOOK = "/api/getMechanicRedemptionPassbook"
 
 // Retailer Login
+export const REGISTER_RETAILER = "/api/registerDealer"
 export const RETAILER_LOGIN = "/api/loginDealer";
 export const VERIFY_RETAILER = "/api/verifyOtpDealer";
 export const GET_RETAILER_DASHBOARD = "/api/getDashboardDealer"

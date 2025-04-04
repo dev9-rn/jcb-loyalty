@@ -61,6 +61,7 @@ interface IDashboardData {
     totalBalancedPoint: string;
     totalCouponsRedeemedPoint: number;
     totalCouponsRedeemedCount: number;
+    totalCouponsScanned: number;
 };
 
 interface IValidCoupon {

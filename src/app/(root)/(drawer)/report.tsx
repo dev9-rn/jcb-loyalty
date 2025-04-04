@@ -67,6 +67,7 @@ const ReportCouponScreen = ({ }: Props) => {
                 data: response
             });
             reset();
+            setPickedCouponImage(null)
             setIsSubmitting(false);
         } catch (error) {
             if (axios.isAxiosError(error)) {

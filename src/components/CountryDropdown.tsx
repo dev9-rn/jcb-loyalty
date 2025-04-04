@@ -57,6 +57,7 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
                 onValueChange(id?.value);
                 setSelectedCountry({ id: id?.value, name: id?.label })
             }}
+            defaultValue={{ value: "101", label: "India" }}
         >
             <SelectTrigger className=''>
                 <SelectValue

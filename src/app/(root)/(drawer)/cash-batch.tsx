@@ -75,8 +75,8 @@ const CashBatchScreen = ({ }: Props) => {
         const cashBatchReportsFormData = new FormData();
 
         cashBatchReportsFormData.append('distributorId', userDetails?.id);
-        cashBatchReportsFormData.append('startDate', selectedFromDate.toDateString());
-        cashBatchReportsFormData.append('endDate', selctedToDate.toDateString());
+        cashBatchReportsFormData.append('startDate', selectedFromDate.toLocaleString());
+        cashBatchReportsFormData.append('endDate', selctedToDate.toLocaleString());
         cashBatchReportsFormData.append('year', new Date().getFullYear());
         cashBatchReportsFormData.append('userType', userDetails?.userType);
 

@@ -93,7 +93,7 @@ const ProfileScreen = ({ }: Props) => {
 
     const { userDetails } = useUser();
 
-    const [profileDetails, setProfileDetails] = useState<IDistributorProfileDetails | undefined>(undefined);
+    const [profileDetails, setProfileDetails] = useState<IDistributorProfileDetails & IMechanicDetails | undefined>(undefined);
     const [userBrand, setUserBrand] = useState();
     const [countryList, setCountryList] = useState<ILocationData[]>([]);
     const [selectedCountry, setSelectedCountry] = useState<ILocationData | undefined>(undefined);
@@ -124,14 +124,14 @@ const ProfileScreen = ({ }: Props) => {
     const { control, handleSubmit, reset, setValue, formState: { errors, isDirty } } = useForm<z.infer<typeof dealerFormSchema>>({
         resolver: zodResolver(dealerFormSchema),
         defaultValues: {
-            dealerName: profileDetails?.name,
-            dealerCompanyName: profileDetails?.company_name,
+            dealerName: profileDetails?.name || profileDetails?.full_name,
+            dealerCompanyName: profileDetails?.company_name || profileDetails?.shop_name,
             dealerEmail: profileDetails?.email,
-            dealerPhoneNumber: profileDetails?.mobile,
+            dealerPhoneNumber: profileDetails?.mobile || profileDetails?.mobile_no,
             dealerGstNumber: profileDetails?.gst_no,
             dealerPanNumber: profileDetails?.pan_no,
             dealerAddress: profileDetails?.address,
-            dealerPincode: profileDetails?.pincode,
+            dealerPincode: profileDetails?.pincode || profileDetails?.pin_code,
             dealerStreet: profileDetails?.street,
         }
     });
@@ -229,14 +229,14 @@ const ProfileScreen = ({ }: Props) => {
             setProfileDetails(response.data.data);
             fetchBrandById();
             reset({
-                dealerName: response.data.data.name,
-                dealerCompanyName: response.data.data.company_name,
+                dealerName: response.data.data.name || response.data.data.full_name,
+                dealerCompanyName: response.data.data.company_name || response.data.data.shop_name,
                 dealerEmail: response.data.data.email,
-                dealerPhoneNumber: response.data.data.mobile,
+                dealerPhoneNumber: response.data.data.mobile || response.data.data.mobile_no,
                 dealerGstNumber: response.data.data.gst_no,
                 dealerPanNumber: response.data.data.pan_no,
                 dealerAddress: response.data.data.address,
-                dealerPincode: response.data.data.pincode,
+                dealerPincode: response.data.data.pincode || response.data.data.pin_code,
                 dealerStreet: response.data.data.street,
                 dealerCountryId: response.data.data.country_id,
                 dealerCityId: response.data.data.state_id,
@@ -329,7 +329,7 @@ const ProfileScreen = ({ }: Props) => {
             <View className='bg-white flex-1 p-4'>
                 <KeyboardAwareScrollView bottomOffset={100} showsVerticalScrollIndicator={false}>
                     <Text className='text-2xl font-semibold'>
-                        Distributor Information
+                        {userDetails?.userType === 0 ? "Distributor" : userDetails?.userType === 1 ? "Mechanic" : "Retailer"} Information
                     </Text>
                     <Text className='text-gray-500 text-sm'>Provide information to edit your account</Text>
 
@@ -373,27 +373,40 @@ const ProfileScreen = ({ }: Props) => {
                             {errors.dealerPhoneNumber && <Text className='text-red-500 font-medium'>{errors.dealerPhoneNumber.message}</Text>}
                         </View>
 
-                        <View className='gap-1'>
-                            <Text>Email Address <Text className='text-red-500'>*</Text></Text>
+                        {userDetails?.userType === 0 && (
+                            <View className='gap-1'>
+                                <Text>Email Address <Text className='text-red-500'>*</Text></Text>
 
-                            <Controller
-                                control={control}
-                                name='dealerEmail'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerEmail && "border-red-500"}`}
-                                        placeholder='Enter email address'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    />
-                                )}
-                            />
-                            {errors.dealerEmail && <Text className='text-red-500 font-medium'>{errors.dealerEmail.message}</Text>}
-                        </View>
+                                <Controller
+                                    control={control}
+                                    name='dealerEmail'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.dealerEmail && "border-red-500"}`}
+                                            placeholder='Enter email address'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+                                {errors.dealerEmail && <Text className='text-red-500 font-medium'>{errors.dealerEmail.message}</Text>}
+                            </View>
+                        )}
 
                         <View className='gap-1'>
-                            <Text>Company Name</Text>
+                            <Text>
+                                {userDetails?.userType === 0
+                                    ? "Company Name"
+                                    : (
+                                        <>
+                                            <Text>
+                                                Shop Name{" "}
+                                                <Text className='text-red-500'>*</Text>
+                                            </Text>
+                                        </>
+                                    )}
+                            </Text>
 
                             <Controller
                                 control={control}
@@ -411,8 +424,34 @@ const ProfileScreen = ({ }: Props) => {
                             />
                         </View>
 
+                        {/* {userDetails?.userType === 1 && (
+                            <View className='gap-1'>
+                                <Text>Retailer Name <Text className='text-red-500'>*</Text></Text>
+
+                                <Controller
+                                    control={control}
+                                    name='dealerEmail'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.dealerEmail && "border-red-500"}`}
+                                            placeholder='Enter retailer name'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+                                {errors.dealerEmail && <Text className='text-red-500 font-medium'>{errors.dealerEmail.message}</Text>}
+                            </View>
+                        )} */}
+
                         <View className='gap-1'>
-                            <Text>PAN Number</Text>
+                            <Text>
+                                PAN Number{" "}
+                                {userDetails?.userType !== 0 && (
+                                    <Text className='text-red-500'>*</Text>
+                                )}
+                            </Text>
 
                             <Controller
                                 control={control}
@@ -430,46 +469,50 @@ const ProfileScreen = ({ }: Props) => {
                             {errors.dealerPanNumber && <Text className='text-red-500 font-medium'>{errors.dealerPanNumber.message}</Text>}
                         </View>
 
-                        <View className='gap-1'>
-                            <Text>GST Number</Text>
+                        {userDetails?.userType === 0 && (
+                            <View className='gap-1'>
+                                <Text>GST Number</Text>
 
-                            <Controller
-                                control={control}
-                                name='dealerGstNumber'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerGstNumber && "border-red-500"}`}
-                                        placeholder='Enter company name'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    />
-                                )}
-                            />
+                                <Controller
+                                    control={control}
+                                    name='dealerGstNumber'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.dealerGstNumber && "border-red-500"}`}
+                                            placeholder='Enter company name'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
 
-                            {errors.dealerGstNumber && <Text className='text-red-500 font-medium'>{errors.dealerGstNumber.message}</Text>}
-                        </View>
+                                {errors.dealerGstNumber && <Text className='text-red-500 font-medium'>{errors.dealerGstNumber.message}</Text>}
+                            </View>
+                        )}
 
-                        <View className='gap-1'>
-                            <Text>Brand</Text>
+                        {userDetails?.userType === 0 && (
+                            <View className='gap-1'>
+                                <Text>Brand</Text>
 
-                            <Controller
-                                control={control}
-                                name='dealerBrand'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerBrand && "border-red-500"}`}
-                                        placeholder='Enter company name'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                        editable={false}
-                                    />
-                                )}
-                            />
+                                <Controller
+                                    control={control}
+                                    name='dealerBrand'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.dealerBrand && "border-red-500"}`}
+                                            placeholder='Enter company name'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                            editable={false}
+                                        />
+                                    )}
+                                />
 
-                            {errors.dealerBrand && <Text className='text-red-500 font-medium'>{errors.dealerBrand.message}</Text>}
-                        </View>
+                                {errors.dealerBrand && <Text className='text-red-500 font-medium'>{errors.dealerBrand.message}</Text>}
+                            </View>
+                        )}
                     </View>
 
                     <View className='py-4'>
@@ -479,44 +522,26 @@ const ProfileScreen = ({ }: Props) => {
 
                     <View className='gap-3'>
 
-                        <View className='gap-1'>
-                            <Text>Street <Text className='text-red-500'>*</Text></Text>
+                        {userDetails?.userType === 0 && (
+                            <View className='gap-1'>
+                                <Text>Street <Text className='text-red-500'>*</Text></Text>
 
-                            <Controller
-                                control={control}
-                                name='dealerStreet'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerStreet && "border-red-500"}`}
-                                        placeholder='Enter street'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    />
-                                )}
-                            />
-                            {errors.dealerStreet && <Text className='text-red-500 font-medium'>{errors.dealerStreet.message}</Text>}
-                        </View>
-
-                        <View className='gap-1'>
-                            <Text>Pincode <Text className='text-red-500'>*</Text></Text>
-
-                            <Controller
-                                control={control}
-                                name='dealerPincode'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerPincode && "border-red-500"}`}
-                                        placeholder='Enter your pincode'
-                                        keyboardType='numeric'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    />
-                                )}
-                            />
-                            {errors.dealerPincode && <Text className='text-red-500 font-medium'>{errors.dealerPincode.message}</Text>}
-                        </View>
+                                <Controller
+                                    control={control}
+                                    name='dealerStreet'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.dealerStreet && "border-red-500"}`}
+                                            placeholder='Enter street'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+                                {errors.dealerStreet && <Text className='text-red-500 font-medium'>{errors.dealerStreet.message}</Text>}
+                            </View>
+                        )}
 
                         <View className='gap-1'>
                             <Text>Select Country <Text className='text-red-500'>*</Text></Text>
@@ -571,24 +596,46 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Address <Text className='text-red-500'>*</Text></Text>
+                            <Text>Pincode <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
-                                name='dealerAddress'
+                                name='dealerPincode'
                                 render={({ field: { onBlur, onChange, value } }) => (
-                                    <Textarea
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerAddress && "border-red-500"}`}
-                                        placeholder='Enter your full address'
+                                    <Input
+                                        className={`focus:border-2 focus:border-primary ${errors.dealerPincode && "border-red-500"}`}
+                                        placeholder='Enter your pincode'
+                                        keyboardType='numeric'
                                         value={value}
                                         onChangeText={onChange}
                                         onBlur={onBlur}
                                     />
                                 )}
                             />
-
-                            {errors.dealerAddress && <Text className='text-red-500 font-medium'>{errors.dealerAddress.message}</Text>}
+                            {errors.dealerPincode && <Text className='text-red-500 font-medium'>{errors.dealerPincode.message}</Text>}
                         </View>
+
+                        {userDetails?.userType === 0 && (
+                            <View className='gap-1'>
+                                <Text>Address <Text className='text-red-500'>*</Text></Text>
+
+                                <Controller
+                                    control={control}
+                                    name='dealerAddress'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Textarea
+                                            className={`focus:border-2 focus:border-primary ${errors.dealerAddress && "border-red-500"}`}
+                                            placeholder='Enter your full address'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+
+                                {errors.dealerAddress && <Text className='text-red-500 font-medium'>{errors.dealerAddress.message}</Text>}
+                            </View>
+                        )}
                     </View>
 
                     <View className='my-6'>

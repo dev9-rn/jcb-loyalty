@@ -7,6 +7,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { GET_REPORTED_COUPON_HISTORY } from '@/utils/routes';
 import useUser from '@/hooks/useUser';
 import { Separator } from '@/components/ui/separator';
+import { useFocusEffect } from 'expo-router';
 
 type Props = {}
 
@@ -22,9 +23,11 @@ const ReportHistory = ({ }: Props) => {
     const [showFromDate, setShowFromDate] = useState<boolean>(false)
     const [showToDate, setShowToDate] = useState<boolean>(false);
 
-    useEffect(() => {
-        fetchReportedCouponsHistory();
-    }, [selectedFromDate, selctedToDate]);
+    useFocusEffect(
+        useCallback(() => {
+            fetchReportedCouponsHistory();
+        }, [selectedFromDate, selctedToDate])
+    );
 
     const renderItem = useCallback(({ item, index }: { item: IReportedCoupon, index: number }) => {
         return (

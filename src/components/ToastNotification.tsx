@@ -22,10 +22,10 @@ const ToastNotification = ({ toastData }: Props) => {
                 {isActionSuccess ? (
                     <CircleCheckIcon className='text-green-600' />
                 ) : (
-                    <CircleAlertIcon className='text-neutral-900' />
+                    <CircleAlertIcon className='text-red-500' />
                 )}
 
-                <Text className={`font-medium`}>
+                <Text className={`font-medium ${!isActionSuccess && "text-red-500"}`}>
                     {toastData.message}
                 </Text>
             </View>

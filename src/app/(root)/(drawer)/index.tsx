@@ -89,15 +89,18 @@ const HomeScreen = ({ }: Props) => {
 						</CardHeader>
 						<CardContent>
 							<Text className='text-2xl font-semibold text-primary'>
-								{dashboardData?.totalCouponsRedeemed || dashboardData?.totalCouponsRedeemedCount}
+								{dashboardData?.totalCouponsRedeemed || dashboardData?.totalCouponsRedeemedCount || dashboardData?.totalCouponsScanned}
 							</Text>
 						</CardContent>
 					</Card>
 
 					<Card className="w-[48%]">
 						<CardHeader className='gap-2'>
-							<CardTitle>Redeemed Amount</CardTitle>
-							<CardDescription>Total redeemed amount till date</CardDescription>
+							<CardTitle>
+								Redeemed{" "}
+								{userDetails?.userType === 1 ? "Points" : "Amount"}
+							</CardTitle>
+							<CardDescription>Total redeemed {userDetails?.userType === 1 ? "points" : "amount"} till date</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<Text className='text-2xl font-semibold text-primary'>
@@ -106,7 +109,7 @@ const HomeScreen = ({ }: Props) => {
 						</CardContent>
 					</Card>
 
-					{userDetails?.userType == 1 && (
+					{/* {userDetails?.userType == 1 && (
 						<Card className="w-[48%]">
 							<CardHeader className='gap-2'>
 								<CardTitle>
@@ -122,7 +125,7 @@ const HomeScreen = ({ }: Props) => {
 								</Text>
 							</CardContent>
 						</Card>
-					)}
+					)} */}
 
 					{/* <Card className="w-[48%]">
 						<CardHeader className='gap-2'>

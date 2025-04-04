@@ -53,7 +53,7 @@ const CouponHistoryScreen = ({ }: Props) => {
                         <Text className='text-lg font-medium'>{item.full_name}</Text>
                     </Text>
                     <Text className='text-lg font-semibold'>
-                        ₹ {item.loyalty_points_wallet}
+                        Points {item.loyalty_points_wallet}
                     </Text>
                 </View>
                 <Text className='text-lg'>
