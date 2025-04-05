@@ -15,7 +15,7 @@ type Props = {
 
 const AuthProvider = ({ children }: Props) => {
 
-    const { setUserDetails, userDetails, userFirebaseToken } = useUser()
+    const { setUserDetails, userFirebaseToken, setLocalUserDetails, localUserDetails } = useUser()
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [userAuthToken, setUserAuthToken] = useState<string>("");
@@ -33,7 +33,8 @@ const AuthProvider = ({ children }: Props) => {
 
         if (!localUserDetails || !localAuthToken) return;
 
-        setUserDetails(JSON.parse(localUserDetails));
+        setLocalUserDetails(JSON.parse(localUserDetails));
+        setUserDetails(JSON.parse(localUserDetails))
         setUserAuthToken(localAuthToken);
         setIsAuthenticated(true);
         router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
@@ -89,9 +90,9 @@ const AuthProvider = ({ children }: Props) => {
     const logout = async () => {
         const logoutFormData = new FormData();
 
-        logoutFormData.append("distributorId", userDetails?.id);
+        logoutFormData.append("distributorId", localUserDetails?.id);
         logoutFormData.append("deviceToken", userFirebaseToken);
-        logoutFormData.append("userType", userDetails?.userType);
+        logoutFormData.append("userType", localUserDetails?.userType);
 
         try {
             const response = await axiosInstance.post(USER_LOGOUT, logoutFormData);

@@ -13,4 +13,7 @@ interface IUserContext {
     setUserFirebaseToken: Dispatch<SetStateAction<string | null>>
     userDetails: IUserDetails & IMechanicDetails | undefined;
     setUserDetails: Dispatch<SetStateAction<IUserDetails & IMechanicDetails | undefined>>
+    localUserDetails: IUserDetails & IMechanicDetails | undefined;
+    setLocalUserDetails: Dispatch<SetStateAction<IUserDetails & IMechanicDetails | undefined>>
+    fetchUserProfileDetails: () => Promise<void>
 };

@@ -19,8 +19,7 @@ type FormData = {
     userPhone: string;
 };
 
-const USER_TYPES = ["distributor", "mechanic", "retailer"];
-
+const USER_TYPES = ["distributor", "retailer"];
 
 const SignInScreen = ({ }: Props) => {
 

@@ -77,7 +77,6 @@ const ReportHistory = ({ }: Props) => {
 
             setReportedCouponHistoryData(response.data);
 
-            console.log(response.data, "HISTORY_DATA");
         } catch (error) {
             console.log(error, "SOMETHIGN_WENT_WRONH_REPORT_HISTORY");
         }
@@ -130,7 +129,7 @@ const ReportHistory = ({ }: Props) => {
                 contentContainerClassName='p-4'
                 data={reportedCouponHistoryData?.reportedCouponHistory}
                 renderItem={renderItem}
-                ItemSeparatorComponent={() => <Separator />}
+                ItemSeparatorComponent={() => <Separator className='my-4' />}
             />
         </View>
     )

@@ -1,339 +1,108 @@
 import { View } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import useUser from '@/hooks/useUser'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
+import { useLocalSearchParams } from 'expo-router'
+import { signUpForm } from '@/libs/schemas/signUpFormSchemas'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Text } from '@/components/ui/text'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axiosInstance from '@/utils/axiosInstance'
-import { GET_BRANDS_BY_IDS, GET_CITIES_LIST, GET_COUNTRY_LIST, GET_STATE_LIST, REGISTER_DISTRIBUTOR, REGISTER_MECHANIC, REGISTER_RETAILER } from '@/utils/routes'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import SelectBrandDropdown from '@/components/SelectBrandDropdown'
 import CountryDropdown from '@/components/CountryDropdown'
 import StateDropdown from '@/components/StateDropdown'
 import CitiesDropdown from '@/components/CitiesDropdown'
+import { Textarea } from '@/components/ui/textarea'
+import axiosInstance from '@/utils/axiosInstance'
+import { GET_COUNTRY_LIST } from '@/utils/routes'
 import { useToast } from 'react-native-toast-notifications'
 import axios from 'axios'
-import { router, useLocalSearchParams } from 'expo-router'
 
 type Props = {}
 
-// const signUpForm = z.object({
-//     userName: z.string().nonempty({
-//         message: "Please enter your full name"
-//     }).refine((value) => /^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/.test(value ?? ""), {
-//         message: "Name should only contain letters"
-//     }),
-//     userPhoneNumber: z.string().nonempty({
-//         message: "Please enter your phone number"
-//     }).refine((value) => /^[0-9]{10}$/.test(value), {
-//         message: "Enter a valid 10-digit phone number"
-//     }),
-//     userEmail: z.string().nonempty({
-//         message: "Please enter your email address",
-//     }).email({
-//         message: "Please enter a valid email address"
-//     }),
-//     userCompanyName: z.string(),
-//     userPanNumber: z.string().optional().refine((value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value), {
-//         message: "Please enter a valid PAN Number"
-//     }),
-//     userGstNumber: z.string(),
-//     userBrand: z.object({
-//         id: z.string({
-//             message: "Please select a brand id"
-//         }).nonempty(),
-//         name: z.string({
-//             message: "Please select a brand name"
-//         }).nonempty(),
-//     }),
-//     userStreet: z.string({
-//         required_error: "Please enter your street address"
-//     }).nonempty(),
-//     userPincode: z.string({
-//         required_error: "Please enter a pincode"
-//     }).nonempty().refine((value) => /^[0-9]{6}$/.test(value), {
-//         message: "Please enter a valid 6-digit pincode"
-//     }),
-//     userCountry: z.string({
-//         required_error: "Please select your country",
-//     }).nonempty(),
-//     userState: z.string({
-//         required_error: "Please select your state",
-//     }).nonempty(),
-//     userCity: z.string({
-//         required_error: "Please select your city",
-//     }).nonempty(),
-// });
-
-// Base schema for common fields
-const baseSchema = z.object({
-    userType: z.enum(["distributor", "mechanic"]),
-    userName: z.string().nonempty("Please enter your full name"),
-    userPhoneNumber: z
-        .string()
-        .nonempty("Please enter your phone number")
-        .regex(/^[0-9]{10}$/, "Enter a valid 10-digit phone number"),
-    userPincode: z
-        .string()
-        .nonempty("Please enter a pincode")
-        .regex(/^[0-9]{6}$/, "Please enter a valid 6-digit pincode"),
-    userCountry: z.string().nonempty("Please select your country"),
-    userState: z.string().nonempty("Please select your state"),
-    userCity: z.string().nonempty("Please select your city"),
-});
-
-// Distributor schema
-const distributorSchema = baseSchema.extend({
-    userType: z.literal("distributor"),
-    userCompanyName: z.string().nonempty("Please enter your company name"),
-    userPanNumber: z
-        .string()
-        .optional()
-        .refine((value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value), {
-            message: "Please enter a valid PAN Number",
-        }),
-    userGstNumber: z.string().nonempty("Please enter GST Number"),
-    userBrand: z.object({
-        id: z.string().nonempty("Please select a brand id"),
-        name: z.string().nonempty("Please select a brand name"),
-    }),
-    userEmail: z.string().email("Please enter a valid email address"),
-    userStreet: z.string().nonempty("Please enter your street address"),
-});
-
-// Mechanic schema
-const mechanicSchema = baseSchema.extend({
-    userType: z.literal("mechanic"),
-    userCompanyName: z.string().optional(),
-    userPanNumber: z.string().optional(),
-});
-
-// Final schema for validation
-const signUpForm = z.discriminatedUnion("userType", [
-    distributorSchema,
-    mechanicSchema,
-]);
+const userTypeMap: Record<number, "distributor" | "mechanic" | "retailer"> = {
+    0: "distributor",
+    1: "mechanic",
+    2: "retailer",
+};
 
 const SignUpScreen = ({ }: Props) => {
 
-    const toast = useToast();
+    const [countryList, setCountryList] = useState<ILocationData[]>([]);
+
+    const { userDetails } = useUser()
 
     const { userType } = useLocalSearchParams();
 
-    const [brands, setBrands] = useState<IBrandsDetails[]>();
-    const [userBrand, setUserBrand] = useState();
-    const [countryList, setCountryList] = useState<ILocationData[]>([]);
-    const [selectedCountry, setSelectedCountry] = useState<ILocationData | undefined>(undefined);
-    const [stateList, setStateList] = useState<ILocationData[]>([]);
-    const [selectedState, setSelectedState] = useState<ILocationData | undefined>(undefined);
-    const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
-    const [selectedCity, setSelectedCity] = useState<ILocationData | undefined>(undefined);
-
-    useEffect(() => {
-        fetchCountryList();
-        fetchBrands();
-    }, []);
-
-    useEffect(() => {
-        if (!selectedCountry) return;
-
-        fetchStateList();
-    }, [selectedCountry]);
-
-    useEffect(() => {
-        if (!selectedState) return;
-
-        fetchCitiesList();
-    }, [selectedState]);
+    const toast = useToast();
 
     const { control, handleSubmit, reset, setValue, formState: { errors, isDirty } } = useForm<z.infer<typeof signUpForm>>({
         resolver: zodResolver(signUpForm),
         defaultValues: {
-            userBrand: {
+            userType: userType as "distributor" | "mechanic" | "retailer",
+            userName: "",
+            userPincode: "",
+            distributorEmail: "",
+            distributorCompanyName: "",
+            retailerShopName: "",
+            mechanicPanNumber: "",
+            distributorPanNumber: "",
+            distributorGstNumber: "",
+            distributorBrand: {
                 id: "",
                 name: ""
             },
-            userCompanyName: "",
-            userEmail: "",
-            userGstNumber: "",
-            userName: "",
-            userPanNumber: "",
+            distributorAddress: "",
+            userCity: {
+                id: "",
+                name: " "
+            },
+            userCountry: {
+                id: "",
+                name: ""
+            },
             userPhoneNumber: "",
-            userCity: "",
-            userCountry: "",
-            userPincode: "",
-            userState: "",
-            userStreet: "",
-            userType
-        },
+            userState: {
+                id: "",
+                name: ""
+            },
+        }
     });
 
-    /**
-     * Get brands
-     */
-    const fetchBrands = async () => {
+    useEffect(() => {
+        fetchCountryList();
+        // fetchBrands();
+    }, []);
 
-        try {
-            const response = await axiosInstance.post(GET_BRANDS_BY_IDS);
-
-            if (response.data.status != 200) {
-                console.log(response.data.message);
-            };
-
-            setBrands(response.data.brands);
-        } catch (error) {
-            console.log(error, "ERROR_MSG");
-        }
-    };
-
+    // Get the list of the country for dropdown
     const fetchCountryList = async () => {
         try {
             const response = await axiosInstance.post(GET_COUNTRY_LIST);
 
             if (response.data.status != 200) {
-                console.log(response.data.message)
-            };
-
-            setCountryList(response.data.countries);
-        } catch (error) {
-            console.log(error, "COUNTRY_GET_ERROR");
-        }
-    };
-
-    const fetchStateList = async () => {
-
-        const stateListFormData = new FormData();
-        stateListFormData.append("countryId", selectedCountry?.id)
-
-        try {
-            const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
-
-            if (response.data.status != 200) {
-                console.log(response.data.message)
-            };
-
-            setStateList(response.data.states);
-        } catch (error) {
-            console.log(error)
-        };
-    };
-
-    const fetchCitiesList = async () => {
-
-        const citiesFormData = new FormData();
-        citiesFormData.append("stateId", selectedState?.id)
-
-        try {
-            const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
-
-            if (response.data.success != 200) {
-                console.log(response.data.message);
-            };
-
-            setCitiesList(response.data.cities);
-
-        } catch (error) {
-
-        };
-    };
-
-    const getRegisterEndpoint = () => {
-        if (userType === "distributor") {
-            return {
-                endpoint: REGISTER_DISTRIBUTOR,
-            }
-        };
-
-        if (userType === "mechanic") {
-            return {
-                endpoint: REGISTER_MECHANIC,
-            };
-        };
-
-        return {
-            endpoint: REGISTER_RETAILER
-        };
-    }
-
-    const handleProfileSubmit: SubmitHandler<z.infer<typeof signUpForm>> = async (formData) => {
-
-        const registerFormData = new FormData();
-        if (userType === "distributor") {
-            registerFormData.append('name', formData.userName);
-            registerFormData.append('mobileNo', formData.userPhoneNumber);
-            registerFormData.append('emailId', formData.userEmail);
-            registerFormData.append('address', formData.userEmail);
-            registerFormData.append('street', formData.userStreet);
-            registerFormData.append('pinCode', formData.userPincode);
-            registerFormData.append('brandId', formData.userBrand.id);
-            registerFormData.append('countryId', formData.userCountry);
-            registerFormData.append('stateId', formData.userState);
-            registerFormData.append('cityId', formData.userCity);
-            registerFormData.append('companyName', formData.userCompanyName);
-            registerFormData.append('panNo', formData.userPanNumber as string);
-            registerFormData.append('gstNo', formData.userGstNumber);
-        };
-
-        if (userType === "mechanic") {
-            registerFormData.append('name', formData.userName);
-            registerFormData.append('mobileNo', formData.userPhoneNumber);
-            registerFormData.append('pinCode', formData.userPincode);
-            registerFormData.append('countryId', formData.userCountry);
-            registerFormData.append('stateId', formData.userState);
-            registerFormData.append('cityId', formData.userCity);
-            registerFormData.append('shopName', formData.userCompanyName);
-            registerFormData.append('panNo', formData.userPanNumber as string);
-        };
-
-        if (userType === "retailer") {
-            registerFormData.append('name', formData.userName);
-            registerFormData.append('mobileNo', formData.userPhoneNumber);
-            registerFormData.append('pinCode', formData.userPincode);
-            registerFormData.append('countryId', formData.userCountry);
-            registerFormData.append('stateId', formData.userState);
-            registerFormData.append('cityId', formData.userCity);
-            registerFormData.append('shopName', formData.userCompanyName);
-            registerFormData.append('panNo', formData.userPanNumber as string);
-        };
-
-        try {
-            const response = await axiosInstance.post(getRegisterEndpoint().endpoint, registerFormData);
-
-            if (response.data.status != 200) {
                 toast.show(response.data.message, {
                     data: response
-                });
-                reset();
-                return;
+                })
             };
-
-            toast.show(response.data.message, {
-                data: response
-            });
-            router.navigate({
-                pathname: '/(auth)/otp-verify',
-                params: {
-                    userPhone: formData.userPhoneNumber,
-                    userType
-                }
-            })
+            setCountryList(response.data.countries)
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 toast.show(error.response?.data.message, {
                     data: error.response
-                })
-            }
-        }
-    };
+                });
+            };
+        };
+    }
 
-    console.log(errors, "ERROR_FORMDATA");
+    const handleProfileSubmit: SubmitHandler<z.infer<typeof signUpForm>> = async (formData) => {
+        console.log(formData, "FORM_DATA");
+    }
 
     return (
         <>
-            <View className='bg-white flex-1 p-4'>
+            <View className='flex-1 bg-white p-4'>
                 <KeyboardAwareScrollView bottomOffset={100} showsVerticalScrollIndicator={false}>
                     <Text className='text-2xl font-semibold'>
                         <Text className='capitalize text-2xl font-semibold'>
@@ -389,10 +158,10 @@ const SignUpScreen = ({ }: Props) => {
 
                                 <Controller
                                     control={control}
-                                    name='userEmail'
+                                    name='distributorEmail'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.userEmail && "border-red-500"}`}
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorEmail && "border-red-500"}`}
                                             placeholder='Enter email address'
                                             value={value}
                                             onChangeText={onChange}
@@ -400,49 +169,94 @@ const SignUpScreen = ({ }: Props) => {
                                         />
                                     )}
                                 />
-                                {errors.userEmail && <Text className='text-red-500 font-medium'>{errors.userEmail.message}</Text>}
+                                {errors.distributorEmail && <Text className='text-red-500 font-medium'>{errors.distributorEmail.message}</Text>}
                             </View>
                         )}
 
-                        <View className='gap-1'>
-                            <Text>
-                                {userType === "distributor" ? "Company Name" : "Shop Name"}
-                            </Text>
+                        {userType === "distributor" ? (
+                            <View className='gap-1'>
+                                <Text>
+                                    Company name
+                                </Text>
 
-                            <Controller
-                                control={control}
-                                name='userCompanyName'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.userCompanyName && "border-red-500"}`}
-                                        placeholder={`${userType === "distributor" ? "Enter Company Name" : "Enter Shop Name"}`}
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    // editable={false}
-                                    />
-                                )}
-                            />
-                        </View>
+                                <Controller
+                                    control={control}
+                                    name='distributorCompanyName'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorCompanyName && "border-red-500"}`}
+                                            placeholder={`${userType === "distributor" ? "Enter Company Name" : "Enter Shop Name"}`}
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        // editable={false}
+                                        />
+                                    )}
+                                />
+                            </View>
+                        ) : (
+                            <View className='gap-1'>
+                                <Text>
+                                    Shop name
+                                </Text>
 
-                        <View className='gap-1'>
-                            <Text>PAN Number</Text>
+                                <Controller
+                                    control={control}
+                                    name='retailerShopName'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.retailerShopName && "border-red-500"}`}
+                                            placeholder={`${userType === "distributor" ? "Enter Company Name" : "Enter Shop Name"}`}
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        // editable={false}
+                                        />
+                                    )}
+                                />
+                                {errors.retailerShopName && <Text className='text-red-500 font-medium'>{errors.retailerShopName.message}</Text>}
+                            </View>
+                        )}
 
-                            <Controller
-                                control={control}
-                                name='userPanNumber'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.userPanNumber && "border-red-500"}`}
-                                        placeholder='Ex. AXNP7853G'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    />
-                                )}
-                            />
-                            {errors.userPanNumber && <Text className='text-red-500 font-medium'>{errors.userPanNumber.message}</Text>}
-                        </View>
+                        {userType === "distributor" ? (
+                            <View className='gap-1'>
+                                <Text>PAN Number</Text>
+
+                                <Controller
+                                    control={control}
+                                    name='distributorPanNumber'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorPanNumber && "border-red-500"}`}
+                                            placeholder='Ex. AXNP7853G'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+                                {errors.distributorPanNumber && <Text className='text-red-500 font-medium'>{errors.distributorPanNumber.message}</Text>}
+                            </View>
+                        ) : (
+                            <View className='gap-1'>
+                                <Text>PAN Number</Text>
+
+                                <Controller
+                                    control={control}
+                                    name='mechanicPanNumber'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.mechanicPanNumber && "border-red-500"}`}
+                                            placeholder='Ex. AXNP7853G'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+                                {errors.mechanicPanNumber && <Text className='text-red-500 font-medium'>{errors.mechanicPanNumber.message}</Text>}
+                            </View>
+                        )}
 
                         {userType === "distributor" && (
                             <View className='gap-1'>
@@ -450,10 +264,10 @@ const SignUpScreen = ({ }: Props) => {
 
                                 <Controller
                                     control={control}
-                                    name='userGstNumber'
+                                    name='distributorGstNumber'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.userGstNumber && "border-red-500"}`}
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorGstNumber && "border-red-500"}`}
                                             placeholder='Enter company name'
                                             value={value}
                                             onChangeText={onChange}
@@ -462,17 +276,17 @@ const SignUpScreen = ({ }: Props) => {
                                     )}
                                 />
 
-                                {errors.userGstNumber && <Text className='text-red-500 font-medium'>{errors.userGstNumber.message}</Text>}
+                                {errors.distributorGstNumber && <Text className='text-red-500 font-medium'>{errors.distributorGstNumber.message}</Text>}
                             </View>
                         )}
 
-                        {userType === "distributor" && (
+                        {/* {userType === "distributor" && (
                             <View className='gap-1'>
                                 <Text>Select Brand</Text>
 
                                 <Controller
                                     control={control}
-                                    name='userBrand'
+                                    name='distributorBrand'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <SelectBrandDropdown
                                             onValueChange={onChange}
@@ -481,30 +295,9 @@ const SignUpScreen = ({ }: Props) => {
                                     )}
                                 />
 
-                                {errors.userBrand && <Text className='text-red-500 font-medium'>{errors.userBrand.id?.message}</Text>}
+                                {errors.distributorBrand && <Text className='text-red-500 font-medium'>{errors.distributorBrand.id?.message}</Text>}
                             </View>
-                        )}
-
-                        {/* <View className='gap-1'>
-                            <Text>Dealer Brand</Text>
-
-                            <Controller
-                                control={control}
-                                name='userBrand'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.userBrand && "border-red-500"}`}
-                                        placeholder='Enter company name'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                        editable={false}
-                                    />
-                                )}
-                            />
-
-                            {errors.userBrand && <Text className='text-red-500 font-medium'>{errors.userBrand.message}</Text>}
-                        </View> */}
+                        )} */}
                     </View>
 
                     <View className='py-4'>
@@ -513,17 +306,16 @@ const SignUpScreen = ({ }: Props) => {
                     </View>
 
                     <View className='gap-3'>
-
                         {userType === "distributor" && (
                             <View className='gap-1'>
-                                <Text>Street</Text>
+                                <Text className=''>Street</Text>
 
                                 <Controller
                                     control={control}
-                                    name='userStreet'
+                                    name='distributorStreetAddress'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.userStreet && "border-red-500"}`}
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorStreetAddress && "border-red-500"}`}
                                             placeholder='Enter street'
                                             value={value}
                                             onChangeText={onChange}
@@ -531,7 +323,7 @@ const SignUpScreen = ({ }: Props) => {
                                         />
                                     )}
                                 />
-                                {errors.userStreet && <Text className='text-red-500 font-medium'>{errors.userStreet.message}</Text>}
+                                {errors.distributorStreetAddress && <Text className='text-red-500 font-medium'>{errors.distributorStreetAddress.message}</Text>}
                             </View>
                         )}
 
@@ -544,15 +336,14 @@ const SignUpScreen = ({ }: Props) => {
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CountryDropdown
                                         onValueChange={onChange}
-                                        setSelectedCountry={setSelectedCountry}
                                         countryList={countryList}
                                     />
                                 )}
                             />
-                            {errors.userCountry && <Text className='text-red-500 font-medium'>{errors.userCountry.message}</Text>}
+                            {errors.userCountry && <Text className='text-red-500 font-medium'>{errors.userCountry.id?.message}</Text>}
                         </View>
 
-                        <View className='gap-1'>
+                        {/* <View className='gap-1'>
                             <Text>Select State</Text>
 
                             <Controller
@@ -567,9 +358,9 @@ const SignUpScreen = ({ }: Props) => {
                                 )}
                             />
                             {errors.userState && <Text className='text-red-500 font-medium'>{errors.userState?.message}</Text>}
-                        </View>
+                        </View> */}
 
-                        <View className='gap-1'>
+                        {/* <View className='gap-1'>
                             <Text>Select City</Text>
 
                             <Controller
@@ -584,10 +375,10 @@ const SignUpScreen = ({ }: Props) => {
                                 )}
                             />
                             {errors.userCity && <Text className='text-red-500 font-medium'>{errors.userCity?.message}</Text>}
-                        </View>
+                        </View> */}
 
                         <View className='gap-1'>
-                            <Text>Pincode</Text>
+                            <Text>Pincode <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -605,6 +396,28 @@ const SignUpScreen = ({ }: Props) => {
                             />
                             {errors.userPincode && <Text className='text-red-500 font-medium'>{errors.userPincode.message}</Text>}
                         </View>
+
+                        {userType === "distributor" && (
+                            <View className='gap-1'>
+                                <Text>Address <Text className='text-red-500'>*</Text></Text>
+
+                                <Controller
+                                    control={control}
+                                    name='distributorAddress'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Textarea
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorAddress && "border-red-500"}`}
+                                            placeholder='Enter your full address'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+
+                                {errors.distributorAddress && <Text className='text-red-500 font-medium'>{errors.distributorAddress.message}</Text>}
+                            </View>
+                        )}
                     </View>
 
                     <View className='my-6'>
@@ -617,7 +430,6 @@ const SignUpScreen = ({ }: Props) => {
                     </View>
                 </KeyboardAwareScrollView>
             </View>
-
             <KeyboardToolbar />
         </>
     )

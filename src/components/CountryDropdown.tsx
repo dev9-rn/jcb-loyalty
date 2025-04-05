@@ -1,4 +1,4 @@
-import { FlatList, Platform, TextInput, View } from 'react-native'
+import { Platform, View } from 'react-native'
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -10,7 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import { Input } from './ui/input';
 
 type Props = {
@@ -21,7 +21,6 @@ type Props = {
 }
 
 const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userDefaultCountryId }: Props) => {
-
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [userDefaultValue, setUserDefaultValue] = useState<ILocationData | undefined>(undefined)
 
@@ -30,7 +29,7 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
     useEffect(() => {
         const userDefaultCountry = countryList.find((country) => country.id === userDefaultCountryId);
         setUserDefaultValue(userDefaultCountry);
-    }, []);
+    }, [userDefaultCountryId, countryList]);
 
     const contentInsets = {
         top: insets.top,
@@ -41,25 +40,35 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
 
     const filteredOptions = useMemo(() => {
         if (!searchQuery) return countryList;
+
         return countryList.filter((country) =>
             country.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [searchQuery, countryList]);
 
-    // Prevent unnecessary re-renders by memoizing input handler
     const handleSearchChange = useCallback((text: string) => {
         setSearchQuery(text);
     }, []);
 
+    const handleValueChange = useCallback((value: string) => {
+        const selectedCountry = countryList.find(country => country.id === value);
+        if (selectedCountry) {
+            onValueChange({ id: selectedCountry.id, name: selectedCountry.name });
+            if (setSelectedCountry) {
+                setSelectedCountry(selectedCountry);
+            }
+        }
+    }, [countryList, onValueChange, setSelectedCountry]);
+
+    const renderItem = useCallback(({ item }: { item: any, index: number }) => (
+        <SelectItem key={item.id} value={item.id} label={item.name}>
+            {item.name}
+        </SelectItem>
+    ), []);
+
     return (
-        <Select
-            onValueChange={(id) => {
-                onValueChange(id?.value);
-                setSelectedCountry({ id: id?.value, name: id?.label })
-            }}
-            defaultValue={{ value: "101", label: "India" }}
-        >
-            <SelectTrigger className=''>
+        <Select onValueChange={handleValueChange}>
+            <SelectTrigger>
                 <SelectValue
                     className='text-foreground text-sm native:text-lg'
                     placeholder='Select a country'
@@ -70,30 +79,26 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
                 insets={contentInsets}
                 className='w-full bg-white'
             >
-                <View>
+                <View style={{ paddingBottom: 8 }}>
                     <Input
                         placeholder='Search by Country'
                         value={searchQuery}
                         onChangeText={handleSearchChange}
                     />
                 </View>
-                <ScrollView className='max-h-48'>
-                    <SelectGroup>
-                        <SelectLabel>Countries</SelectLabel>
-                        <FlatList
-                            scrollEnabled={false}
-                            data={filteredOptions}
-                            renderItem={({ item, index }) => (
-                                <SelectItem label={item.name} value={item.id} key={index}>
-                                    {item.name}
-                                </SelectItem>
-                            )}
-                        />
-                    </SelectGroup>
-                </ScrollView>
+                <View style={{ maxHeight: 300 }}>
+                    <FlatList
+                        data={filteredOptions}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.id}
+                        initialNumToRender={10}
+                        maxToRenderPerBatch={5}
+                        windowSize={5}
+                    />
+                </View>
             </SelectContent>
         </Select>
-    )
-}
+    );
+};
 
-export default CountryDropdown
+export default CountryDropdown;

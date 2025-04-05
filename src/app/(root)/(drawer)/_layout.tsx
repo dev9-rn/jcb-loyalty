@@ -29,7 +29,7 @@ const DrawerLayout = ({ }: Props) => {
                 drawerActiveBackgroundColor: "#144799",
                 drawerItemStyle: {
                     borderRadius: 8,
-                    display: ["cash-batch", "report", "report-history"].includes(route.name) && userDetails?.userType != 0 ? "none" : "flex"
+                    display: ["cash-batch", "report", "report-history"].includes(route.name) && (userDetails?.userType != 0) ? "none" : "flex"
                 }
             })}
             drawerContent={(props) => <CustomDrawerContent {...props} />}

@@ -2,6 +2,7 @@ import axios from "axios";
 import { storage, tokenStorage, tokenStorageService } from "./storageService";
 import { STORAGE_KEYS } from "@/libs/constants";
 import { router } from "expo-router";
+import { Toast } from "react-native-toast-notifications";
 
 export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 export const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
@@ -32,6 +33,9 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 403 && (!error.config?.url?.includes("/login") && !error.config?.url?.includes("/verifyOtp"))) {
+            Toast.show(error.response.data.message, {
+                data: error.response
+            });
             tokenStorage.clearAll();
             storage.clearAll();
             router.replace("/(auth)")

@@ -28,6 +28,7 @@ import axios from 'axios'
 import CountryDropdown from '@/components/CountryDropdown'
 import StateDropdown from '@/components/StateDropdown'
 import CitiesDropdown from '@/components/CitiesDropdown'
+import { getProfileEndpoint } from '@/libs/utils'
 
 type Props = {}
 
@@ -91,7 +92,7 @@ export const dealerFormSchema = z.object({
 
 const ProfileScreen = ({ }: Props) => {
 
-    const { userDetails } = useUser();
+    const { userDetails, fetchUserProfileDetails } = useUser();
 
     const [profileDetails, setProfileDetails] = useState<IDistributorProfileDetails & IMechanicDetails | undefined>(undefined);
     const [userBrand, setUserBrand] = useState();
@@ -174,7 +175,6 @@ const ProfileScreen = ({ }: Props) => {
         updateProfileFormData.append('panNo', formData.dealerPanNumber);
         updateProfileFormData.append('gstNo', formData.dealerGstNumber);
 
-        console.log(updateProfileFormData, "FORM_DATA");
         try {
             const response = await axiosInstance.post(getUpdateProfileEnpoint().endpoint, updateProfileFormData);
 
@@ -185,40 +185,24 @@ const ProfileScreen = ({ }: Props) => {
 
             toast.show(response.data.message, {
                 data: response
-            })
+            });
+            fetchUserProfileDetails();
         } catch (error) {
-            console.log(error, "SOEMTHING_WENT_WRONG");
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            }
         };
     }
-
-    const getProfileEndpoint = () => {
-        if (userDetails?.userType === 0) {
-            return {
-                endpoint: GET_DISTRIBUTOR_PROFILE,
-                user_id: "distributorId"
-            };
-        };
-
-        if (userDetails?.userType === 1) {
-            return {
-                endpoint: GET_MECHANIC_PROFILE,
-                user_id: "mechanicId"
-            };
-        };
-
-        return {
-            endpoint: GET_RETAILER_PROFILE,
-            user_id: "dealerId"
-        }
-    };
 
     const fetchUserProfile = async () => {
 
         const profileFormData = new FormData();
-        profileFormData.append(getProfileEndpoint().user_id, userDetails.id);
+        profileFormData.append(getProfileEndpoint(userDetails).user_id, userDetails.id);
 
         try {
-            const response = await axiosInstance.post(getProfileEndpoint().endpoint, profileFormData);
+            const response = await axiosInstance.post(getProfileEndpoint(userDetails).endpoint, profileFormData);
 
             if (response.data.status != 200) {
                 toast.show(response.data.message, {
@@ -242,6 +226,7 @@ const ProfileScreen = ({ }: Props) => {
                 dealerCityId: response.data.data.state_id,
                 dealerStateId: response.data.data.city_id
             });
+            return response.data.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 toast.show(error.response?.data.message, {
