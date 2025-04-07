@@ -26,11 +26,18 @@ const DrawerLayout = ({ }: Props) => {
             screenOptions={({ route }) => ({
                 headerTitleAlign: "center",
                 drawerActiveTintColor: "#FFF",
-                drawerActiveBackgroundColor: "#144799",
+                drawerActiveBackgroundColor: userDetails?.userType === 0 ? "#144799" : '#f0a028',
+                headerStyle: {
+                    backgroundColor: userDetails?.userType === 0 ? "#144799" : '#f0a028',
+                },
+                headerTintColor: "#FFF",
+                headerTitleStyle: {
+                    color: "#FFF"
+                },
                 drawerItemStyle: {
                     borderRadius: 8,
                     display: ["cash-batch", "report", "report-history"].includes(route.name) && (userDetails?.userType != 0) ? "none" : "flex"
-                }
+                },
             })}
             drawerContent={(props) => <CustomDrawerContent {...props} />}
         >

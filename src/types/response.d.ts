@@ -49,6 +49,24 @@ interface IMechanicDetails {
     updated_date: string | null;
     accesstoken: string;
     userType: number;
+};
+
+interface IRetailerDetails {
+    id: string;
+    distributor_code: string;
+    shop_name: string;
+    dealer_name: string;
+    mobile_no: string;
+    address: string;
+    state_id: string;
+    city_id: string;
+    pincode: string;
+    is_verified: string;
+    is_approved: string;
+    is_active: string;
+    created: string; // ISO Date string
+    updated: string; // ISO Date string
+    userType: number;
 }
 
 interface IDashboardData {

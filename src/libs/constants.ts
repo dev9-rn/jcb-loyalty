@@ -20,4 +20,5 @@ export const NAV_THEME = {
 export const STORAGE_KEYS = {
     AUTH_TOKEN: "authToken",
     LOCAL_USER: "user",
+    THEME_COLOR: "userTheme",
 }

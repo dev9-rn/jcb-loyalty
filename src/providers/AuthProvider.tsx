@@ -8,6 +8,7 @@ import { storage, storageService, tokenStorage, tokenStorageService } from '@/ut
 import { STORAGE_KEYS } from '@/libs/constants'
 import useUser from '@/hooks/useUser'
 import { useToast } from 'react-native-toast-notifications'
+import { useColorScheme } from '@/hooks/useColorScheme'
 
 type Props = {
     children: React.ReactNode
@@ -15,10 +16,12 @@ type Props = {
 
 const AuthProvider = ({ children }: Props) => {
 
-    const { setUserDetails, userFirebaseToken, setLocalUserDetails, localUserDetails } = useUser()
+    const { setUserDetails, userFirebaseToken, setLocalUserDetails, localUserDetails, userDetails } = useUser()
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [userAuthToken, setUserAuthToken] = useState<string>("");
+
+    const { isDarkColorScheme, setColorScheme, colorScheme } = useColorScheme();
 
     const router = useRouter();
     const toast = useToast();
@@ -30,12 +33,14 @@ const AuthProvider = ({ children }: Props) => {
     const getLocalUser = () => {
         const localUserDetails = storageService.getItem(STORAGE_KEYS.LOCAL_USER);
         const localAuthToken = tokenStorageService.getAuthToken(STORAGE_KEYS.AUTH_TOKEN);
+        const localUserColorScheme = storageService.getItem(STORAGE_KEYS.THEME_COLOR);
 
         if (!localUserDetails || !localAuthToken) return;
 
         setLocalUserDetails(JSON.parse(localUserDetails));
         setUserDetails(JSON.parse(localUserDetails))
         setUserAuthToken(localAuthToken);
+        setColorScheme(localUserColorScheme as "light" | "dark" | "system");
         setIsAuthenticated(true);
         router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
     }
@@ -77,6 +82,7 @@ const AuthProvider = ({ children }: Props) => {
 
             // Set user details to local storage to maintain the seesion
             storageService.setItem(STORAGE_KEYS.LOCAL_USER, JSON.stringify(response.data?.data));
+            storageService.setItem(STORAGE_KEYS.THEME_COLOR, colorScheme);
             tokenStorageService.setAuthToken(STORAGE_KEYS.AUTH_TOKEN, response.data?.data?.accesstoken || response.headers.accesstoken);
 
             setIsAuthenticated(true);
@@ -84,15 +90,15 @@ const AuthProvider = ({ children }: Props) => {
         } catch (error) {
             return error
         }
-    }
+    };
 
     // ✅ Logout function (Redirect to Auth Screen)
     const logout = async () => {
         const logoutFormData = new FormData();
 
-        logoutFormData.append("distributorId", localUserDetails?.id);
+        logoutFormData.append(userDetails?.userType === 0 ? "distributorId" : userDetails?.userType === 1 ? "mechanicId" : "dealerId", userDetails?.id);
         logoutFormData.append("deviceToken", userFirebaseToken);
-        logoutFormData.append("userType", localUserDetails?.userType);
+        logoutFormData.append("userType", userDetails?.userType);
 
         try {
             const response = await axiosInstance.post(USER_LOGOUT, logoutFormData);

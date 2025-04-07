@@ -10,6 +10,7 @@ import UserProvider from "@/providers/UserProvider";
 import ToastNotification from "@/components/ToastNotification";
 
 import "./globals.css"
+import { StatusBar } from "react-native";
 
 if (__DEV__) {
   require("../../ReactotronConfig");

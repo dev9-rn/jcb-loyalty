@@ -33,6 +33,6 @@ export const REGISTER_RETAILER = "/api/registerDealer"
 export const RETAILER_LOGIN = "/api/loginDealer";
 export const VERIFY_RETAILER = "/api/verifyOtpDealer";
 export const GET_RETAILER_DASHBOARD = "/api/getDashboardDealer"
-export const GET_RETAILER_PROFILE = "/api/getDealerProfile";
+export const GET_RETAILER_PROFILE = "/api/getProfileDealer";
 export const UPDATE_RETAILER_PROFILE = "/api/updateProfileDealer";
 export const GET_RETAILER_COUPON_HISTORY = "/api/getScannedHistory";

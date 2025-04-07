@@ -8,6 +8,8 @@ import { GET_REPORTED_COUPON_HISTORY } from '@/utils/routes';
 import useUser from '@/hooks/useUser';
 import { Separator } from '@/components/ui/separator';
 import { useFocusEffect } from 'expo-router';
+import axios from 'axios';
+import { useToast } from 'react-native-toast-notifications';
 
 type Props = {}
 
@@ -16,6 +18,8 @@ const ReportHistory = ({ }: Props) => {
     const { userDetails } = useUser();
 
     const [reportedCouponHistoryData, setReportedCouponHistoryData] = useState<IReportedCouponsHistory | undefined>(undefined);
+
+    const toast = useToast();
 
     // Mananging user's date selection
     const [selectedFromDate, setSelectedFromDate] = useState(new Date());
@@ -78,7 +82,12 @@ const ReportHistory = ({ }: Props) => {
             setReportedCouponHistoryData(response.data);
 
         } catch (error) {
-            console.log(error, "SOMETHIGN_WENT_WRONH_REPORT_HISTORY");
+            setReportedCouponHistoryData(undefined);
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            }
         }
     };
 
@@ -130,6 +139,14 @@ const ReportHistory = ({ }: Props) => {
                 data={reportedCouponHistoryData?.reportedCouponHistory}
                 renderItem={renderItem}
                 ItemSeparatorComponent={() => <Separator className='my-4' />}
+                ListEmptyComponent={() => (
+                    <View className='flex-1 items-center justify-center'>
+                        <Text className='text-xl font-medium'>
+                            No Data found.
+                            Try another date range.
+                        </Text>
+                    </View>
+                )}
             />
         </View>
     )

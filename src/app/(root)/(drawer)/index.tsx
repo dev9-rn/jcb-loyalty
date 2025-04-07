@@ -16,6 +16,7 @@ import { router, useFocusEffect, useNavigation } from 'expo-router';
 import useUser from '@/hooks/useUser';
 import axiosInstance from '@/utils/axiosInstance';
 import { GET_DASHBOARD_DATA, GET_MECHANIC_DASHBOARD, GET_RETAILER_DASHBOARD } from '@/utils/routes';
+import { StatusBar } from 'react-native';
 
 type Props = {}
 
@@ -80,6 +81,7 @@ const HomeScreen = ({ }: Props) => {
 
 	return (
 		<View className='p-4 flex-1 bg-white'>
+			<StatusBar className='bg-primary' />
 			<View className='gap-8'>
 				<View className="flex-row flex-wrap justify-between gap-2 xs:gap-3">
 					<Card className="w-[48%]">

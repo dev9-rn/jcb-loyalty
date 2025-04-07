@@ -12,15 +12,17 @@ import {
 } from '@/components/ui/select';
 import { FlatList } from 'react-native-gesture-handler';
 import { Input } from './ui/input';
+import { Option } from '@rn-primitives/select';
 
 type Props = {
     onValueChange: (...event: any[]) => void,
     setSelectedCountry?: Dispatch<SetStateAction<ILocationData | undefined>>
     countryList: ILocationData[]
     userDefaultCountryId?: string | undefined;
+    defaultValue: Option
 }
 
-const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userDefaultCountryId }: Props) => {
+const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userDefaultCountryId, defaultValue }: Props) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [userDefaultValue, setUserDefaultValue] = useState<ILocationData | undefined>(undefined)
 
@@ -50,24 +52,26 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
         setSearchQuery(text);
     }, []);
 
-    const handleValueChange = useCallback((value: string) => {
-        const selectedCountry = countryList.find(country => country.id === value);
+    const handleValueChange = useCallback((option: Option) => {
+        const selectedCountry = countryList.find(country => country.id === option?.value);
         if (selectedCountry) {
-            onValueChange({ id: selectedCountry.id, name: selectedCountry.name });
+            onValueChange({ id: option?.value, name: option?.label });
             if (setSelectedCountry) {
                 setSelectedCountry(selectedCountry);
             }
         }
     }, [countryList, onValueChange, setSelectedCountry]);
 
-    const renderItem = useCallback(({ item }: { item: any, index: number }) => (
+    const renderItem = useCallback(({ item }: { item: ILocationData, index: number }) => (
         <SelectItem key={item.id} value={item.id} label={item.name}>
             {item.name}
         </SelectItem>
     ), []);
 
+    console.log(defaultValue, "DEF_VAL");
+
     return (
-        <Select onValueChange={handleValueChange}>
+        <Select onValueChange={handleValueChange} defaultValue={defaultValue}>
             <SelectTrigger>
                 <SelectValue
                     className='text-foreground text-sm native:text-lg'

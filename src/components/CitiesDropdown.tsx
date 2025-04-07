@@ -1,5 +1,5 @@
 import { FlatList, Platform, TextInput, View } from 'react-native'
-import React, { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
     Select,
@@ -13,10 +13,11 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import { Input } from './ui/input';
 import { Text } from './ui/text';
+import { Option } from '@rn-primitives/select';
 
 type Props = {
     onValueChange: (...event: any[]) => void,
-    setSelectedCity: Dispatch<SetStateAction<ILocationData | undefined>>;
+    setSelectedCity?: Dispatch<SetStateAction<ILocationData | undefined>>;
     citiesList: ILocationData[]
 }
 
@@ -32,6 +33,22 @@ const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange }: Props) =
         right: 12,
     };
 
+    const handleValueChange = useCallback((option: Option) => {
+        const selectedCountry = citiesList.find(city => city.id === option?.value);
+        if (selectedCountry) {
+            onValueChange({ id: option?.value, name: option?.label });
+            if (setSelectedCity) {
+                setSelectedCity(selectedCountry);
+            }
+        }
+    }, [citiesList, onValueChange, setSelectedCity]);
+
+    const renderItem = useCallback(({ item }: { item: ILocationData, index: number }) => (
+        <SelectItem key={item.id} value={item.id} label={item.name}>
+            {item.name}
+        </SelectItem>
+    ), []);
+
     const filteredOptions = useMemo(() => {
         return citiesList.filter((city) =>
             city.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,10 +57,7 @@ const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange }: Props) =
 
     return (
         <Select
-            onValueChange={(id) => {
-                onValueChange(id?.value)
-                setSelectedCity(id)
-            }}
+            onValueChange={handleValueChange}
         >
             <SelectTrigger className=''>
                 <SelectValue
@@ -69,11 +83,7 @@ const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange }: Props) =
                         <FlatList
                             scrollEnabled={false}
                             data={filteredOptions}
-                            renderItem={({ item, index }) => (
-                                <SelectItem label={item.name} value={item.id} key={index}>
-                                    {item.name}
-                                </SelectItem>
-                            )}
+                            renderItem={renderItem}
                             ListEmptyComponent={() => (
                                 <View>
                                     <Text>Please select a country first</Text>

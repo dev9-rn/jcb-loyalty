@@ -92,6 +92,7 @@ const CashBatchScreen = ({ }: Props) => {
             setCashBatchReportData(response.data.batchesData)
         } catch (error) {
             if (axios.isAxiosError(error)) {
+                setCashBatchReportData(undefined)
                 toast.show(error.response?.data.message, {
                     data: error.response
                 });
@@ -147,6 +148,14 @@ const CashBatchScreen = ({ }: Props) => {
                 data={cashBatchReportData}
                 renderItem={renderItem}
                 ItemSeparatorComponent={() => <Separator />}
+                ListEmptyComponent={() => (
+                    <View className='flex-1 items-center justify-center'>
+                        <Text className='text-xl font-medium'>
+                            No Data found.
+                            Try another date range.
+                        </Text>
+                    </View>
+                )}
             />
         </View>
     )

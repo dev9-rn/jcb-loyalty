@@ -22,12 +22,6 @@ import axios from 'axios'
 
 type Props = {}
 
-const userTypeMap: Record<number, "distributor" | "mechanic" | "retailer"> = {
-    0: "distributor",
-    1: "mechanic",
-    2: "retailer",
-};
-
 const SignUpScreen = ({ }: Props) => {
 
     const [countryList, setCountryList] = useState<ILocationData[]>([]);

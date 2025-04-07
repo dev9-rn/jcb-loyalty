@@ -11,7 +11,7 @@ interface IAuthContext {
 interface IUserContext {
     userFirebaseToken: string | null;
     setUserFirebaseToken: Dispatch<SetStateAction<string | null>>
-    userDetails: IUserDetails & IMechanicDetails | undefined;
+    userDetails: IUserDetails & IMechanicDetails & IRetailerDetails | undefined;
     setUserDetails: Dispatch<SetStateAction<IUserDetails & IMechanicDetails | undefined>>
     localUserDetails: IUserDetails & IMechanicDetails | undefined;
     setLocalUserDetails: Dispatch<SetStateAction<IUserDetails & IMechanicDetails | undefined>>

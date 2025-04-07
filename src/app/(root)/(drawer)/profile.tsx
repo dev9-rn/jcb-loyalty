@@ -1,141 +1,151 @@
 import { View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Input } from '@/components/ui/input'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
-import { Textarea } from '@/components/ui/textarea'
-import axiosInstance from '@/utils/axiosInstance'
 import useUser from '@/hooks/useUser'
-import { z } from "zod";
-
-import {
-    GET_BRANDS_BY_IDS,
-    GET_CITIES_LIST,
-    GET_COUNTRY_LIST,
-    GET_DISTRIBUTOR_PROFILE,
-    GET_MECHANIC_PROFILE,
-    GET_RETAILER_PROFILE,
-    GET_STATE_LIST,
-    UPDATE_DISTRIBUTOR_PROFILE,
-    UPDATE_MECHANIC_PROFILE,
-    UPDATE_RETAILER_PROFILE
-} from '@/utils/routes'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { zodResolver } from "@hookform/resolvers/zod"
+import { signUpForm } from '@/libs/schemas/profileUpdateFromSchemas'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
+import { Input } from '@/components/ui/input'
+import CountryDropdown from '@/components/CountryDropdown'
+import { Textarea } from '@/components/ui/textarea'
+import axiosInstance from '@/utils/axiosInstance'
+import { GET_BRANDS_BY_IDS, GET_CITIES_LIST, GET_COUNTRY_LIST, GET_STATE_LIST, UPDATE_DISTRIBUTOR_PROFILE, UPDATE_MECHANIC_PROFILE, UPDATE_RETAILER_PROFILE } from '@/utils/routes'
 import { useToast } from 'react-native-toast-notifications'
 import axios from 'axios'
-import CountryDropdown from '@/components/CountryDropdown'
 import StateDropdown from '@/components/StateDropdown'
 import CitiesDropdown from '@/components/CitiesDropdown'
 import { getProfileEndpoint } from '@/libs/utils'
 
 type Props = {}
 
-// 0 = des, 1 = mech, 2 = delearde
-
-export const dealerFormSchema = z.object({
-    dealerName: z.string({
-        required_error: "Please enter your full name",
-    }).nonempty({
-        message: "Please enter your full name"
-    }).refine((value) => /^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/.test(value ?? ""), {
-        message: "Name should only contain letters"
-    }),
-    dealerPhoneNumber: z.string({
-        required_error: "Please enter your phone number"
-    }).nonempty().refine((value) => /^[0-9]{10}$/.test(value), {
-        message: "Enter a valid 10-digit phone number"
-    }),
-    dealerEmail: z.string({
-        required_error: "Please enter your Email Address",
-    }).nonempty({
-        message: "Please enter your email address"
-    }).email({
-        message: "Please enter a valid e-mail address"
-    }),
-    dealerCompanyName: z.string({
-        required_error: "Please enter your company's name",
-    }),
-    dealerPanNumber: z.string()
-        .optional()
-        .refine((value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value), {
-            message: "Please enter a valid PAN Number"
-        }),
-    dealerGstNumber: z.string({
-        required_error: "Please enter your GST Number"
-    }),
-    dealerBrand: z.string({
-        required_error: "Please select your brand"
-    }).nonempty(),
-    dealerStreet: z.string({
-        required_error: "Please enter your street address"
-    }).nonempty(),
-    dealerPincode: z.string({
-        required_error: "Please enter your pincode"
-    }).nonempty().refine((value) => /^[0-9]{6}$/.test(value), {
-        message: "Please enter a valid 6-digit pincode"
-    }),
-    dealerAddress: z.string({
-        required_error: "Please enter your full address"
-    }).nonempty(),
-    dealerCountryId: z.string({
-        required_error: "Please select your country",
-    }).nonempty(),
-    dealerStateId: z.string({
-        required_error: "Please select your state",
-    }).nonempty(),
-    dealerCityId: z.string({
-        required_error: "Please select your city",
-    }).nonempty(),
-})
+const userTypeMap: Record<number, "distributor" | "mechanic" | "retailer"> = {
+    0: "distributor",
+    1: "mechanic",
+    2: "retailer",
+};
 
 const ProfileScreen = ({ }: Props) => {
 
-    const { userDetails, fetchUserProfileDetails } = useUser();
-
-    const [profileDetails, setProfileDetails] = useState<IDistributorProfileDetails & IMechanicDetails | undefined>(undefined);
-    const [userBrand, setUserBrand] = useState();
+    const [profileDetails, setProfileDetails] = useState<IDistributorProfileDetails & IMechanicDetails & IRetailerDetails | undefined>(undefined);
     const [countryList, setCountryList] = useState<ILocationData[]>([]);
-    const [selectedCountry, setSelectedCountry] = useState<ILocationData | undefined>(undefined);
     const [stateList, setStateList] = useState<ILocationData[]>([]);
-    const [selectedState, setSelectedState] = useState<ILocationData | undefined>(undefined);
     const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
-    const [selectedCity, setSelectedCity] = useState<ILocationData | undefined>(undefined);
+
+    const { userDetails, fetchUserProfileDetails } = useUser();
 
     const toast = useToast();
 
     useEffect(() => {
-        fetchUserProfile();
         fetchCountryList();
+        fetchUserProfile();
+        // fetchBrands();
     }, []);
 
-    useEffect(() => {
-        if (!selectedCountry) return;
-
-        fetchStateList();
-    }, [selectedCountry]);
-
-    useEffect(() => {
-        if (!selectedState) return;
-
-        fetchCitiesList();
-    }, [selectedState]);
-
-    const { control, handleSubmit, reset, setValue, formState: { errors, isDirty } } = useForm<z.infer<typeof dealerFormSchema>>({
-        resolver: zodResolver(dealerFormSchema),
+    const { control, handleSubmit, reset, getValues, formState: { errors, isDirty } } = useForm<z.infer<typeof signUpForm>>({
+        resolver: zodResolver(signUpForm),
         defaultValues: {
-            dealerName: profileDetails?.name || profileDetails?.full_name,
-            dealerCompanyName: profileDetails?.company_name || profileDetails?.shop_name,
-            dealerEmail: profileDetails?.email,
-            dealerPhoneNumber: profileDetails?.mobile || profileDetails?.mobile_no,
-            dealerGstNumber: profileDetails?.gst_no,
-            dealerPanNumber: profileDetails?.pan_no,
-            dealerAddress: profileDetails?.address,
-            dealerPincode: profileDetails?.pincode || profileDetails?.pin_code,
-            dealerStreet: profileDetails?.street,
+            userType: userTypeMap[userDetails?.userType || 0],
+            userName: "",
+            userPincode: "",
+            distributorEmail: "",
+            distributorCompanyName: "",
+            retailerShopName: "",
+            mechanicPanNumber: "",
+            distributorPanNumber: "",
+            distributorGstNumber: "",
+            distributorBrand: {
+                id: "",
+                name: ""
+            },
+            distributorAddress: "",
+            userCity: {
+                id: "",
+                name: " "
+            },
+            userCountry: {
+                id: "",
+                name: ""
+            },
+            userPhoneNumber: "",
+            userState: {
+                id: "",
+                name: ""
+            },
         }
     });
+
+    useEffect(() => {
+        if (!getValues().userCountry.id && !userDetails?.country_id) return;
+
+        fetchStateList();
+    }, [getValues().userCountry.id]);
+
+    useEffect(() => {
+        if (!getValues().userState.id && !userDetails?.state_id) return;
+
+        fetchCitiesList();
+    }, [getValues().userState.id]);
+
+    // Get the list of the COUNTRIES for dropdown
+    const fetchCountryList = async () => {
+        try {
+            const response = await axiosInstance.post(GET_COUNTRY_LIST);
+
+            if (response.data.status != 200) {
+                toast.show(response.data.message, {
+                    data: response
+                })
+            };
+            setCountryList(response.data.countries)
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            };
+        };
+    };
+
+    // Get the list of the STATES for dropdown
+    const fetchStateList = async () => {
+
+        const stateListFormData = new FormData();
+        stateListFormData.append("countryId", getValues().userCountry.id || userDetails?.country_id)
+
+        try {
+            const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
+
+            if (response.data.status != 200) {
+                console.log(response.data.message)
+            };
+
+            setStateList(response.data.states);
+        } catch (error) {
+            console.log(error)
+        };
+    };
+
+    // Get the list of the CITIES for dropdown
+    const fetchCitiesList = async () => {
+
+        const citiesFormData = new FormData();
+        citiesFormData.append("stateId", getValues().userState.id || userDetails?.state_id)
+
+        try {
+            const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
+
+            if (response.data.success != 200) {
+                console.log(response.data.message);
+            };
+
+            setCitiesList(response.data.cities);
+        } catch (error) {
+
+        };
+    };
 
     const getUpdateProfileEnpoint = () => {
         if (userDetails?.userType === 0) {
@@ -158,22 +168,86 @@ const ProfileScreen = ({ }: Props) => {
         };
     };
 
-    const handleProfileSubmit: SubmitHandler<z.infer<typeof dealerFormSchema>> = async (formData) => {
+    const fetchUserProfile = async () => {
+
+        const profileFormData = new FormData();
+        profileFormData.append(getProfileEndpoint(userDetails).user_id, userDetails?.id);
+
+        try {
+            const response = await axiosInstance.post(getProfileEndpoint(userDetails).endpoint, profileFormData);
+            const brandResponse = await axiosInstance.post(GET_BRANDS_BY_IDS);
+
+            if (response.data.status != 200) {
+                toast.show(response.data.message, {
+                    data: { response }
+                })
+            };
+
+            const currentUserBrand = brandResponse.data.brands.find((brand) => brand.id === userDetails?.brand_id);
+            const matchedCountry = countryList.find(
+                (country) => country.id === response.data.data.country_id
+            );
+
+            const matchedState = stateList.find(
+                (state) => state.id === response.data.data.state_id
+            );
+
+            const matchedCity = citiesList.find(
+                (city) => city.id === response.data.data.city_id
+            );
+
+            setProfileDetails(response.data.data);
+            reset({
+                userType: userTypeMap[userDetails?.userType || 0],
+                userName: response.data.data.name || response.data.data.dealer_name,
+                distributorAddress: response.data.data.address,
+                userPhoneNumber: response.data.data.mobile || response.data.data.mobile_no,
+                distributorBrand: currentUserBrand,
+                distributorCompanyName: response.data.data.company_name,
+                retailerShopName: response.data.data.shop_name,
+                distributorEmail: response.data.data.email,
+                distributorGstNumber: response.data.data.gst_no,
+                mechanicPanNumber: response.data.data.pan_no,
+                distributorPanNumber: response.data.data.pan_no,
+                distributorStreetAddress: response.data.data.street,
+                userPincode: response.data.data.pincode || response.data.data.pin_code,
+                userCountry: matchedCountry || { id: "", name: "" },
+                userState: matchedState || { id: "", name: "" },
+                userCity: matchedCity || { id: "", name: "" }
+            });
+            return response.data.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+                return;
+            }
+            console.log(error, "SOMETHING_WENT_WRONG_PROFILE");
+        };
+    };
+
+    const handleProfileSubmit: SubmitHandler<z.infer<typeof signUpForm>> = async (formData) => {
+
         const updateProfileFormData = new FormData();
+
         updateProfileFormData.append(getUpdateProfileEnpoint().user_id, userDetails?.id)
-        updateProfileFormData.append('name', formData.dealerName);
-        updateProfileFormData.append('mobileNo', formData.dealerPhoneNumber);
-        updateProfileFormData.append('emailId', formData.dealerEmail);
-        updateProfileFormData.append('address', formData.dealerAddress);
-        updateProfileFormData.append('street', formData.dealerStreet);
-        updateProfileFormData.append('pinCode', formData.dealerPincode);
-        updateProfileFormData.append('brandId', userDetails?.brand_id);
-        updateProfileFormData.append('countryId', formData.dealerCountryId);
-        updateProfileFormData.append('stateId', formData.dealerStateId);
-        updateProfileFormData.append('cityId', formData.dealerCityId);
-        updateProfileFormData.append('companyName', formData.dealerCompanyName);
-        updateProfileFormData.append('panNo', formData.dealerPanNumber);
-        updateProfileFormData.append('gstNo', formData.dealerGstNumber);
+        updateProfileFormData.append('name', formData.userName);
+        updateProfileFormData.append('mobileNo', formData.userPhoneNumber);
+        updateProfileFormData.append('pinCode', formData.userPincode);
+        updateProfileFormData.append('countryId', formData.userCountry.id);
+        updateProfileFormData.append('stateId', formData.userState.id);
+        updateProfileFormData.append('cityId', formData.userCity.id);
+
+        if (userDetails?.userType === 0) {
+            updateProfileFormData.append('companyName', formData.distributorCompanyName);
+            updateProfileFormData.append('panNo', formData.distributorPanNumber);
+            updateProfileFormData.append('gstNo', formData.distributorGstNumber);
+            updateProfileFormData.append('emailId', formData.distributorEmail);
+            updateProfileFormData.append('address', formData.distributorAddress);
+            updateProfileFormData.append('street', formData.distributorStreetAddress);
+            updateProfileFormData.append('brandId', userDetails.brand_id);
+        }
 
         try {
             const response = await axiosInstance.post(getUpdateProfileEnpoint().endpoint, updateProfileFormData);
@@ -194,124 +268,11 @@ const ProfileScreen = ({ }: Props) => {
                 });
             }
         };
-    }
-
-    const fetchUserProfile = async () => {
-
-        const profileFormData = new FormData();
-        profileFormData.append(getProfileEndpoint(userDetails).user_id, userDetails.id);
-
-        try {
-            const response = await axiosInstance.post(getProfileEndpoint(userDetails).endpoint, profileFormData);
-
-            if (response.data.status != 200) {
-                toast.show(response.data.message, {
-                    data: { response }
-                })
-            };
-
-            setProfileDetails(response.data.data);
-            fetchBrandById();
-            reset({
-                dealerName: response.data.data.name || response.data.data.full_name,
-                dealerCompanyName: response.data.data.company_name || response.data.data.shop_name,
-                dealerEmail: response.data.data.email,
-                dealerPhoneNumber: response.data.data.mobile || response.data.data.mobile_no,
-                dealerGstNumber: response.data.data.gst_no,
-                dealerPanNumber: response.data.data.pan_no,
-                dealerAddress: response.data.data.address,
-                dealerPincode: response.data.data.pincode || response.data.data.pin_code,
-                dealerStreet: response.data.data.street,
-                dealerCountryId: response.data.data.country_id,
-                dealerCityId: response.data.data.state_id,
-                dealerStateId: response.data.data.city_id
-            });
-            return response.data.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, {
-                    data: error.response
-                });
-                return;
-            }
-            console.log(error, "SOMETHING_WENT_WRONG_PROFILE");
-        };
-    };
-
-    const fetchCountryList = async () => {
-        try {
-            const response = await axiosInstance.post(GET_COUNTRY_LIST);
-
-            if (response.data.status != 200) {
-                console.log(response.data.message)
-            };
-
-            setCountryList(response.data.countries);
-            const selectedUserCountry = countryList.filter((country) => country.id === profileDetails?.country_id);
-            // setSelectedCountry(selectedUserCountry);
-        } catch (error) {
-            console.log(error, "COUNTRY_GET_ERROR");
-        }
-    };
-
-    const fetchStateList = async () => {
-
-        const stateListFormData = new FormData();
-        stateListFormData.append("countryId", selectedCountry?.id)
-
-        try {
-            const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
-
-            if (response.data.status != 200) {
-                console.log(response.data.message)
-            };
-
-            setStateList(response.data.states);
-        } catch (error) {
-            console.log(error)
-        };
-    };
-
-    const fetchCitiesList = async () => {
-
-        const citiesFormData = new FormData();
-        citiesFormData.append("stateId", selectedState?.id)
-
-        try {
-            const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
-
-            if (response.data.success != 200) {
-                console.log(response.data.message);
-            };
-
-            setCitiesList(response.data.cities);
-
-        } catch (error) {
-
-        };
-    };
-
-    const fetchBrandById = async () => {
-        try {
-            const response = await axiosInstance.post(GET_BRANDS_BY_IDS);
-
-            if (response.data.status != 200) {
-                toast.show(response.data.message);
-                return;
-            };
-
-            const currentUserBrand = response.data.brands.find((brand) => brand.id === profileDetails?.brand_id);
-            const brandName = currentUserBrand ? currentUserBrand.name : "Unknown Brand";
-            setUserBrand(brandName);
-            setValue("dealerBrand", brandName)
-        } catch (error) {
-            console.log(error, "");
-        }
     };
 
     return (
         <>
-            <View className='bg-white flex-1 p-4'>
+            <View className='bg-white p-4 flex-1'>
                 <KeyboardAwareScrollView bottomOffset={100} showsVerticalScrollIndicator={false}>
                     <Text className='text-2xl font-semibold'>
                         {userDetails?.userType === 0 ? "Distributor" : userDetails?.userType === 1 ? "Mechanic" : "Retailer"} Information
@@ -320,14 +281,14 @@ const ProfileScreen = ({ }: Props) => {
 
                     <View className='mt-4 gap-3'>
                         <View className='gap-1'>
-                            <Text>Full Name <Text className='text-red-500'>*</Text></Text>
+                            <Text>Full Name</Text>
 
                             <Controller
                                 control={control}
-                                name='dealerName'
+                                name='userName'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerName && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userName && "border-red-500"}`}
                                         placeholder='Enter full name'
                                         value={value}
                                         onChangeText={onChange}
@@ -335,18 +296,18 @@ const ProfileScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerName && <Text className='text-red-500 font-medium'>{errors.dealerName.message}</Text>}
+                            {errors.userName && <Text className='text-red-500 font-medium'>{errors.userName.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Phone Number <Text className='text-red-500'>*</Text></Text>
+                            <Text>Phone Number</Text>
 
                             <Controller
                                 control={control}
-                                name='dealerPhoneNumber'
+                                name='userPhoneNumber'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerPhoneNumber && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userPhoneNumber && "border-red-500"}`}
                                         placeholder='Enter phone number'
                                         value={value}
                                         onChangeText={onChange}
@@ -355,19 +316,19 @@ const ProfileScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerPhoneNumber && <Text className='text-red-500 font-medium'>{errors.dealerPhoneNumber.message}</Text>}
+                            {errors.userPhoneNumber && <Text className='text-red-500 font-medium'>{errors.userPhoneNumber.message}</Text>}
                         </View>
 
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
-                                <Text>Email Address <Text className='text-red-500'>*</Text></Text>
+                                <Text>Email Address</Text>
 
                                 <Controller
                                     control={control}
-                                    name='dealerEmail'
+                                    name='distributorEmail'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.dealerEmail && "border-red-500"}`}
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorEmail && "border-red-500"}`}
                                             placeholder='Enter email address'
                                             value={value}
                                             onChangeText={onChange}
@@ -375,84 +336,94 @@ const ProfileScreen = ({ }: Props) => {
                                         />
                                     )}
                                 />
-                                {errors.dealerEmail && <Text className='text-red-500 font-medium'>{errors.dealerEmail.message}</Text>}
+                                {errors.distributorEmail && <Text className='text-red-500 font-medium'>{errors.distributorEmail.message}</Text>}
                             </View>
                         )}
 
-                        <View className='gap-1'>
-                            <Text>
-                                {userDetails?.userType === 0
-                                    ? "Company Name"
-                                    : (
-                                        <>
-                                            <Text>
-                                                Shop Name{" "}
-                                                <Text className='text-red-500'>*</Text>
-                                            </Text>
-                                        </>
-                                    )}
-                            </Text>
-
-                            <Controller
-                                control={control}
-                                name='dealerCompanyName'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerCompanyName && "border-red-500"}`}
-                                        placeholder='Enter company name'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    // editable={false}
-                                    />
-                                )}
-                            />
-                        </View>
-
-                        {/* {userDetails?.userType === 1 && (
+                        {userDetails?.userType === 0 ? (
                             <View className='gap-1'>
-                                <Text>Retailer Name <Text className='text-red-500'>*</Text></Text>
+                                <Text>
+                                    Company name
+                                </Text>
 
                                 <Controller
                                     control={control}
-                                    name='dealerEmail'
+                                    name='distributorCompanyName'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.dealerEmail && "border-red-500"}`}
-                                            placeholder='Enter retailer name'
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorCompanyName && "border-red-500"}`}
+                                            placeholder="Enter Company Name"
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        // editable={false}
+                                        />
+                                    )}
+                                />
+                            </View>
+                        ) : (
+                            <View className='gap-1'>
+                                <Text>
+                                    Shop name
+                                </Text>
+
+                                <Controller
+                                    control={control}
+                                    name='retailerShopName'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.retailerShopName && "border-red-500"}`}
+                                            placeholder="Enter Shop Name"
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        // editable={false}
+                                        />
+                                    )}
+                                />
+                                {errors.retailerShopName && <Text className='text-red-500 font-medium'>{errors.retailerShopName.message}</Text>}
+                            </View>
+                        )}
+
+                        {userDetails?.userType === 0 ? (
+                            <View className='gap-1'>
+                                <Text>PAN Number</Text>
+
+                                <Controller
+                                    control={control}
+                                    name='distributorPanNumber'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorPanNumber && "border-red-500"}`}
+                                            placeholder='Ex. AXNP7853G'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
                                         />
                                     )}
                                 />
-                                {errors.dealerEmail && <Text className='text-red-500 font-medium'>{errors.dealerEmail.message}</Text>}
+                                {errors.distributorPanNumber && <Text className='text-red-500 font-medium'>{errors.distributorPanNumber.message}</Text>}
                             </View>
-                        )} */}
+                        ) : (
+                            <View className='gap-1'>
+                                <Text>PAN Number</Text>
 
-                        <View className='gap-1'>
-                            <Text>
-                                PAN Number{" "}
-                                {userDetails?.userType !== 0 && (
-                                    <Text className='text-red-500'>*</Text>
-                                )}
-                            </Text>
-
-                            <Controller
-                                control={control}
-                                name='dealerPanNumber'
-                                render={({ field: { onBlur, onChange, value } }) => (
-                                    <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerPanNumber && "border-red-500"}`}
-                                        placeholder='Ex. AXNP7853G'
-                                        value={value}
-                                        onChangeText={onChange}
-                                        onBlur={onBlur}
-                                    />
-                                )}
-                            />
-                            {errors.dealerPanNumber && <Text className='text-red-500 font-medium'>{errors.dealerPanNumber.message}</Text>}
-                        </View>
+                                <Controller
+                                    control={control}
+                                    name='mechanicPanNumber'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.mechanicPanNumber && "border-red-500"}`}
+                                            placeholder='Ex. AXNP7853G'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+                                {errors.mechanicPanNumber && <Text className='text-red-500 font-medium'>{errors.mechanicPanNumber.message}</Text>}
+                            </View>
+                        )}
 
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
@@ -460,11 +431,11 @@ const ProfileScreen = ({ }: Props) => {
 
                                 <Controller
                                     control={control}
-                                    name='dealerGstNumber'
+                                    name='distributorGstNumber'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.dealerGstNumber && "border-red-500"}`}
-                                            placeholder='Enter company name'
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorGstNumber && "border-red-500"}`}
+                                            placeholder='Enter GSTIN number'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -472,7 +443,7 @@ const ProfileScreen = ({ }: Props) => {
                                     )}
                                 />
 
-                                {errors.dealerGstNumber && <Text className='text-red-500 font-medium'>{errors.dealerGstNumber.message}</Text>}
+                                {errors.distributorGstNumber && <Text className='text-red-500 font-medium'>{errors.distributorGstNumber.message}</Text>}
                             </View>
                         )}
 
@@ -482,12 +453,12 @@ const ProfileScreen = ({ }: Props) => {
 
                                 <Controller
                                     control={control}
-                                    name='dealerBrand'
+                                    name='distributorBrand'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.dealerBrand && "border-red-500"}`}
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorBrand && "border-red-500"}`}
                                             placeholder='Enter company name'
-                                            value={value}
+                                            value={value.name}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
                                             editable={false}
@@ -495,7 +466,7 @@ const ProfileScreen = ({ }: Props) => {
                                     )}
                                 />
 
-                                {errors.dealerBrand && <Text className='text-red-500 font-medium'>{errors.dealerBrand.message}</Text>}
+                                {errors.distributorBrand && <Text className='text-red-500 font-medium'>{errors.distributorBrand.id?.message}</Text>}
                             </View>
                         )}
                     </View>
@@ -506,17 +477,16 @@ const ProfileScreen = ({ }: Props) => {
                     </View>
 
                     <View className='gap-3'>
-
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
-                                <Text>Street <Text className='text-red-500'>*</Text></Text>
+                                <Text className=''>Street</Text>
 
                                 <Controller
                                     control={control}
-                                    name='dealerStreet'
+                                    name='distributorStreetAddress'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.dealerStreet && "border-red-500"}`}
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorStreetAddress && "border-red-500"}`}
                                             placeholder='Enter street'
                                             value={value}
                                             onChangeText={onChange}
@@ -524,60 +494,64 @@ const ProfileScreen = ({ }: Props) => {
                                         />
                                     )}
                                 />
-                                {errors.dealerStreet && <Text className='text-red-500 font-medium'>{errors.dealerStreet.message}</Text>}
+                                {errors.distributorStreetAddress && <Text className='text-red-500 font-medium'>{errors.distributorStreetAddress.message}</Text>}
                             </View>
                         )}
 
                         <View className='gap-1'>
-                            <Text>Select Country <Text className='text-red-500'>*</Text></Text>
+                            <Text>Select Country</Text>
 
                             <Controller
                                 control={control}
-                                name='dealerCountryId'
+                                name='userCountry'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CountryDropdown
                                         onValueChange={onChange}
-                                        setSelectedCountry={setSelectedCountry}
                                         countryList={countryList}
-                                        userDefaultCountryId={profileDetails?.country_id}
+                                        defaultValue={{
+                                            label: value.name,
+                                            value: value.id
+                                        }}
                                     />
                                 )}
                             />
-                            {errors.dealerCountryId && <Text className='text-red-500 font-medium'>{errors.dealerCountryId.message}</Text>}
+                            {errors.userCountry && <Text className='text-red-500 font-medium'>{errors.userCountry.id?.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Select State <Text className='text-red-500'>*</Text></Text>
+                            <Text>Select State</Text>
 
                             <Controller
                                 control={control}
-                                name='dealerStateId'
+                                name='userState'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <StateDropdown
+                                        defaultValue={{
+                                            value: value.id,
+                                            label: value.name,
+                                        }}
                                         onValueChange={onChange}
-                                        setSelectedState={setSelectedState}
                                         stateList={stateList}
                                     />
                                 )}
                             />
-                            {errors.dealerStateId && <Text className='text-red-500 font-medium'>{errors.dealerStateId.message}</Text>}
+                            {errors.userState && <Text className='text-red-500 font-medium'>{errors.userState.id?.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Select City <Text className='text-red-500'>*</Text></Text>
+                            <Text>Select City</Text>
 
                             <Controller
                                 control={control}
-                                name='dealerCityId'
+                                name='userCity'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CitiesDropdown
                                         onValueChange={onChange}
-                                        setSelectedCity={setSelectedCity}
                                         citiesList={citiesList}
                                     />
                                 )}
                             />
-                            {errors.dealerCityId && <Text className='text-red-500 font-medium'>{errors.dealerCityId.message}</Text>}
+                            {errors.userCity && <Text className='text-red-500 font-medium'>{errors.userCity.id?.message}</Text>}
                         </View>
 
                         <View className='gap-1'>
@@ -585,10 +559,10 @@ const ProfileScreen = ({ }: Props) => {
 
                             <Controller
                                 control={control}
-                                name='dealerPincode'
+                                name='userPincode'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
-                                        className={`focus:border-2 focus:border-primary ${errors.dealerPincode && "border-red-500"}`}
+                                        className={`focus:border-2 focus:border-primary ${errors.userPincode && "border-red-500"}`}
                                         placeholder='Enter your pincode'
                                         keyboardType='numeric'
                                         value={value}
@@ -597,7 +571,7 @@ const ProfileScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-                            {errors.dealerPincode && <Text className='text-red-500 font-medium'>{errors.dealerPincode.message}</Text>}
+                            {errors.userPincode && <Text className='text-red-500 font-medium'>{errors.userPincode.message}</Text>}
                         </View>
 
                         {userDetails?.userType === 0 && (
@@ -606,10 +580,10 @@ const ProfileScreen = ({ }: Props) => {
 
                                 <Controller
                                     control={control}
-                                    name='dealerAddress'
+                                    name='distributorAddress'
                                     render={({ field: { onBlur, onChange, value } }) => (
                                         <Textarea
-                                            className={`focus:border-2 focus:border-primary ${errors.dealerAddress && "border-red-500"}`}
+                                            className={`focus:border-2 focus:border-primary ${errors.distributorAddress && "border-red-500"}`}
                                             placeholder='Enter your full address'
                                             value={value}
                                             onChangeText={onChange}
@@ -618,7 +592,7 @@ const ProfileScreen = ({ }: Props) => {
                                     )}
                                 />
 
-                                {errors.dealerAddress && <Text className='text-red-500 font-medium'>{errors.dealerAddress.message}</Text>}
+                                {errors.distributorAddress && <Text className='text-red-500 font-medium'>{errors.distributorAddress.message}</Text>}
                             </View>
                         )}
                     </View>
@@ -633,7 +607,6 @@ const ProfileScreen = ({ }: Props) => {
                     </View>
                 </KeyboardAwareScrollView>
             </View>
-
             <KeyboardToolbar />
         </>
     )

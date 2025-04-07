@@ -12,14 +12,16 @@ import {
 } from '@/components/ui/select';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Input } from './ui/input';
+import { Option } from '@rn-primitives/select';
 
 type Props = {
     onValueChange: (...event: any[]) => void,
-    setSelectedState: Dispatch<SetStateAction<ILocationData | undefined>>;
+    setSelectedState?: Dispatch<SetStateAction<ILocationData | undefined>>;
     stateList: ILocationData[]
+    defaultValue: Option
 }
 
-const StateDropdown = ({ setSelectedState, stateList, onValueChange }: Props) => {
+const StateDropdown = ({ setSelectedState, stateList, onValueChange, defaultValue }: Props) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     const insets = useSafeAreaInsets();
@@ -39,17 +41,31 @@ const StateDropdown = ({ setSelectedState, stateList, onValueChange }: Props) =>
         );
     }, [searchQuery, stateList]);
 
+    const handleValueChange = useCallback((option: Option) => {
+        const selectedCountry = stateList.find(state => state.id === option?.value);
+        if (selectedCountry) {
+            onValueChange({ id: option?.value, name: option?.label });
+            if (setSelectedState) {
+                setSelectedState(selectedCountry);
+            }
+        }
+    }, [stateList, onValueChange, setSelectedState]);
+
     // Prevent unnecessary re-renders by memoizing input handler
     const handleSearchChange = useCallback((text: string) => {
         setSearchQuery(text);
     }, []);
 
+    const renderItem = useCallback(({ item }: { item: ILocationData, index: number }) => (
+        <SelectItem key={item.id} value={item.id} label={item.name}>
+            {item.name}
+        </SelectItem>
+    ), []);
+
     return (
         <Select
-            onValueChange={(id) => {
-                onValueChange(id?.value)
-                setSelectedState({ id: id?.value, name: id?.label })
-            }}
+            onValueChange={handleValueChange}
+            defaultValue={defaultValue}
         >
             <SelectTrigger className=''>
                 <SelectValue
@@ -75,11 +91,7 @@ const StateDropdown = ({ setSelectedState, stateList, onValueChange }: Props) =>
                         <FlatList
                             scrollEnabled={false}
                             data={filteredOptions}
-                            renderItem={({ item, index }) => (
-                                <SelectItem label={item.name} value={item.id} key={index}>
-                                    {item.name}
-                                </SelectItem>
-                            )}
+                            renderItem={renderItem}
                             ListEmptyComponent={() => (
                                 <View>
                                     <Text>Please select a country first</Text>

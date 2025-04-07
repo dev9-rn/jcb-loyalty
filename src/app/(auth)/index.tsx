@@ -1,4 +1,4 @@
-import { View, Image, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Image, ScrollView, ActivityIndicator, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import useAuth from '@/hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import axios, { AxiosResponse } from 'axios';
 import { router } from 'expo-router';
 import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN } from '@/utils/routes';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 type Props = {}
 
@@ -25,6 +26,8 @@ const SignInScreen = ({ }: Props) => {
 
     const [selectedSignInType, setSelectedSignInType] = useState<string>("distributor");
     const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
+
+    const { isDarkColorScheme, setColorScheme, colorScheme } = useColorScheme();
 
     const { login } = useAuth();
 
@@ -40,6 +43,9 @@ const SignInScreen = ({ }: Props) => {
             const nextIndex = (currentIndex + 1) % USER_TYPES.length; // Cycle to the next type
             return USER_TYPES[nextIndex];
         });
+
+        const newTheme = isDarkColorScheme ? 'light' : 'dark';
+        setColorScheme(newTheme);
     };
 
     const getLoginEndpoint = () => {
@@ -79,7 +85,6 @@ const SignInScreen = ({ }: Props) => {
 
     return (
         <SafeAreaView className='flex-1 bg-white'>
-
             <KeyboardAwareScrollView>
                 <View className='items-center justify-center'>
                     <View>
@@ -169,9 +174,10 @@ const SignInScreen = ({ }: Props) => {
                         <Separator className='flex-1' />
                     </View>
 
-                    <Button onPress={() => toggleSignInType()}>
+                    <Button onPress={() => toggleSignInType()} className={`${colorScheme !== "light" ? "bg-[#144799]" : "bg-[#f0a028]"}`}>
                         <Text>
-                            <Text>Switch to {USER_TYPES[(USER_TYPES.indexOf(selectedSignInType) + 1) % USER_TYPES.length]}</Text>
+                            Switch to{" "}
+                            <Text>{USER_TYPES[(USER_TYPES.indexOf(selectedSignInType) + 1) % USER_TYPES.length]}</Text>
                         </Text>
                     </Button>
                 </View>
