@@ -156,7 +156,6 @@ const CouponHistoryScreen = ({ }: Props) => {
             const response = await axiosInstance.post(getCouponHistoryEndpoint().endpoint, redeemHistoryFormData);
 
             if (response.data.status != 200) {
-                console.log(response.data, "GET_COUPON_HISTORY");
                 setLoading(false);
             };
 
@@ -164,7 +163,6 @@ const CouponHistoryScreen = ({ }: Props) => {
             setLoading(false)
         } catch (error) {
             setLoading(false);
-            console.log(error, " SOMETHING_WENT_WRONG_HISTORY");
         }
     };
 

@@ -13,25 +13,22 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 import { Input } from './ui/input';
 import { Option } from '@rn-primitives/select';
+import { useRoute } from '@react-navigation/native';
 
 type Props = {
     onValueChange: (...event: any[]) => void,
     setSelectedCountry?: Dispatch<SetStateAction<ILocationData | undefined>>
     countryList: ILocationData[]
     userDefaultCountryId?: string | undefined;
-    defaultValue: Option
+    defaultValue?: Option
 }
 
 const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userDefaultCountryId, defaultValue }: Props) => {
+
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [userDefaultValue, setUserDefaultValue] = useState<ILocationData | undefined>(undefined)
 
     const insets = useSafeAreaInsets();
-
-    useEffect(() => {
-        const userDefaultCountry = countryList.find((country) => country.id === userDefaultCountryId);
-        setUserDefaultValue(userDefaultCountry);
-    }, [userDefaultCountryId, countryList]);
+    const route = useRoute();
 
     const contentInsets = {
         top: insets.top,
@@ -68,7 +65,7 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
         </SelectItem>
     ), []);
 
-    console.log(defaultValue, "DEF_VAL");
+    if (!defaultValue?.value && route.name !== "sign-up") return;
 
     return (
         <Select onValueChange={handleValueChange} defaultValue={defaultValue}>

@@ -16,6 +16,7 @@ import { Option } from '@rn-primitives/select';
 type Props = {
     onValueChange: (...event: any[]) => void;
     brands: IBrandsDetails[] | undefined;
+    defaultValue?: Option
 }
 
 const SelectBrandDropdown = ({ onValueChange, brands }: Props) => {
@@ -39,7 +40,7 @@ const SelectBrandDropdown = ({ onValueChange, brands }: Props) => {
             <SelectContent side='top' insets={contentInsets} className='w-full'>
                 <ScrollView className='max-h-48'>
                     <SelectGroup>
-                        <SelectLabel>Fruits</SelectLabel>
+                        <SelectLabel>Brands</SelectLabel>
                         <FlatList
                             scrollEnabled={false}
                             data={brands}

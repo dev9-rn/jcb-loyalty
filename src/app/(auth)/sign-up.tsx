@@ -2,7 +2,7 @@ import { View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import useUser from '@/hooks/useUser'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { signUpForm } from '@/libs/schemas/signUpFormSchemas'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -10,29 +10,32 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import SelectBrandDropdown from '@/components/SelectBrandDropdown'
 import CountryDropdown from '@/components/CountryDropdown'
 import StateDropdown from '@/components/StateDropdown'
 import CitiesDropdown from '@/components/CitiesDropdown'
 import { Textarea } from '@/components/ui/textarea'
 import axiosInstance from '@/utils/axiosInstance'
-import { GET_COUNTRY_LIST } from '@/utils/routes'
+import { GET_BRANDS_BY_IDS, GET_CITIES_LIST, GET_COUNTRY_LIST, GET_STATE_LIST, REGISTER_DISTRIBUTOR, REGISTER_MECHANIC, REGISTER_RETAILER } from '@/utils/routes'
 import { useToast } from 'react-native-toast-notifications'
 import axios from 'axios'
+import SelectBrandDropdown from '@/components/SelectBrandDropdown'
 
 type Props = {}
 
 const SignUpScreen = ({ }: Props) => {
 
     const [countryList, setCountryList] = useState<ILocationData[]>([]);
+    const [stateList, setStateList] = useState<ILocationData[]>([]);
+    const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
+    const [brands, setBrands] = useState<IBrandsDetails[]>([])
 
     const { userDetails } = useUser()
 
-    const { userType } = useLocalSearchParams();
+    const { userType } = useLocalSearchParams<{ userType: string }>();
 
     const toast = useToast();
 
-    const { control, handleSubmit, reset, setValue, formState: { errors, isDirty } } = useForm<z.infer<typeof signUpForm>>({
+    const { control, handleSubmit, reset, setValue, getValues, formState: { errors, isDirty } } = useForm<z.infer<typeof signUpForm>>({
         resolver: zodResolver(signUpForm),
         defaultValues: {
             userType: userType as "distributor" | "mechanic" | "retailer",
@@ -67,8 +70,20 @@ const SignUpScreen = ({ }: Props) => {
 
     useEffect(() => {
         fetchCountryList();
-        // fetchBrands();
+        fetchBrands();
     }, []);
+
+    useEffect(() => {
+        if (!getValues().userCountry.id && !userDetails?.country_id) return;
+
+        fetchStateList();
+    }, [getValues().userCountry.id]);
+
+    useEffect(() => {
+        if (!getValues().userState.id && !userDetails?.state_id) return;
+
+        fetchCitiesList();
+    }, [getValues().userState.id]);
 
     // Get the list of the country for dropdown
     const fetchCountryList = async () => {
@@ -88,11 +103,129 @@ const SignUpScreen = ({ }: Props) => {
                 });
             };
         };
+    };
+
+    // Get the list of the STATES for dropdown
+    const fetchStateList = async () => {
+
+        const stateListFormData = new FormData();
+        stateListFormData.append("countryId", getValues().userCountry.id || userDetails?.country_id)
+
+        try {
+            const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
+
+            if (response.data.status != 200) {
+                (response.data.message)
+            };
+
+            setStateList(response.data.states);
+        } catch (error) {
+            (error)
+        };
+    };
+
+    // Get the list of the CITIES for dropdown
+    const fetchCitiesList = async () => {
+
+        const citiesFormData = new FormData();
+        citiesFormData.append("stateId", getValues().userState.id || userDetails?.state_id)
+
+        try {
+            const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
+
+            if (response.data.success != 200) {
+                (response.data.message);
+            };
+
+            setCitiesList(response.data.cities);
+        } catch (error) {
+
+        };
+    };
+
+    const fetchBrands = async () => {
+        try {
+            const response = await axiosInstance.post(GET_BRANDS_BY_IDS);
+
+            setBrands(response.data.brands);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            }
+        }
+    }
+
+    const getRegisterEndpoint = () => {
+        if (userType === "distributor") {
+            return {
+                endpoint: REGISTER_DISTRIBUTOR,
+            };
+        };
+
+        if (userType === "mechanic") {
+            return {
+                endpoint: REGISTER_MECHANIC,
+            };
+        };
+
+        return {
+            endpoint: REGISTER_RETAILER,
+        }
     }
 
     const handleProfileSubmit: SubmitHandler<z.infer<typeof signUpForm>> = async (formData) => {
-        console.log(formData, "FORM_DATA");
-    }
+
+        const registerFormData = new FormData();
+
+        registerFormData.append(userType !== "distributor" ? "dealerName" : "name", formData.userName);
+        registerFormData.append('mobileNo', formData.userPhoneNumber);
+        registerFormData.append('pinCode', formData.userPincode);
+        registerFormData.append('countryId', formData.userCountry.id);
+        registerFormData.append('stateId', formData.userState.id);
+        registerFormData.append('cityId', formData.userCity.id);
+
+        if (userType === "distributor") {
+            registerFormData.append('companyName', formData.distributorCompanyName);
+            registerFormData.append('panNo', formData.distributorPanNumber);
+            registerFormData.append('gstNo', formData.distributorGstNumber);
+            registerFormData.append('emailId', formData.distributorEmail);
+            registerFormData.append('address', formData.distributorAddress);
+            registerFormData.append('street', formData.distributorStreetAddress);
+            registerFormData.append('brandId', formData.distributorBrand?.id);
+        };
+
+        if (userType === "retailer") {
+            registerFormData.append('shopName', formData.retailerShopName);
+            registerFormData.append('distributorCode', formData.retailerCode);
+        }
+
+        try {
+            const response = await axiosInstance.post(getRegisterEndpoint()?.endpoint, registerFormData);
+
+            if (response.data.success != 200) {
+                toast.show(response.data.message, {
+                    data: response
+                });
+            };
+
+            router.navigate({
+                pathname: "/(auth)/otp-verify",
+                params: {
+                    userPhone: formData.userPhoneNumber,
+                    userType
+                }
+            });
+
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            };
+        }
+    };
 
     return (
         <>
@@ -167,7 +300,7 @@ const SignUpScreen = ({ }: Props) => {
                             </View>
                         )}
 
-                        {userType === "distributor" ? (
+                        {userType === "distributor" && userType === "mechaninc" ? (
                             <View className='gap-1'>
                                 <Text>
                                     Company name
@@ -212,6 +345,30 @@ const SignUpScreen = ({ }: Props) => {
                             </View>
                         )}
 
+                        {userType === "retailer" && (
+                            <View className='gap-1'>
+                                <Text>
+                                    Distributor Code
+                                </Text>
+
+                                <Controller
+                                    control={control}
+                                    name='retailerCode'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Input
+                                            className={`focus:border-2 focus:border-primary ${errors.retailerCode && "border-red-500"}`}
+                                            placeholder="Enter Distributor Code"
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        // editable={false}
+                                        />
+                                    )}
+                                />
+                                {errors.retailerCode && <Text className='text-red-500 font-medium'>{errors.retailerCode.message}</Text>}
+                            </View>
+                        )}
+
                         {userType === "distributor" ? (
                             <View className='gap-1'>
                                 <Text>PAN Number</Text>
@@ -231,7 +388,7 @@ const SignUpScreen = ({ }: Props) => {
                                 />
                                 {errors.distributorPanNumber && <Text className='text-red-500 font-medium'>{errors.distributorPanNumber.message}</Text>}
                             </View>
-                        ) : (
+                        ) : userType === "mechanic" ? (
                             <View className='gap-1'>
                                 <Text>PAN Number</Text>
 
@@ -250,7 +407,7 @@ const SignUpScreen = ({ }: Props) => {
                                 />
                                 {errors.mechanicPanNumber && <Text className='text-red-500 font-medium'>{errors.mechanicPanNumber.message}</Text>}
                             </View>
-                        )}
+                        ) : null}
 
                         {userType === "distributor" && (
                             <View className='gap-1'>
@@ -274,7 +431,7 @@ const SignUpScreen = ({ }: Props) => {
                             </View>
                         )}
 
-                        {/* {userType === "distributor" && (
+                        {userType === "distributor" && (
                             <View className='gap-1'>
                                 <Text>Select Brand</Text>
 
@@ -291,7 +448,7 @@ const SignUpScreen = ({ }: Props) => {
 
                                 {errors.distributorBrand && <Text className='text-red-500 font-medium'>{errors.distributorBrand.id?.message}</Text>}
                             </View>
-                        )} */}
+                        )}
                     </View>
 
                     <View className='py-4'>
@@ -337,7 +494,7 @@ const SignUpScreen = ({ }: Props) => {
                             {errors.userCountry && <Text className='text-red-500 font-medium'>{errors.userCountry.id?.message}</Text>}
                         </View>
 
-                        {/* <View className='gap-1'>
+                        <View className='gap-1'>
                             <Text>Select State</Text>
 
                             <Controller
@@ -346,15 +503,14 @@ const SignUpScreen = ({ }: Props) => {
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <StateDropdown
                                         onValueChange={onChange}
-                                        setSelectedState={setSelectedState}
                                         stateList={stateList}
                                     />
                                 )}
                             />
-                            {errors.userState && <Text className='text-red-500 font-medium'>{errors.userState?.message}</Text>}
-                        </View> */}
+                            {errors.userState && <Text className='text-red-500 font-medium'>{errors.userState.id?.message}</Text>}
+                        </View>
 
-                        {/* <View className='gap-1'>
+                        <View className='gap-1'>
                             <Text>Select City</Text>
 
                             <Controller
@@ -363,13 +519,12 @@ const SignUpScreen = ({ }: Props) => {
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CitiesDropdown
                                         onValueChange={onChange}
-                                        setSelectedCity={setSelectedCity}
                                         citiesList={citiesList}
                                     />
                                 )}
                             />
-                            {errors.userCity && <Text className='text-red-500 font-medium'>{errors.userCity?.message}</Text>}
-                        </View> */}
+                            {errors.userCity && <Text className='text-red-500 font-medium'>{errors.userCity.id?.message}</Text>}
+                        </View>
 
                         <View className='gap-1'>
                             <Text>Pincode <Text className='text-red-500'>*</Text></Text>

@@ -13,18 +13,20 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import { Input } from './ui/input';
 import { Option } from '@rn-primitives/select';
+import { useRoute } from '@react-navigation/native';
 
 type Props = {
     onValueChange: (...event: any[]) => void,
     setSelectedState?: Dispatch<SetStateAction<ILocationData | undefined>>;
     stateList: ILocationData[]
-    defaultValue: Option
+    defaultValue?: Option
 }
 
 const StateDropdown = ({ setSelectedState, stateList, onValueChange, defaultValue }: Props) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     const insets = useSafeAreaInsets();
+    const route = useRoute();
 
     const contentInsets = {
         top: insets.top,
@@ -61,6 +63,8 @@ const StateDropdown = ({ setSelectedState, stateList, onValueChange, defaultValu
             {item.name}
         </SelectItem>
     ), []);
+
+    if (!defaultValue?.value && route.name !== "sign-up") return;
 
     return (
         <Select

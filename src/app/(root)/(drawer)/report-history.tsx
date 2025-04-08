@@ -35,8 +35,8 @@ const ReportHistory = ({ }: Props) => {
 
     const renderItem = useCallback(({ item, index }: { item: IReportedCoupon, index: number }) => {
         return (
-            <View className='flex-row items-start justify-between' key={index}>
-                <View>
+            <View className='flex-row items-start justify-between gap-2' key={index}>
+                <View className='flex-shrink'>
                     <Text className='text-lg'>
                         Serial No:{" "}
                         <Text className='text-lg font-medium'>{item.sr_no}</Text>
@@ -46,8 +46,8 @@ const ReportHistory = ({ }: Props) => {
                         <Text className='text-lg font-medium'>{item.description}</Text>
                     </Text>
                     <Text className='text-lg'>
-                        Serial No:{" "}
-                        <Text className='text-lg font-medium'>{item.created}</Text>
+                        Reported Date:{" "}
+                        <Text className='text-lg font-medium'>{new Date(item.created).toLocaleDateString()}</Text>
                     </Text>
                 </View>
                 <View>

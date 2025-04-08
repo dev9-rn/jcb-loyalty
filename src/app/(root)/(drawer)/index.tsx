@@ -17,6 +17,7 @@ import useUser from '@/hooks/useUser';
 import axiosInstance from '@/utils/axiosInstance';
 import { GET_DASHBOARD_DATA, GET_MECHANIC_DASHBOARD, GET_RETAILER_DASHBOARD } from '@/utils/routes';
 import { StatusBar } from 'react-native';
+import { useToast } from 'react-native-toast-notifications';
 
 type Props = {}
 
@@ -24,6 +25,8 @@ const HomeScreen = ({ }: Props) => {
 
 	const { logout } = useAuth();
 	const { userDetails } = useUser();
+
+	const toast = useToast();
 
 	const [dashboardData, setDashboardData] = useState<IDashboardData | undefined>(undefined);
 
@@ -70,18 +73,19 @@ const HomeScreen = ({ }: Props) => {
 		try {
 			const response = await axiosInstance.post(getDashboardEndpoints()?.endpoint, dashboardFormData);
 			if (response.data.message != "success") {
-				console.log(response.data.message, "ERROR_MESSSAGE");
+				toast.show(response.data.message, {
+					data: response
+				})
 			}
 
 			setDashboardData(response.data);
 		} catch (error) {
-			console.log(error, 'SOMETHIGN_WENT_WRONG_DASH');
 		};
 	};
 
 	return (
 		<View className='p-4 flex-1 bg-white'>
-			<StatusBar className='bg-primary' />
+			<StatusBar className='bg-primary' barStyle={"light-content"} />
 			<View className='gap-8'>
 				<View className="flex-row flex-wrap justify-between gap-2 xs:gap-3">
 					<Card className="w-[48%]">

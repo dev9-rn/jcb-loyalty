@@ -41,6 +41,13 @@ const ReportCouponScreen = ({ }: Props) => {
 
     const handleCouponReportSubmit: SubmitHandler<ReportFormData | FieldValues> = async (formData) => {
 
+        if (!pickedCouponImage) {
+            toast.show("Please pick an image to report..!", {
+                data: { status: 400, }
+            })
+            return;
+        };
+
         const uploadReportFormData = new FormData();
 
         uploadReportFormData.append("srNo", formData.couponSerial);

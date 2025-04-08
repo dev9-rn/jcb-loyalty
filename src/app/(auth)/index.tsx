@@ -24,7 +24,7 @@ const USER_TYPES = ["distributor", "retailer"];
 
 const SignInScreen = ({ }: Props) => {
 
-    const [selectedSignInType, setSelectedSignInType] = useState<string>("distributor");
+    const [selectedSignInType, setSelectedSignInType] = useState("distributor");
     const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
     const { isDarkColorScheme, setColorScheme, colorScheme } = useColorScheme();
@@ -85,6 +85,7 @@ const SignInScreen = ({ }: Props) => {
 
     return (
         <SafeAreaView className='flex-1 bg-white'>
+            <StatusBar backgroundColor={"#FFF"} barStyle={"dark-content"} />
             <KeyboardAwareScrollView>
                 <View className='items-center justify-center'>
                     <View>
@@ -124,6 +125,8 @@ const SignInScreen = ({ }: Props) => {
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
+                                    keyboardType='numeric'
+                                    maxLength={10}
                                 />
                             )}
                             name='userPhone'

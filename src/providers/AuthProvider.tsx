@@ -9,6 +9,7 @@ import { STORAGE_KEYS } from '@/libs/constants'
 import useUser from '@/hooks/useUser'
 import { useToast } from 'react-native-toast-notifications'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import axios from 'axios'
 
 type Props = {
     children: React.ReactNode
@@ -111,12 +112,17 @@ const AuthProvider = ({ children }: Props) => {
 
             tokenStorage.clearAll();
             storage.clearAll();
+            setColorScheme("light");
             toast.show(response.data.message, {
                 data: response
             })
         } catch (error) {
-            console.log(error, "LOGOUT_ERROR");
-        }
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            };
+        };
 
         setIsAuthenticated(false);
         router.replace("/(auth)"); // ✅ Redirect to login screen

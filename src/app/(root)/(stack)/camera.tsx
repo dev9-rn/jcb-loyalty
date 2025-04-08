@@ -16,6 +16,8 @@ import { CHECK_COUPON, REDEEM_COUPON, REDEEM_MECHANIC_COUPON } from '@/utils/rou
 import CouponRedeemedDialog from '@/components/CouponRedeemedDialog';
 import axios from 'axios';
 import CouponErrorDialog from '@/components/CouponErrorDialog';
+import * as Haptics from 'expo-haptics';
+import { useAudioPlayer } from 'expo-audio';
 
 type Props = {}
 
@@ -37,6 +39,8 @@ const CameraScreen = ({ }: Props) => {
 
     const toast = useToast()
     const { userDetails } = useUser();
+    const qrSuccessAudio = useAudioPlayer(require("@/assets/sounds/qr-scan-success_1.wav"));
+    const qrErrorAudio = useAudioPlayer(require("@/assets/sounds/qr-scan-error_2.mp3"));
 
     const cameraRef = useRef<CameraView | null>(null);
     const [permission, requestPermission] = useCameraPermissions();
@@ -91,26 +95,26 @@ const CameraScreen = ({ }: Props) => {
         }
     };
 
-    const getCheckCouponEndpoint = () => {
-        if (userDetails?.userType === 0) {
-            return {
-                endpoint: CHECK_COUPON,
-                user_id: "distributorId"
-            };
-        };
+    // const getCheckCouponEndpoint = () => {
+    //     if (userDetails?.userType === 0) {
+    //         return {
+    //             endpoint: CHECK_COUPON,
+    //             user_id: "distributorId"
+    //         };
+    //     };
 
-        if (userDetails?.userType === 1) {
-            return {
-                endpoint: CHECK_COUPON,
-                user_id: "mechanicId"
-            };
-        };
+    //     if (userDetails?.userType === 1) {
+    //         return {
+    //             endpoint: CHECK_COUPON,
+    //             user_id: "mechanicId"
+    //         };
+    //     };
 
-        return {
-            endpoint: CHECK_COUPON,
-            user_id: "dealerId"
-        };
-    }
+    //     return {
+    //         endpoint: CHECK_COUPON,
+    //         user_id: "dealerId"
+    //     };
+    // }
 
     const handleBarCodeScanned = ({ bounds, data }: BarcodeScanningResult) => {
         if (scanned || isCouponRedeemed || isCouponInvalid) return;
@@ -174,12 +178,22 @@ const CameraScreen = ({ }: Props) => {
                 });
             };
 
+            Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Success
+            );
+            qrSuccessAudio.play();
+            qrSuccessAudio.seekTo(0);
             setCouponRedeemedData(response.data)
             setIsCouponRedeem(true);
         } catch (error) {
             if (axios.isAxiosError(error)) {
+                qrErrorAudio.play();
+                qrErrorAudio.seekTo(0);
                 setCouponValidationData(error.response?.data);
                 setIsCouponInvalid(true);
+                Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Error
+                )
                 // toast.show(error.response?.data?.message || error.message, {
                 //     data: error.response || error.message
                 // });
