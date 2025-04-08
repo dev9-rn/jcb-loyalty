@@ -62,6 +62,8 @@ const StateDropdown = ({ setSelectedState, stateList, onValueChange, defaultValu
         </SelectItem>
     ), []);
 
+    if (!defaultValue?.value) return;
+
     return (
         <Select
             onValueChange={handleValueChange}

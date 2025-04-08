@@ -29,7 +29,7 @@ const UserProvider = ({ children }: Props) => {
         try {
             // const apnToken = await messaging().getAPNSToken();
             const fcmToken = await messaging.getToken();
-            console.log(fcmToken, "FCM_TOKEN");
+            (fcmToken, "FCM_TOKEN");
 
             setUserFirebaseToken(fcmToken)
         } catch (error) {
@@ -46,7 +46,7 @@ const UserProvider = ({ children }: Props) => {
             const response = await axiosInstance.post(getProfileEndpoint(userDetails).endpoint, profileFormData);
 
             if (response.data.status != 200) {
-                console.log(response.data.message)
+                (response.data.message)
             };
 
             const combinedUserDetails = { ...localUserDetails, ...response.data.data }

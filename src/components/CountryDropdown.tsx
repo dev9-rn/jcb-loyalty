@@ -23,15 +23,10 @@ type Props = {
 }
 
 const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userDefaultCountryId, defaultValue }: Props) => {
+    
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [userDefaultValue, setUserDefaultValue] = useState<ILocationData | undefined>(undefined)
 
     const insets = useSafeAreaInsets();
-
-    useEffect(() => {
-        const userDefaultCountry = countryList.find((country) => country.id === userDefaultCountryId);
-        setUserDefaultValue(userDefaultCountry);
-    }, [userDefaultCountryId, countryList]);
 
     const contentInsets = {
         top: insets.top,
@@ -68,7 +63,7 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
         </SelectItem>
     ), []);
 
-    console.log(defaultValue, "DEF_VAL");
+    if (!defaultValue?.value) return;
 
     return (
         <Select onValueChange={handleValueChange} defaultValue={defaultValue}>

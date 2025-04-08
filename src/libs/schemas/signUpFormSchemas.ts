@@ -9,7 +9,7 @@ const baseSchema = z.object({
         message: "Please enter a 10 digit phone number"
     }).max(10, {
         message: "Please enter a 10 digit phone number"
-    }).refine((value) => /^[0-9]$/.test(value), {
+    }).refine((value) => /^\d{10}$/.test(value), {
         message: "Enter a valid 10-digit phone number"
     }),
     userPincode: z.string().nonempty("Please enter a pincode").min(6, {
@@ -24,17 +24,11 @@ const baseSchema = z.object({
         name: z.string().nonempty("Please select a country"),
     }),
     userState: z.object({
-        id: z.string({
-            required_error: "Please select a state"
-        }).nonempty(),
-        name: z.string({
-            message: "Please select a state"
-        }).nonempty(),
+        id: z.string().nonempty("Please select a state"),
+        name: z.string().nonempty("Please select a state"),
     }),
     userCity: z.object({
-        id: z.string({
-            required_error: "Please select a city"
-        }).nonempty(),
+        id: z.string().nonempty("Please select a city"),
         name: z.string({
             message: "Please select a city"
         }).nonempty(),
@@ -58,12 +52,8 @@ const distributorSchema = baseSchema.extend({
         }),
     distributorGstNumber: z.string(),
     distributorBrand: z.object({
-        id: z.string({
-            required_error: "Please select a city"
-        }).nonempty(),
-        name: z.string({
-            message: "Please select a city"
-        }).nonempty(),
+        id: z.string(7).nonempty("Please select a brand"),
+        name: z.string().nonempty("Please select a brand"),
     })
 });
 
@@ -76,7 +66,10 @@ const mechanicSchema = baseSchema.extend({
 
 const retailerSchema = baseSchema.extend({
     userType: z.literal("retailer"),
-    retailerShopName: z.string().nonempty("Please enter a shop name")
+    retailerShopName: z.string().nonempty("Please enter a shop name"),
+    retailerCode: z.string({
+        required_error: "Please enter a code."
+    }).nonempty("Please enter a code.")
 });
 
 const signUpForm = z.discriminatedUnion("userType", [

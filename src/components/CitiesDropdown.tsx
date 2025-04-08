@@ -18,10 +18,11 @@ import { Option } from '@rn-primitives/select';
 type Props = {
     onValueChange: (...event: any[]) => void,
     setSelectedCity?: Dispatch<SetStateAction<ILocationData | undefined>>;
-    citiesList: ILocationData[]
+    citiesList: ILocationData[];
+    defaultValue: Option
 }
 
-const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange }: Props) => {
+const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange, defaultValue }: Props) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     const insets = useSafeAreaInsets();
@@ -55,9 +56,12 @@ const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange }: Props) =
         );
     }, [searchQuery, citiesList]);
 
+    if (!defaultValue?.value) return;
+
     return (
         <Select
             onValueChange={handleValueChange}
+            defaultValue={defaultValue}
         >
             <SelectTrigger className=''>
                 <SelectValue

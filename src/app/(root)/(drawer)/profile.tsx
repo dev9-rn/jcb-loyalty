@@ -18,6 +18,8 @@ import axios from 'axios'
 import StateDropdown from '@/components/StateDropdown'
 import CitiesDropdown from '@/components/CitiesDropdown'
 import { getProfileEndpoint } from '@/libs/utils'
+import { PencilLineIcon } from "@/libs/icons/PencilLineIcon"
+import DiscardFormDialog from '@/components/DiscardFormDialog'
 
 type Props = {}
 
@@ -33,6 +35,9 @@ const ProfileScreen = ({ }: Props) => {
     const [countryList, setCountryList] = useState<ILocationData[]>([]);
     const [stateList, setStateList] = useState<ILocationData[]>([]);
     const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
+    const [brands, setBrands] = useState<IBrandsDetails[]>([])
+    const [isFormDisabled, setIsFormDisabled] = useState<boolean>(false);
+    const [discardChanges, setDiscardChanges] = useState<boolean>(true);
 
     const { userDetails, fetchUserProfileDetails } = useUser();
 
@@ -44,8 +49,9 @@ const ProfileScreen = ({ }: Props) => {
         // fetchBrands();
     }, []);
 
-    const { control, handleSubmit, reset, getValues, formState: { errors, isDirty } } = useForm<z.infer<typeof signUpForm>>({
+    const { control, handleSubmit, reset, getValues, resetField, formState: { errors, isDirty, disabled, dirtyFields } } = useForm<z.infer<typeof signUpForm>>({
         resolver: zodResolver(signUpForm),
+        disabled: !isFormDisabled,
         defaultValues: {
             userType: userTypeMap[userDetails?.userType || 0],
             userName: "",
@@ -89,6 +95,42 @@ const ProfileScreen = ({ }: Props) => {
         fetchCitiesList();
     }, [getValues().userState.id]);
 
+    useEffect(() => {
+        if (!profileDetails || !brands) return;
+
+        const currentUserBrand = brands.find((brand) => brand.id === profileDetails.brand_id);
+        const matchedCountry = countryList.find(
+            (country) => country.id === profileDetails.country_id
+        );
+
+        const matchedState = stateList.find(
+            (state) => state.id === profileDetails.state_id
+        );
+
+        const matchedCity = citiesList.find(
+            (city) => city.id === profileDetails.city_id
+        );
+
+        reset({
+            userType: userTypeMap[userDetails?.userType || 0],
+            userName: profileDetails.name || profileDetails.dealer_name,
+            distributorAddress: profileDetails.address,
+            userPhoneNumber: profileDetails.mobile || profileDetails.mobile_no,
+            distributorBrand: currentUserBrand || { id: "", name: '' },
+            distributorCompanyName: profileDetails.company_name,
+            retailerShopName: profileDetails.shop_name,
+            distributorEmail: profileDetails.email,
+            distributorGstNumber: profileDetails.gst_no,
+            mechanicPanNumber: profileDetails.pan_no,
+            distributorPanNumber: profileDetails.pan_no,
+            distributorStreetAddress: profileDetails.street,
+            userPincode: profileDetails.pincode || profileDetails.pin_code,
+            userCountry: matchedCountry || { id: "", name: "" },
+            userState: matchedState || { id: "", name: "" },
+            userCity: matchedCity || { id: "", name: "" }
+        });
+    }, [profileDetails, brands]);
+
     // Get the list of the COUNTRIES for dropdown
     const fetchCountryList = async () => {
         try {
@@ -119,12 +161,12 @@ const ProfileScreen = ({ }: Props) => {
             const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
 
             if (response.data.status != 200) {
-                console.log(response.data.message)
+                (response.data.message)
             };
 
             setStateList(response.data.states);
         } catch (error) {
-            console.log(error)
+            (error)
         };
     };
 
@@ -138,7 +180,7 @@ const ProfileScreen = ({ }: Props) => {
             const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
 
             if (response.data.success != 200) {
-                console.log(response.data.message);
+                (response.data.message);
             };
 
             setCitiesList(response.data.cities);
@@ -183,38 +225,8 @@ const ProfileScreen = ({ }: Props) => {
                 })
             };
 
-            const currentUserBrand = brandResponse.data.brands.find((brand) => brand.id === userDetails?.brand_id);
-            const matchedCountry = countryList.find(
-                (country) => country.id === response.data.data.country_id
-            );
-
-            const matchedState = stateList.find(
-                (state) => state.id === response.data.data.state_id
-            );
-
-            const matchedCity = citiesList.find(
-                (city) => city.id === response.data.data.city_id
-            );
-
+            setBrands(brandResponse.data.brands);
             setProfileDetails(response.data.data);
-            reset({
-                userType: userTypeMap[userDetails?.userType || 0],
-                userName: response.data.data.name || response.data.data.dealer_name,
-                distributorAddress: response.data.data.address,
-                userPhoneNumber: response.data.data.mobile || response.data.data.mobile_no,
-                distributorBrand: currentUserBrand,
-                distributorCompanyName: response.data.data.company_name,
-                retailerShopName: response.data.data.shop_name,
-                distributorEmail: response.data.data.email,
-                distributorGstNumber: response.data.data.gst_no,
-                mechanicPanNumber: response.data.data.pan_no,
-                distributorPanNumber: response.data.data.pan_no,
-                distributorStreetAddress: response.data.data.street,
-                userPincode: response.data.data.pincode || response.data.data.pin_code,
-                userCountry: matchedCountry || { id: "", name: "" },
-                userState: matchedState || { id: "", name: "" },
-                userCity: matchedCity || { id: "", name: "" }
-            });
             return response.data.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -223,7 +235,6 @@ const ProfileScreen = ({ }: Props) => {
                 });
                 return;
             }
-            console.log(error, "SOMETHING_WENT_WRONG_PROFILE");
         };
     };
 
@@ -270,14 +281,30 @@ const ProfileScreen = ({ }: Props) => {
         };
     };
 
+    const toggleFormState = () => {
+        setIsFormDisabled(!isFormDisabled);
+
+    };
+
     return (
         <>
             <View className='bg-white p-4 flex-1'>
                 <KeyboardAwareScrollView bottomOffset={100} showsVerticalScrollIndicator={false}>
-                    <Text className='text-2xl font-semibold'>
-                        {userDetails?.userType === 0 ? "Distributor" : userDetails?.userType === 1 ? "Mechanic" : "Retailer"} Information
-                    </Text>
-                    <Text className='text-gray-500 text-sm'>Provide information to edit your account</Text>
+                    <View className='flex-row items-center justify-between'>
+                        <View>
+                            <Text className='text-2xl font-semibold'>
+                                {userDetails?.userType === 0 ? "Distributor" : userDetails?.userType === 1 ? "Mechanic" : "Retailer"} Information
+                            </Text>
+                            <Text className='text-gray-500 text-sm'>Provide information to edit your account</Text>
+                        </View>
+
+                        {/* <Button className='flex-row items-center gap-4' onPress={() => toggleFormState()} variant={isFormDisabled ? "default" : "destructive"}>
+                            <PencilLineIcon className='text-white' height={20} width={20} />
+                            <Text>
+                                {isFormDisabled ? "Edit" : "Discard"}
+                            </Text>
+                        </Button> */}
+                    </View>
 
                     <View className='mt-4 gap-3'>
                         <View className='gap-1'>
@@ -286,13 +313,15 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name='userName'
-                                render={({ field: { onBlur, onChange, value } }) => (
+                                disabled={disabled}
+                                render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.userName && "border-red-500"}`}
                                         placeholder='Enter full name'
                                         value={value}
                                         onChangeText={onChange}
                                         onBlur={onBlur}
+                                        editable={disabled}
                                     />
                                 )}
                             />
@@ -305,7 +334,8 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name='userPhoneNumber'
-                                render={({ field: { onBlur, onChange, value } }) => (
+                                disabled={disabled}
+                                render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.userPhoneNumber && "border-red-500"}`}
                                         placeholder='Enter phone number'
@@ -313,6 +343,7 @@ const ProfileScreen = ({ }: Props) => {
                                         onChangeText={onChange}
                                         onBlur={onBlur}
                                         keyboardType='numeric'
+                                        editable={disabled}
                                     />
                                 )}
                             />
@@ -326,13 +357,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='distributorEmail'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorEmail && "border-red-500"}`}
                                             placeholder='Enter email address'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -349,14 +382,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='distributorCompanyName'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorCompanyName && "border-red-500"}`}
                                             placeholder="Enter Company Name"
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
-                                        // editable={false}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -370,14 +404,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='retailerShopName'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.retailerShopName && "border-red-500"}`}
                                             placeholder="Enter Shop Name"
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
-                                        // editable={false}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -392,13 +427,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='distributorPanNumber'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorPanNumber && "border-red-500"}`}
                                             placeholder='Ex. AXNP7853G'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -411,13 +448,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='mechanicPanNumber'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.mechanicPanNumber && "border-red-500"}`}
                                             placeholder='Ex. AXNP7853G'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -432,13 +471,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='distributorGstNumber'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorGstNumber && "border-red-500"}`}
                                             placeholder='Enter GSTIN number'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -454,7 +495,8 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='distributorBrand'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorBrand && "border-red-500"}`}
                                             placeholder='Enter company name'
@@ -484,13 +526,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='distributorStreetAddress'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorStreetAddress && "border-red-500"}`}
                                             placeholder='Enter street'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -504,7 +548,8 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name='userCountry'
-                                render={({ field: { onBlur, onChange, value } }) => (
+                                disabled={disabled}
+                                render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <CountryDropdown
                                         onValueChange={onChange}
                                         countryList={countryList}
@@ -524,7 +569,8 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name='userState'
-                                render={({ field: { onBlur, onChange, value } }) => (
+                                disabled={disabled}
+                                render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <StateDropdown
                                         defaultValue={{
                                             value: value.id,
@@ -544,8 +590,13 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name='userCity'
-                                render={({ field: { onBlur, onChange, value } }) => (
+                                disabled={disabled}
+                                render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <CitiesDropdown
+                                        defaultValue={{
+                                            value: value.id,
+                                            label: value.name,
+                                        }}
                                         onValueChange={onChange}
                                         citiesList={citiesList}
                                     />
@@ -560,7 +611,8 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name='userPincode'
-                                render={({ field: { onBlur, onChange, value } }) => (
+                                disabled={disabled}
+                                render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.userPincode && "border-red-500"}`}
                                         placeholder='Enter your pincode'
@@ -568,6 +620,7 @@ const ProfileScreen = ({ }: Props) => {
                                         value={value}
                                         onChangeText={onChange}
                                         onBlur={onBlur}
+                                        editable={disabled}
                                     />
                                 )}
                             />
@@ -581,13 +634,15 @@ const ProfileScreen = ({ }: Props) => {
                                 <Controller
                                     control={control}
                                     name='distributorAddress'
-                                    render={({ field: { onBlur, onChange, value } }) => (
+                                    disabled={disabled}
+                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Textarea
                                             className={`focus:border-2 focus:border-primary ${errors.distributorAddress && "border-red-500"}`}
                                             placeholder='Enter your full address'
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
+                                            editable={disabled}
                                         />
                                     )}
                                 />
@@ -600,12 +655,17 @@ const ProfileScreen = ({ }: Props) => {
                     <View className='my-6'>
                         <Button
                             onPress={handleSubmit(handleProfileSubmit)}
-                            disabled={!isDirty}
+                            // disabled={!isDirty}
                         >
                             <Text>Submit</Text>
                         </Button>
                     </View>
                 </KeyboardAwareScrollView>
+                {/* <DiscardFormDialog
+                    open={discardChanges}
+                    setIsFormDisabled={setIsFormDisabled}
+                    setDiscardChanges={setDiscardChanges}
+                /> */}
             </View>
             <KeyboardToolbar />
         </>
