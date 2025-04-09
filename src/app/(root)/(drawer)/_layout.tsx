@@ -104,8 +104,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name="report" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Report',
-                    title: 'Reports',
+                    drawerLabel: 'Report Coupon',
+                    title: 'Reports Coupon',
                     drawerIcon: ({ focused, color }) => (
                         <ClipboardPlusIcon color={focused ? "#FFF" : color} />
                     )
