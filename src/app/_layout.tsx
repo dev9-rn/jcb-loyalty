@@ -8,9 +8,9 @@ import { PortalHost } from '@rn-primitives/portal';
 import AuthProvider from "@/providers/AuthProvider";
 import UserProvider from "@/providers/UserProvider";
 import ToastNotification from "@/components/ToastNotification";
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import "./globals.css"
-import { StatusBar } from "react-native";
 
 if (__DEV__) {
   require("../../ReactotronConfig");
@@ -22,28 +22,30 @@ export default function RootLayout() {
       <KeyboardProvider>
         <SafeAreaProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <ToastProvider
-              offsetBottom={40}
-              swipeEnabled={true}
-              renderToast={(props) => <ToastNotification toastData={props} />}
-            >
-              <UserProvider>
-                <AuthProvider>
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen
-                      name="(auth)"
-                      options={{ headerShown: false }}
-                    />
+            <BottomSheetModalProvider>
+              <ToastProvider
+                offsetBottom={40}
+                swipeEnabled={true}
+                renderToast={(props) => <ToastNotification toastData={props} />}
+              >
+                <UserProvider>
+                  <AuthProvider>
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen
+                        name="(auth)"
+                        options={{ headerShown: false }}
+                      />
 
-                    <Stack.Screen
-                      name="(root)"
-                      options={{ headerShown: false }}
-                    />
-                  </Stack>
-                </AuthProvider>
-              </UserProvider>
-            </ToastProvider>
-            <PortalHost />
+                      <Stack.Screen
+                        name="(root)"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack>
+                  </AuthProvider>
+                </UserProvider>
+              </ToastProvider>
+              <PortalHost />
+            </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </SafeAreaProvider>
       </KeyboardProvider>

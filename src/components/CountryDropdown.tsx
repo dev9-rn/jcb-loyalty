@@ -65,7 +65,7 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
         </SelectItem>
     ), []);
 
-    if (!defaultValue?.value && route.name !== "sign-up") return;
+    // if (!defaultValue?.value && route.name !== "sign-up") return;
 
     return (
         <Select onValueChange={handleValueChange} defaultValue={defaultValue}>

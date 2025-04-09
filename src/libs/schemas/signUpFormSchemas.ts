@@ -69,7 +69,8 @@ const retailerSchema = baseSchema.extend({
     retailerShopName: z.string().nonempty("Please enter a shop name"),
     retailerCode: z.string({
         required_error: "Please enter a code."
-    }).nonempty("Please enter a code.")
+    }).nonempty("Please enter a code."),
+    retailerAddress: z.string().nonempty("Please enter you full address"),
 });
 
 const signUpForm = z.discriminatedUnion("userType", [

@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { useFocusEffect } from 'expo-router';
 import axios from 'axios';
 import { useToast } from 'react-native-toast-notifications';
+import ImageView from "react-native-image-viewing";
 
 type Props = {}
 
@@ -26,6 +27,8 @@ const ReportHistory = ({ }: Props) => {
     const [selctedToDate, setSelectedToDate] = useState(new Date());
     const [showFromDate, setShowFromDate] = useState<boolean>(false)
     const [showToDate, setShowToDate] = useState<boolean>(false);
+
+    const [selectedImageToView, setSelectedImageToView] = useState<{ visible: boolean, currentImage: string } | undefined>(undefined)
 
     useFocusEffect(
         useCallback(() => {
@@ -50,9 +53,18 @@ const ReportHistory = ({ }: Props) => {
                         <Text className='text-lg font-medium'>{new Date(item.created).toLocaleDateString()}</Text>
                     </Text>
                 </View>
-                <View>
-                    <Image source={{ uri: item.coupon_image }} className='size-36' />
-                </View>
+                <TouchableOpacity
+                    className='border-2 border-gray-400 rounded-lg'
+                    onPress={() => {
+                        setSelectedImageToView({
+                            currentImage: item.coupon_image,
+                            visible: true
+                        })
+                    }}
+                >
+                    <Image source={{ uri: item.coupon_image }} className='size-36 m-1' />
+                </TouchableOpacity>
+                {/* <ReportHistoryImageDialog item={item} /> */}
             </View>
         )
     }, [reportedCouponHistoryData]);
@@ -147,6 +159,13 @@ const ReportHistory = ({ }: Props) => {
                         </Text>
                     </View>
                 )}
+            />
+
+            <ImageView
+                imageIndex={0}
+                visible={selectedImageToView?.visible || false}
+                images={[{ uri: selectedImageToView?.currentImage }]}
+                onRequestClose={() => setSelectedImageToView(undefined)}
             />
         </View>
     )

@@ -64,7 +64,7 @@ const StateDropdown = ({ setSelectedState, stateList, onValueChange, defaultValu
         </SelectItem>
     ), []);
 
-    if (!defaultValue?.value && route.name !== "sign-up") return;
+    // if (!defaultValue?.value && route.name !== "sign-up") return;
 
     return (
         <Select

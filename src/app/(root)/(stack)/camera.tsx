@@ -12,7 +12,7 @@ import { ZapOffIcon } from '@/libs/icons/ZapIconOff';
 import { ZapIcon } from '@/libs/icons/ZapIcon';
 import useUser from '@/hooks/useUser';
 import axiosInstance from '@/utils/axiosInstance';
-import { CHECK_COUPON, REDEEM_COUPON, REDEEM_MECHANIC_COUPON } from '@/utils/routes';
+import { CHECK_COUPON, REDEEM_COUPON, REDEEM_MECHANIC_COUPON, SCAN_RETAILER_COUPON } from '@/utils/routes';
 import CouponRedeemedDialog from '@/components/CouponRedeemedDialog';
 import axios from 'axios';
 import CouponErrorDialog from '@/components/CouponErrorDialog';
@@ -90,8 +90,8 @@ const CameraScreen = ({ }: Props) => {
         };
 
         return {
-            endpoint: REDEEM_MECHANIC_COUPON,
-            user_id: "mechanicId"
+            endpoint: SCAN_RETAILER_COUPON,
+            user_id: "dealerId"
         }
     };
 

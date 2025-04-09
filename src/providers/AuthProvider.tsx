@@ -97,7 +97,7 @@ const AuthProvider = ({ children }: Props) => {
     const logout = async () => {
         const logoutFormData = new FormData();
 
-        logoutFormData.append(userDetails?.userType === 0 ? "distributorId" : userDetails?.userType === 1 ? "mechanicId" : "dealerId", userDetails?.id);
+        logoutFormData.append("distributorId", userDetails?.id);
         logoutFormData.append("deviceToken", userFirebaseToken);
         logoutFormData.append("userType", userDetails?.userType);
 
@@ -121,6 +121,7 @@ const AuthProvider = ({ children }: Props) => {
                 toast.show(error.response?.data.message, {
                     data: error.response
                 });
+                setColorScheme("light");
             };
         };
 
