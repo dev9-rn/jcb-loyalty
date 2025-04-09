@@ -108,7 +108,7 @@ const ProfileScreen = ({ }: Props) => {
         );
 
         const matchedCity = citiesList.find(
-            (city) => city.id === profileDetails.city_id
+            (city) => city.id === profileDetails.city_id || userDetails?.city_id
         );
 
         reset({
@@ -179,13 +179,19 @@ const ProfileScreen = ({ }: Props) => {
         try {
             const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
 
-            if (response.data.success != 200) {
-                (response.data.message);
+            if (response.data.status != 200) {
+                toast.show(response.data.message, {
+                    data: response
+                });
             };
 
             setCitiesList(response.data.cities);
         } catch (error) {
-
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            };
         };
     };
 
@@ -655,7 +661,7 @@ const ProfileScreen = ({ }: Props) => {
                     <View className='my-6'>
                         <Button
                             onPress={handleSubmit(handleProfileSubmit)}
-                            // disabled={!isDirty}
+                        // disabled={!isDirty}
                         >
                             <Text>Submit</Text>
                         </Button>
