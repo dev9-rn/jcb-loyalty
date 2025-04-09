@@ -126,8 +126,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name='my-dealers'
                 options={{
-                    drawerLabel: 'My Dealers',
-                    title: 'Dealers',
+                    drawerLabel: 'My Retailers',
+                    title: 'Retailers',
                     drawerIcon: ({ focused, color }) => (
                         <TruckIcon color={focused ? "#FFF" : color} />
                     )
