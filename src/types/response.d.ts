@@ -227,3 +227,23 @@ interface ICashBatchReports {
     credit_note_date: string | null;
     credit_note_value: string | null;
 };
+
+interface IDealerListDetail {
+    id: string;
+    distributor_code: string;
+    shop_name: string;
+    dealer_name: string;
+    mobile_no: string;
+    address: string;
+    state_id: string;
+    city_id: string;
+    pincode: string;
+    is_verified: "0" | "1" | "2";
+    is_approved: "0" | "1" | "2";
+    is_active: "0" | "1" | "2";
+    otp: string | null;
+    created: string; // e.g., ISO date string
+    updated: string | null;
+    state: string;
+    city: string;
+}

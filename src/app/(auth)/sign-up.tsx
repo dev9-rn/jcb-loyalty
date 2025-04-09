@@ -19,6 +19,7 @@ import { GET_BRANDS_BY_IDS, GET_CITIES_LIST, GET_COUNTRY_LIST, GET_STATE_LIST, R
 import { useToast } from 'react-native-toast-notifications'
 import axios from 'axios'
 import SelectBrandDropdown from '@/components/SelectBrandDropdown'
+import RetailerApprovalDialog from '@/components/RetailerApprovalDialog'
 
 type Props = {}
 
@@ -27,7 +28,7 @@ const SignUpScreen = ({ }: Props) => {
     const [countryList, setCountryList] = useState<ILocationData[]>([]);
     const [stateList, setStateList] = useState<ILocationData[]>([]);
     const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
-    const [brands, setBrands] = useState<IBrandsDetails[]>([])
+    const [brands, setBrands] = useState<IBrandsDetails[]>([]);
 
     const { userDetails } = useUser()
 
@@ -199,12 +200,13 @@ const SignUpScreen = ({ }: Props) => {
         if (userType === "retailer") {
             registerFormData.append('shopName', formData.retailerShopName);
             registerFormData.append('distributorCode', formData.retailerCode);
+            registerFormData.append('address', formData.retailerAddress);
         }
 
         try {
             const response = await axiosInstance.post(getRegisterEndpoint()?.endpoint, registerFormData);
 
-            if (response.data.success != 200) {
+            if (response.data.status != 200) {
                 toast.show(response.data.message, {
                     data: response
                 });
@@ -565,6 +567,28 @@ const SignUpScreen = ({ }: Props) => {
                                 />
 
                                 {errors.distributorAddress && <Text className='text-red-500 font-medium'>{errors.distributorAddress.message}</Text>}
+                            </View>
+                        )}
+
+                        {userType === "retailer" && (
+                            <View className='gap-1'>
+                                <Text>Address <Text className='text-red-500'>*</Text></Text>
+
+                                <Controller
+                                    control={control}
+                                    name='retailerAddress'
+                                    render={({ field: { onBlur, onChange, value } }) => (
+                                        <Textarea
+                                            className={`focus:border-2 focus:border-primary ${errors.retailerAddress && "border-red-500"}`}
+                                            placeholder='Enter your full address'
+                                            value={value}
+                                            onChangeText={onChange}
+                                            onBlur={onBlur}
+                                        />
+                                    )}
+                                />
+
+                                {errors.retailerAddress && <Text className='text-red-500 font-medium'>{errors.retailerAddress.message}</Text>}
                             </View>
                         )}
                     </View>

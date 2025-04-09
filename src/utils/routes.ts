@@ -15,6 +15,8 @@ export const GET_COUNTRY_LIST = "/api/getCountries";
 export const GET_STATE_LIST = "/api/getStatesByCountry";
 export const GET_CITIES_LIST = "/api/getCitiesByState";
 export const GET_BRANDS_BY_IDS = "/api/getBrands";
+export const GET_DEALERS_LIST = "/api/getDealersList";
+export const APPROVE_REJECT_DEALER = "/api/approveRejectDealer"
 
 /* 
 ** Mechanic URLs
@@ -36,3 +38,5 @@ export const GET_RETAILER_DASHBOARD = "/api/getDashboardDealer"
 export const GET_RETAILER_PROFILE = "/api/getProfileDealer";
 export const UPDATE_RETAILER_PROFILE = "/api/updateProfileDealer";
 export const GET_RETAILER_COUPON_HISTORY = "/api/getScannedHistory";
+export const SCAN_RETAILER_COUPON = "/api/scanCoupon";
+export const VERIFY_VALID_RETAILER = "/api/verifyDealer";

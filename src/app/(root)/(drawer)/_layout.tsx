@@ -13,6 +13,7 @@ import { HistoryIcon } from '@/libs/icons/HistoryIcon';
 import { ClipboardList } from '@/libs/icons/ClipboardList';
 import { ClipboardPlusIcon } from '@/libs/icons/ClipboardPlus';
 import { FileClockIcon } from '@/libs/icons/FileClockIcon';
+import { TruckIcon } from '@/libs/icons/TruckIcon';
 import useUser from '@/hooks/useUser';
 
 type Props = {}
@@ -36,7 +37,7 @@ const DrawerLayout = ({ }: Props) => {
                 },
                 drawerItemStyle: {
                     borderRadius: 8,
-                    display: ["cash-batch", "report", "report-history"].includes(route.name) && (userDetails?.userType != 0) ? "none" : "flex"
+                    display: ["cash-batch", "report", "report-history", "my-dealers"].includes(route.name) && (userDetails?.userType != 0) ? "none" : "flex"
                 },
             })}
             drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -118,6 +119,17 @@ const DrawerLayout = ({ }: Props) => {
                     title: 'Reports History',
                     drawerIcon: ({ focused, color }) => (
                         <FileClockIcon color={focused ? "#FFF" : color} />
+                    )
+                }}
+            />
+
+            <Drawer.Screen
+                name='my-dealers'
+                options={{
+                    drawerLabel: 'My Dealers',
+                    title: 'Dealers',
+                    drawerIcon: ({ focused, color }) => (
+                        <TruckIcon color={focused ? "#FFF" : color} />
                     )
                 }}
             />

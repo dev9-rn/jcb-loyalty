@@ -1,5 +1,5 @@
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams } from 'expo-router';
 
@@ -10,7 +10,8 @@ import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form
 import useAuth from '@/hooks/useAuth';
 import useUser from '@/hooks/useUser';
 import axios, { AxiosResponse } from 'axios';
-import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER } from '@/utils/routes';
+import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER, VERIFY_VALID_RETAILER } from '@/utils/routes';
+import RetailerApprovalDialog from '@/components/RetailerApprovalDialog';
 
 type Props = {}
 
@@ -19,6 +20,9 @@ type FormData = {
 }
 
 const OtpVerificationScreen = ({ }: Props) => {
+
+    const [isApprovalDialogVisible, setIsApprovalDialogVisible] = useState<boolean>(false);
+    const [approvalDialogContent, setApprovalDialogContent] = useState<{ status: number, message: string } | undefined>(undefined);
 
     const { verify, login } = useAuth();
     const { userFirebaseToken } = useUser()
@@ -40,7 +44,7 @@ const OtpVerificationScreen = ({ }: Props) => {
             return VERIFY_OTP
         };
 
-        return VERIFY_RETAILER
+        return VERIFY_VALID_RETAILER
     };
 
     const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (formData) => {
@@ -52,7 +56,12 @@ const OtpVerificationScreen = ({ }: Props) => {
         verifyOtpFormData.append('deviceToken', userFirebaseToken as string);
         verifyOtpFormData.append('deviceType', Platform.OS);
 
-        const verifyResponse: AxiosResponse = await verify(getVerifyEndpoint(), verifyOtpFormData, userType as string)
+        const verifyResponse: AxiosResponse = await verify(getVerifyEndpoint(), verifyOtpFormData, userType as string);
+
+        if (!verifyResponse.data.accesstoken && verifyResponse.data.status === 200) {
+            setIsApprovalDialogVisible(true)
+            setApprovalDialogContent(verifyResponse.data);
+        };
 
         if (axios.isAxiosError(verifyResponse)) {
             setError("userOtp", {
@@ -100,9 +109,9 @@ const OtpVerificationScreen = ({ }: Props) => {
             setError("userPhone", {
                 type: loginResponse.data.satus,
                 message: loginResponse.data.message,
-            })
-        }
-    }
+            });
+        };
+    };
 
     return (
         <SafeAreaView className='flex-1 bg-white'>
@@ -148,6 +157,13 @@ const OtpVerificationScreen = ({ }: Props) => {
                         <Text>Verify</Text>
                     </Button>
                 </View>
+
+
+                <RetailerApprovalDialog
+                    isApprovalDialogVisible={isApprovalDialogVisible}
+                    setIsApprovalDialogVisible={setIsApprovalDialogVisible}
+                    approvalDialogContent={approvalDialogContent}
+                />
             </View>
         </SafeAreaView>
     )

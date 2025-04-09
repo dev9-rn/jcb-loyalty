@@ -100,11 +100,11 @@ const ProfileScreen = ({ }: Props) => {
 
         const currentUserBrand = brands.find((brand) => brand.id === profileDetails.brand_id);
         const matchedCountry = countryList.find(
-            (country) => country.id === profileDetails.country_id
+            (country) => country.id === profileDetails.country_id || userDetails?.country_id
         );
 
         const matchedState = stateList.find(
-            (state) => state.id === profileDetails.state_id
+            (state) => state.id === profileDetails.state_id || userDetails?.state_id
         );
 
         const matchedCity = citiesList.find(
@@ -161,8 +161,12 @@ const ProfileScreen = ({ }: Props) => {
             const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
 
             if (response.data.status != 200) {
-                (response.data.message)
+                toast.show(response.data.message, {
+                    data: response
+                })
             };
+
+            console.log(response.data, "RES_STATE_LIST");
 
             setStateList(response.data.states);
         } catch (error) {

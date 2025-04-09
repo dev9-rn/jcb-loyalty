@@ -78,6 +78,10 @@ const AuthProvider = ({ children }: Props) => {
                 return response.data
             };
 
+            if (!response.data?.data?.accesstoken) {
+                return response
+            };
+
             setUserAuthToken(response.data?.data?.accesstoken);
             setUserDetails(response.data?.data);
 
