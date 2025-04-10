@@ -85,18 +85,20 @@ const CouponHistoryScreen = ({ }: Props) => {
                         ₹ {item.value}
                     </Text>
                 </View>
-                <Text className='text-lg'>
-                    Item Code:{" "}
-                    <Text className='text-lg font-medium'>{item.item_code}</Text>
-                </Text>
+                {item.item_code && (
+                    <Text className='text-lg'>
+                        Item Code:{" "}
+                        <Text className='text-lg font-medium'>{item.item_code}</Text>
+                    </Text>
+                )}
                 <Text className='text-lg'>
                     Redeemed Date:{" "}
-                    <Text className='text-lg font-medium'>{new Date(item.distributor_redemption_date).toLocaleString()}</Text>
+                    <Text className='text-lg font-medium'>{new Date(item.distributor_redemption_date || item?.scanned_date).toLocaleString()}</Text>
                 </Text>
-
+                
                 <Text className='text-lg'>
                     Status:{" "}
-                    <Text className='text-green-600 text-lg font-medium'>{item.distributor_redemption_flag}</Text>
+                    <Text className='text-green-600 text-lg font-medium'>{item.distributor_redemption_flag || "Scanned"}</Text>
                 </Text>
             </View>
         )

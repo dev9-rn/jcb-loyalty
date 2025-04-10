@@ -80,6 +80,7 @@ interface IDashboardData {
     totalCouponsRedeemedPoint: number;
     totalCouponsRedeemedCount: number;
     totalCouponsScanned: number;
+    totalAmountCouponsScanned: number;
 };
 
 interface IValidCoupon {
@@ -144,7 +145,7 @@ interface IRedeemedCoupon {
     mechanic_id: string;
     mechanic_redeemption_date_time: string | null;
     scanned_by: string | null;
-    scanned_date: string | null;
+    scanned_date: string;
 }
 
 interface ICouponHistory {

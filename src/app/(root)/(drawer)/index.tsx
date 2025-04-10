@@ -110,7 +110,7 @@ const HomeScreen = ({ }: Props) => {
 						</CardHeader>
 						<CardContent>
 							<Text className='text-2xl font-semibold text-primary'>
-								{dashboardData?.totalAmountRedeemed || dashboardData?.totalCouponsRedeemedPoint}
+								{dashboardData?.totalAmountRedeemed || dashboardData?.totalCouponsRedeemedPoint || dashboardData?.totalAmountCouponsScanned}
 							</Text>
 						</CardContent>
 					</Card>
