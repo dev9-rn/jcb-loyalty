@@ -151,6 +151,7 @@ interface ICouponHistory {
     status: number;
     message: string;
     redeemHistory: IRedeemedCoupon[];
+    scannedHistory: IRedeemedCoupon[];
     offset: number;
 };
 

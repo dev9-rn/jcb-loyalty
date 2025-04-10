@@ -220,8 +220,9 @@ const CouponHistoryScreen = ({ }: Props) => {
 
             <FlatList
                 contentContainerClassName='p-4'
-                data={couponHistoryData?.redeemHistory}
-                renderItem={userDetails?.userType != 1 ? renderCouponItem : renderMechanicPassbook}
+                data={couponHistoryData?.redeemHistory || couponHistoryData?.scannedHistory}
+                renderItem={renderCouponItem}
+                // renderItem={userDetails?.userType === 0 ? renderCouponItem : renderMechanicPassbook}
                 ItemSeparatorComponent={() => <Separator />}
                 ListFooterComponent={loading ? <ActivityIndicator size="large" color="blue" /> : null}
                 ListEmptyComponent={() => (
