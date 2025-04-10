@@ -84,7 +84,7 @@ const StateDropdown = ({ setSelectedState, stateList, onValueChange, defaultValu
             >
                 <View>
                     <Input
-                        placeholder='Search by Country'
+                        placeholder='Search by State'
                         value={searchQuery}
                         onChangeText={handleSearchChange}
                     />

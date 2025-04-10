@@ -78,7 +78,7 @@ const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange, defaultVal
             >
                 <View>
                     <Input
-                        placeholder='Search by Country'
+                        placeholder='Search by Cities'
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
