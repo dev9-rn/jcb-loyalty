@@ -103,10 +103,10 @@ const HomeScreen = ({ }: Props) => {
 					<Card className="w-[48%]">
 						<CardHeader className='gap-2'>
 							<CardTitle>
-								Redeemed{" "}
+								{userDetails?.userType === 0 ? "Redeemed" : "Scanned"}{" "}
 								{userDetails?.userType === 1 ? "Points" : "Amount"}
 							</CardTitle>
-							<CardDescription>Total redeemed {userDetails?.userType === 1 ? "points" : "amount"} till date</CardDescription>
+							<CardDescription>Total {userDetails?.userType === 0 ? "redeemed points" : "scanned amount"} till date</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<Text className='text-2xl font-semibold text-primary'>
