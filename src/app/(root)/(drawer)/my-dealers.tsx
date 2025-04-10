@@ -126,6 +126,7 @@ const DealersScreen = ({ }: Props) => {
             setDealerList(response.data.dealersData);
         } catch (error) {
             if (axios.isAxiosError(error)) {
+                setDealerList(error.response?.data.dealersData);
                 toast.show(error.response?.data.message, {
                     data: error.response
                 });
@@ -168,10 +169,17 @@ const DealersScreen = ({ }: Props) => {
         <ScrollView
             className='flex-1 p-4 bg-white'
         >
-            <View>
-                <Text>
-                    Filter: {statusFilterValue}
+            <View className='flex-row items-center gap-2'>
+                <Text className='flex-row items-center text-lg font-medium'>
+                    Filter:
                 </Text>
+                <View>
+                    <Badge className='flex-row items-center'>
+                        <Text>
+                            {statusFilterValue}
+                        </Text>
+                    </Badge>
+                </View>
             </View>
 
             <View className='my-8'>
@@ -180,6 +188,11 @@ const DealersScreen = ({ }: Props) => {
                     contentContainerClassName='gap-4'
                     data={dealerList}
                     renderItem={renderDealerCard}
+                    ListEmptyComponent={() => (
+                        <View className='flex-1 items-center justify-center'>
+                            <Text className='text-2xl font-semibold'>No request found</Text>
+                        </View>
+                    )}
                 />
             </View>
 

@@ -87,7 +87,7 @@ const CountryDropdown = ({ countryList, setSelectedCountry, onValueChange, userD
                         onChangeText={handleSearchChange}
                     />
                 </View>
-                <View style={{ maxHeight: 300 }}>
+                <View className='max-h-48'>
                     <FlatList
                         data={filteredOptions}
                         renderItem={renderItem}
