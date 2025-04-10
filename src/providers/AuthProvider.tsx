@@ -78,20 +78,20 @@ const AuthProvider = ({ children }: Props) => {
                 return response.data
             };
 
-            if (!response.data?.data?.accesstoken) {
+            if (response.data?.data?.accesstoken || response.headers.accesstoken) {
+                setUserAuthToken(response.data?.data?.accesstoken || response.headers.accesstoken);
+                setUserDetails(response.data?.data);
+
+                // Set user details to local storage to maintain the seesion
+                storageService.setItem(STORAGE_KEYS.LOCAL_USER, JSON.stringify(response.data?.data));
+                storageService.setItem(STORAGE_KEYS.THEME_COLOR, colorScheme);
+                tokenStorageService.setAuthToken(STORAGE_KEYS.AUTH_TOKEN, response.data?.data?.accesstoken || response.headers.accesstoken);
+
+                setIsAuthenticated(true);
+                router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
+            } else {
                 return response
             };
-
-            setUserAuthToken(response.data?.data?.accesstoken);
-            setUserDetails(response.data?.data);
-
-            // Set user details to local storage to maintain the seesion
-            storageService.setItem(STORAGE_KEYS.LOCAL_USER, JSON.stringify(response.data?.data));
-            storageService.setItem(STORAGE_KEYS.THEME_COLOR, colorScheme);
-            tokenStorageService.setAuthToken(STORAGE_KEYS.AUTH_TOKEN, response.data?.data?.accesstoken || response.headers.accesstoken);
-
-            setIsAuthenticated(true);
-            router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
         } catch (error) {
             return error
         }

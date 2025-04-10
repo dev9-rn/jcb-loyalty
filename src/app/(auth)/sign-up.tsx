@@ -216,7 +216,8 @@ const SignUpScreen = ({ }: Props) => {
                 pathname: "/(auth)/otp-verify",
                 params: {
                     userPhone: formData.userPhoneNumber,
-                    userType
+                    userType,
+                    methodType: "registration",
                 }
             });
 

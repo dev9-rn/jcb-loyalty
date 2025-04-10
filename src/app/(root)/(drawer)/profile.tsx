@@ -166,8 +166,6 @@ const ProfileScreen = ({ }: Props) => {
                 })
             };
 
-            console.log(response.data, "RES_STATE_LIST");
-
             setStateList(response.data.states);
         } catch (error) {
             (error)

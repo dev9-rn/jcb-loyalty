@@ -27,7 +27,7 @@ const OtpVerificationScreen = ({ }: Props) => {
     const { verify, login } = useAuth();
     const { userFirebaseToken } = useUser()
 
-    const { userPhone, userType } = useLocalSearchParams();
+    const { userPhone, userType, methodType } = useLocalSearchParams();
 
     const { control, handleSubmit, setError, formState: { errors } } = useForm<FormData | FieldValues>({
         defaultValues: {
@@ -44,7 +44,7 @@ const OtpVerificationScreen = ({ }: Props) => {
             return VERIFY_OTP
         };
 
-        return VERIFY_VALID_RETAILER
+        return methodType === "registration" ? VERIFY_VALID_RETAILER : VERIFY_RETAILER;
     };
 
     const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (formData) => {
@@ -58,7 +58,7 @@ const OtpVerificationScreen = ({ }: Props) => {
 
         const verifyResponse: AxiosResponse = await verify(getVerifyEndpoint(), verifyOtpFormData, userType as string);
 
-        if (!verifyResponse.data.accesstoken && verifyResponse.data.status === 200) {
+        if ((!verifyResponse.data.accesstoken || !verifyResponse.headers.accesstoken) && verifyResponse.data.status === 200) {
             setIsApprovalDialogVisible(true)
             setApprovalDialogContent(verifyResponse.data);
         };

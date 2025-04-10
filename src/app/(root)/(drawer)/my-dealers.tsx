@@ -1,4 +1,4 @@
-import { View, FlatList, ScrollView } from 'react-native'
+import { View, FlatList, ScrollView, RefreshControl } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { router, useFocusEffect, useNavigation } from 'expo-router'
 import { Button } from '@/components/ui/button'
@@ -12,6 +12,8 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import FilterBottomSheetModal from '@/components/FilterBottomSheetModal'
 import { Text } from '@/components/ui/text'
 import { Badge } from '@/components/ui/badge'
+import ApproveDealerAlertDialog from '@/components/ApproveDealerAlertDialog'
+import RejectDealerAlterDialog from '@/components/RejectDealerAlterDialog'
 
 type Props = {}
 
@@ -19,6 +21,7 @@ const DealersScreen = ({ }: Props) => {
 
     const [dealerList, setDealerList] = useState<IDealerListDetail[]>([])
     const [statusFilterValue, setStatusFilterValue] = useState<string | undefined>("All");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { userDetails } = useUser();
 
@@ -50,7 +53,7 @@ const DealersScreen = ({ }: Props) => {
 
     const renderDealerCard = useCallback(({ item, index }: { item: IDealerListDetail, index: number }) => {
         return (
-            <View key={item.id || index} className='border rounded-lg border-gray-500 p-2 flex-row items-center justify-between gap-2.5 relative'>
+            <View key={item.id || index} className='border rounded-lg border-gray-400 p-2 flex-row items-center justify-between gap-2.5 relative'>
                 <View className='gap-1 flex-shrink'>
                     <Text>
                         Name:{" "}
@@ -84,12 +87,14 @@ const DealersScreen = ({ }: Props) => {
                 <View className='gap-2 '>
                     {item.is_approved === "0" && (
                         <>
-                            <Button size={"sm"} onPress={() => postDealerAction({ dealer_id: item.id, isApproved: "1" })}>
-                                <Text>Approve</Text>
-                            </Button>
-                            <Button size={"sm"} variant={"destructive"} onPress={() => postDealerAction({ dealer_id: item.id, isApproved: "2" })}>
-                                <Text>Reject</Text>
-                            </Button>
+                            <ApproveDealerAlertDialog
+                                postDealerAction={() => postDealerAction({ dealer_id: item.id, isApproved: "1" })}
+                                item={item}
+                            />
+                            <RejectDealerAlterDialog
+                                postDealerAction={() => postDealerAction({ dealer_id: item.id, isApproved: "2" })}
+                                item={item}
+                            />
                         </>
                     )}
                 </View>
@@ -113,7 +118,7 @@ const DealersScreen = ({ }: Props) => {
 
         dealerListFormData.append("distributorId", userDetails?.id);
         dealerListFormData.append("status", statusFilterValue);
-
+        setIsLoading(true);
         try {
             const response = await axiosInstance.post(GET_DEALERS_LIST, dealerListFormData);
 
@@ -132,6 +137,7 @@ const DealersScreen = ({ }: Props) => {
                 });
             };
         };
+        setIsLoading(false);
     };
 
     const postDealerAction = async ({ dealer_id, isApproved }: { dealer_id: string, isApproved: string }) => {
@@ -168,6 +174,12 @@ const DealersScreen = ({ }: Props) => {
     return (
         <ScrollView
             className='flex-1 p-4 bg-white'
+            refreshControl={
+                <RefreshControl
+                    refreshing={isLoading}
+                    onRefresh={fetchDealerList}
+                />
+            }
         >
             <View className='flex-row items-center gap-2'>
                 <Text className='flex-row items-center text-lg font-medium'>
