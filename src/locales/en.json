@@ -1,0 +1,14 @@
+{
+    "signInAs": "Sign in as",
+    "phoneNumber": "Phone Number",
+    "errors": {
+        "phoneRequired": "Please enter your phone number",
+        "phoneInvalid": "Please enter a 10-digit phone number"
+    },
+    "login": "Login",
+    "loggingIn": "Logging In",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign Up",
+    "orSignInAs": "Or Sign In as",
+    "switchTo": "Switch to"
+}

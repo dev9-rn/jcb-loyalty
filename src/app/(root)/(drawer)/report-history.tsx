@@ -11,8 +11,14 @@ import { useFocusEffect } from 'expo-router';
 import axios from 'axios';
 import { useToast } from 'react-native-toast-notifications';
 import ImageView from "react-native-image-viewing";
+import { ImageSource } from 'react-native-image-viewing/dist/@types';
 
 type Props = {}
+
+type SelectedImageToViewType = {
+    visible: boolean;
+    currentImage: ImageSource[]
+}
 
 const ReportHistory = ({ }: Props) => {
 
@@ -28,7 +34,7 @@ const ReportHistory = ({ }: Props) => {
     const [showFromDate, setShowFromDate] = useState<boolean>(false)
     const [showToDate, setShowToDate] = useState<boolean>(false);
 
-    const [selectedImageToView, setSelectedImageToView] = useState<{ visible: boolean, currentImage: string } | undefined>(undefined)
+    const [selectedImageToView, setSelectedImageToView] = useState<SelectedImageToViewType | undefined>(undefined);
 
     useFocusEffect(
         useCallback(() => {
@@ -57,9 +63,12 @@ const ReportHistory = ({ }: Props) => {
                     className='border-2 border-gray-400 rounded-lg'
                     onPress={() => {
                         setSelectedImageToView({
-                            currentImage: item.coupon_image,
+                            currentImage: [
+                                { uri: item.coupon_image },
+                                { uri: item.coupon_image_back }
+                            ],
                             visible: true
-                        })
+                        });
                     }}
                 >
                     <Image source={{ uri: item.coupon_image }} className='size-36 m-1' />
@@ -164,8 +173,9 @@ const ReportHistory = ({ }: Props) => {
             <ImageView
                 imageIndex={0}
                 visible={selectedImageToView?.visible || false}
-                images={[{ uri: selectedImageToView?.currentImage }]}
+                images={selectedImageToView?.currentImage as ImageSource[]}
                 onRequestClose={() => setSelectedImageToView(undefined)}
+                keyExtractor={(item, index) => index.toString()}
             />
         </View>
     )

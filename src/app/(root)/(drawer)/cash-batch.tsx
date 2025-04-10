@@ -9,7 +9,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { GET_CASH_BATCH_REPORTS } from '@/utils/routes';
 import { useToast } from 'react-native-toast-notifications';
 import axios from 'axios';
-import { Separator } from '@rn-primitives/select';
+import { Separator } from '@/components/ui/separator';
 
 type Props = {}
 
@@ -36,7 +36,7 @@ const CashBatchScreen = ({ }: Props) => {
                 <View className='flex-row items-center justify-between'>
                     <Text className='text-lg'>
                         Total Coupons Scanned:{" "}
-                        <Text className='text-lg font-medium'>{item.batch_number}</Text>
+                        <Text className='text-lg font-medium'>{item.total_coupons_scanned}</Text>
                     </Text>
                     <Text className='text-lg font-semibold'>
                         ₹ {item.total_amount}
@@ -55,6 +55,25 @@ const CashBatchScreen = ({ }: Props) => {
                     Status:{" "}
                     <Text className='text-primary text-lg font-medium capitalize'>{item.status}</Text>
                 </Text>
+                {item.credit_note_no && (
+                    <>
+                        <Text className='text-lg'>
+                            Credited note no.:{" "}
+                            <Text className='text-lg font-medium'>{item.credit_note_no}</Text>
+                        </Text>
+
+                        <Text className='text-lg'>
+                            Credited date:{" "}
+                            <Text className='text-lg font-medium'>{new Date(item.credit_note_date as string).toLocaleDateString()}</Text>
+                        </Text>
+
+                        <Text className='text-lg'>
+                            Credited value:{" "}
+                            <Text className='text-lg font-medium'>{item.credit_note_value}</Text>
+                        </Text>
+                    </>
+
+                )}
             </View>
         )
     }, [])
@@ -147,7 +166,7 @@ const CashBatchScreen = ({ }: Props) => {
                 contentContainerClassName='p-4'
                 data={cashBatchReportData}
                 renderItem={renderItem}
-                ItemSeparatorComponent={() => <Separator />}
+                ItemSeparatorComponent={() => <Separator className='' />}
                 ListEmptyComponent={() => (
                     <View className='flex-1 items-center justify-center'>
                         <Text className='text-xl font-medium'>

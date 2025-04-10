@@ -25,7 +25,8 @@ type ReportFormData = {
 
 const ReportCouponScreen = ({ }: Props) => {
 
-    const [pickedCouponImage, setPickedCouponImage] = useState<string | null>(null);
+    const [pickedFrontsideCouponImage, setPickedFrontsideCouponImage] = useState<string | null>(null);
+    const [pickedBacksideCouponImage, setPickedBacksideCouponImage] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const { userDetails } = useUser();
@@ -41,7 +42,7 @@ const ReportCouponScreen = ({ }: Props) => {
 
     const handleCouponReportSubmit: SubmitHandler<ReportFormData | FieldValues> = async (formData) => {
 
-        if (!pickedCouponImage) {
+        if (!pickedFrontsideCouponImage || !pickedBacksideCouponImage) {
             toast.show("Please pick an image to report..!", {
                 data: { status: 400, }
             })
@@ -54,9 +55,14 @@ const ReportCouponScreen = ({ }: Props) => {
         uploadReportFormData.append("description", formData.couponDescription);
         uploadReportFormData.append('distributorId', userDetails?.id);
         uploadReportFormData.append('couponFile', {
-            uri: pickedCouponImage,
+            uri: pickedFrontsideCouponImage,
             type: 'image/jpeg',
             name: "abc.jpeg",
+        });
+        uploadReportFormData.append('couponFileBack', {
+            uri: pickedBacksideCouponImage,
+            type: 'image/jpeg',
+            name: "abc_back.jpeg",
         });
 
         try {
@@ -74,7 +80,8 @@ const ReportCouponScreen = ({ }: Props) => {
                 data: response
             });
             reset();
-            setPickedCouponImage(null)
+            setPickedBacksideCouponImage(null)
+            setPickedFrontsideCouponImage(null);
             setIsSubmitting(false);
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -102,7 +109,7 @@ const ReportCouponScreen = ({ }: Props) => {
         }
     };
 
-    const handleCouponImagePicker = async () => {
+    const handleFrontsideCouponImagePicker = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
             allowsEditing: true,
@@ -110,7 +117,19 @@ const ReportCouponScreen = ({ }: Props) => {
         });
 
         if (!result.canceled) {
-            setPickedCouponImage(result.assets[0].uri);
+            setPickedFrontsideCouponImage(result.assets[0].uri);
+        };
+    };
+
+    const handleBacksideCouponImagePicker = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            quality: 0.85,
+        });
+
+        if (!result.canceled) {
+            setPickedBacksideCouponImage(result.assets[0].uri);
         };
     };
 
@@ -126,28 +145,53 @@ const ReportCouponScreen = ({ }: Props) => {
                     </Text>
                 </View>
 
-                <TouchableOpacity onPress={() => handleCouponImagePicker()}>
-                    <View className='bg-primary/20 rounded-lg items-center justify-center my-6 h-52 border border-dashed border-primary'>
-                        {!pickedCouponImage ? (
-                            <>
-                                <CloudUploadIcon className='text-primary' height={55} width={55} />
-                                <Text className='font-medium text-gray-600'>
-                                    Tap here to upload your images
-                                </Text>
-                            </>
-                        ) : (
-                            <View className='p-4 gap-2 items-center relative w-full'>
-                                <Button size={"icon"} variant={"ghost"} className='absolute right-0 m-4' onPress={() => setPickedCouponImage(null)}>
-                                    <X className='text-white' />
-                                </Button>
-                                <Image source={{ uri: pickedCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
-                                <Text className='font-medium text-gray-600 opacity-40 text-sm'>
-                                    Tap here again to edit your selection
-                                </Text>
-                            </View>
-                        )}
-                    </View>
-                </TouchableOpacity>
+                <View className='flex-row items-center justify-between'>
+                    <TouchableOpacity onPress={() => handleFrontsideCouponImagePicker()}>
+                        <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-52 border border-dashed border-primary'>
+                            {!pickedFrontsideCouponImage ? (
+                                <View className='items-center'>
+                                    <CloudUploadIcon className='text-primary' height={55} width={55} />
+                                    <Text className='font-medium text-gray-600 text-center'>
+                                        Tap here to upload front side of the images
+                                    </Text>
+                                </View>
+                            ) : (
+                                <View className='p-4 gap-2 items-center relative w-full'>
+                                    <Button size={"icon"} variant={"ghost"} className='absolute right-0 m-4' onPress={() => setPickedFrontsideCouponImage(null)}>
+                                        <X className='text-white' />
+                                    </Button>
+                                    <Image source={{ uri: pickedFrontsideCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
+                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>
+                                        Tap here again to edit your selection
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => handleBacksideCouponImagePicker()}>
+                        <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-52 border border-dashed border-primary'>
+                            {!pickedBacksideCouponImage ? (
+                                <View className='items-center flex-shrink'>
+                                    <CloudUploadIcon className='text-primary' height={55} width={55} />
+                                    <Text className='font-medium text-gray-600 text-center'>
+                                        Tap here to upload back side of the images
+                                    </Text>
+                                </View>
+                            ) : (
+                                <View className='p-4 gap-2 items-center relative w-full'>
+                                    <Button size={"icon"} variant={"ghost"} className='absolute right-0 m-4' onPress={() => setPickedBacksideCouponImage(null)}>
+                                        <X className='text-white' />
+                                    </Button>
+                                    <Image source={{ uri: pickedBacksideCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
+                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>
+                                        Tap here again to edit your selection
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    </TouchableOpacity>
+                </View>
 
                 <View className='gap-4 my-6'>
                     <View className='gap-2'>

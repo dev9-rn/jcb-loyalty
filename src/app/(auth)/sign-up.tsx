@@ -327,7 +327,7 @@ const SignUpScreen = ({ }: Props) => {
                         ) : (
                             <View className='gap-1'>
                                 <Text>
-                                    Shop name
+                                    Company name
                                 </Text>
 
                                 <Controller

@@ -1,0 +1,14 @@
+{
+    "signInAs": "Iniciar sesión como",
+    "phoneNumber": "Número de teléfono",
+    "errors": {
+        "phoneRequired": "Por favor, ingrese su número de teléfono",
+        "phoneInvalid": "Por favor, ingrese un número de teléfono de 10 dígitos"
+    },
+    "login": "Iniciar sesión",
+    "loggingIn": "Iniciando sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUp": "Regístrate",
+    "orSignInAs": "O inicia sesión como",
+    "switchTo": "Cambiar a"
+}

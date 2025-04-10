@@ -24,6 +24,8 @@ const DrawerLayout = ({ }: Props) => {
 
     return (
         <Drawer
+            initialRouteName='index'
+            backBehavior='initialRoute'
             screenOptions={({ route }) => ({
                 headerTitleAlign: "center",
                 drawerActiveTintColor: "#FFF",
