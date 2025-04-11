@@ -17,3 +17,9 @@ interface IUserContext {
     setLocalUserDetails: Dispatch<SetStateAction<IUserDetails & IMechanicDetails | undefined>>
     fetchUserProfileDetails: () => Promise<void>
 };
+
+interface NotificationContextType {
+    expoPushToken: string | null;
+    notification: Notifications.Notification | null;
+    error: Error | null;
+};

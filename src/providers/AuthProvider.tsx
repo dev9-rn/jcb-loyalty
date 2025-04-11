@@ -28,7 +28,8 @@ const AuthProvider = ({ children }: Props) => {
     const toast = useToast();
 
     useEffect(() => {
-        getLocalUser()
+        getLocalUser();
+        setColorScheme("light");
     }, []);
 
     const getLocalUser = () => {
