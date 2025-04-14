@@ -15,27 +15,10 @@ type Props = {
 
 const UserProvider = ({ children }: Props) => {
 
-    const [userFirebaseToken, setUserFirebaseToken] = useState<string | null>("");
-    const [userDetails, setUserDetails] = useState<IUserDetails & IMechanicDetails | undefined>(undefined);
+    const [userDetails, setUserDetails] = useState<IUserDetails & IMechanicDetails & IRetailerDetails | undefined>(undefined);
     const [localUserDetails, setLocalUserDetails] = useState<IUserDetails & IMechanicDetails | undefined>(undefined);
 
     const toast = useToast();
-
-    useEffect(() => {
-        fetchUserFcmToken();
-    }, []);
-
-    const fetchUserFcmToken = async () => {
-        try {
-            // const apnToken = await messaging().getAPNSToken();
-            const fcmToken = await messaging.getToken();
-            (fcmToken, "FCM_TOKEN");
-
-            setUserFirebaseToken(fcmToken)
-        } catch (error) {
-            throw new Error("Something went wrong with firebase " + error);
-        }
-    };
 
     const fetchUserProfileDetails = async () => {
 
@@ -65,7 +48,7 @@ const UserProvider = ({ children }: Props) => {
     }
 
     return (
-        <UserContext.Provider value={{ userFirebaseToken, setUserFirebaseToken, setUserDetails, userDetails, setLocalUserDetails, localUserDetails, fetchUserProfileDetails }}>
+        <UserContext.Provider value={{ setUserDetails, userDetails, setLocalUserDetails, localUserDetails, fetchUserProfileDetails }}>
             {children}
         </UserContext.Provider>
     )

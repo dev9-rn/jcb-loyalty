@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import useUser from '@/hooks/useUser'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -29,8 +29,12 @@ const SignUpScreen = ({ }: Props) => {
     const [stateList, setStateList] = useState<ILocationData[]>([]);
     const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
     const [brands, setBrands] = useState<IBrandsDetails[]>([]);
+    const [searchedCountry, setSearchedCountry] = useState<string>("");
+    const [selected, setSelected] = useState(null);
 
-    const { userDetails } = useUser()
+    const { userDetails } = useUser();
+
+    console.log(countryList, "COUNTRY_LIST");
 
     const { userType } = useLocalSearchParams<{ userType: string }>();
 
@@ -489,8 +493,12 @@ const SignUpScreen = ({ }: Props) => {
                                 name='userCountry'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CountryDropdown
-                                        onValueChange={onChange}
-                                        countryList={countryList}
+                                        onSelect={onChange}
+                                        options={countryList}
+                                        selected={{
+                                            label: value.name,
+                                            value: value.id
+                                        }}
                                     />
                                 )}
                             />
@@ -505,8 +513,12 @@ const SignUpScreen = ({ }: Props) => {
                                 name='userState'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <StateDropdown
-                                        onValueChange={onChange}
-                                        stateList={stateList}
+                                        onSelect={onChange}
+                                        options={countryList}
+                                        selected={{
+                                            label: value.name,
+                                            value: value.id
+                                        }}
                                     />
                                 )}
                             />
@@ -521,8 +533,12 @@ const SignUpScreen = ({ }: Props) => {
                                 name='userCity'
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CitiesDropdown
-                                        onValueChange={onChange}
-                                        citiesList={citiesList}
+                                        onSelect={onChange}
+                                        options={countryList}
+                                        selected={{
+                                            label: value.name,
+                                            value: value.id
+                                        }}
                                     />
                                 )}
                             />

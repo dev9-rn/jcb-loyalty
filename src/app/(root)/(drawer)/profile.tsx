@@ -50,6 +50,7 @@ const ProfileScreen = ({ }: Props) => {
     }, []);
 
     const { control, handleSubmit, reset, getValues, resetField, formState: { errors, isDirty, disabled, dirtyFields } } = useForm<z.infer<typeof signUpForm>>({
+        mode: "onChange",
         resolver: zodResolver(signUpForm),
         disabled: !isFormDisabled,
         defaultValues: {
@@ -94,6 +95,8 @@ const ProfileScreen = ({ }: Props) => {
 
         fetchCitiesList();
     }, [getValues().userState.id]);
+
+    console.log(getValues(), "FORM_VALS");
 
     useEffect(() => {
         if (!profileDetails || !brands) return;
@@ -559,9 +562,9 @@ const ProfileScreen = ({ }: Props) => {
                                 disabled={disabled}
                                 render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <CountryDropdown
-                                        onValueChange={onChange}
-                                        countryList={countryList}
-                                        defaultValue={{
+                                        onSelect={onChange}
+                                        options={countryList}
+                                        selected={{
                                             label: value.name,
                                             value: value.id
                                         }}
@@ -580,12 +583,12 @@ const ProfileScreen = ({ }: Props) => {
                                 disabled={disabled}
                                 render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <StateDropdown
-                                        defaultValue={{
-                                            value: value.id,
+                                        onSelect={onChange}
+                                        options={stateList}
+                                        selected={{
                                             label: value.name,
+                                            value: value.id
                                         }}
-                                        onValueChange={onChange}
-                                        stateList={stateList}
                                     />
                                 )}
                             />
@@ -601,12 +604,12 @@ const ProfileScreen = ({ }: Props) => {
                                 disabled={disabled}
                                 render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <CitiesDropdown
-                                        defaultValue={{
-                                            value: value.id,
+                                        onSelect={onChange}
+                                        options={citiesList}
+                                        selected={{
                                             label: value.name,
+                                            value: value.id
                                         }}
-                                        onValueChange={onChange}
-                                        citiesList={citiesList}
                                     />
                                 )}
                             />

@@ -34,11 +34,9 @@ export async function registerForPushNotificationsAsync() {
         }
         try {
             const pushTokenString = (
-                await Notifications.getExpoPushTokenAsync({
-                    projectId,
-                })
+                await Notifications.getDevicePushTokenAsync()
             ).data;
-            console.log(pushTokenString);
+            console.log(pushTokenString, Platform.OS);
             return pushTokenString;
         } catch (e: unknown) {
             throw new Error(`${e}`);

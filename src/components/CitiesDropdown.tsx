@@ -1,4 +1,4 @@
-import { FlatList, Platform, TextInput, View } from 'react-native'
+import { FlatList, Modal, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -17,90 +17,130 @@ import { Option } from '@rn-primitives/select';
 import { useRoute } from '@react-navigation/native';
 
 type Props = {
-    onValueChange: (...event: any[]) => void,
-    setSelectedCity?: Dispatch<SetStateAction<ILocationData | undefined>>;
-    citiesList: ILocationData[];
-    defaultValue?: Option
-}
+    options: ILocationData[];
+    selected: Option | null;
+    onSelect: (...event: any[]) => void;
+    placeholder?: string;
+};
 
-const CitiesDropdown = ({ citiesList, setSelectedCity, onValueChange, defaultValue }: Props) => {
-    const [searchQuery, setSearchQuery] = useState<string>("");
+const CitiesDropdown = ({ options, selected, onSelect, placeholder }: Props) => {
+    const [visible, setVisible] = useState(false);
+    const [search, setSearch] = useState('');
 
-    const insets = useSafeAreaInsets();
-    const route = useRoute();
+    const filtered = useMemo(() => {
+        if (!search) return options;
 
-    const contentInsets = {
-        top: insets.top,
-        bottom: Platform.select({ android: insets.bottom + 24, default: insets.bottom }),
-        left: 12,
-        right: 12,
+        return options.filter(opt =>
+            opt.name.toLowerCase().includes(search.toLowerCase())
+        );
+    }, [search, options]);
+
+    const handleSelect = (option: Option) => {
+        onSelect({
+            id: option?.value,
+            name: option?.label
+        });
+        setSearch('');
+        setVisible(false);
     };
 
-    const handleValueChange = useCallback((option: Option) => {
-        const selectedCountry = citiesList.find(city => city.id === option?.value);
-        if (selectedCountry) {
-            onValueChange({ id: option?.value, name: option?.label });
-            if (setSelectedCity) {
-                setSelectedCity(selectedCountry);
-            }
-        }
-    }, [citiesList, onValueChange, setSelectedCity]);
-
-    const renderItem = useCallback(({ item }: { item: ILocationData, index: number }) => (
-        <SelectItem key={item.id} value={item.id} label={item.name}>
-            {item.name}
-        </SelectItem>
-    ), []);
-
-    const filteredOptions = useMemo(() => {
-        return citiesList.filter((city) =>
-            city.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [searchQuery, citiesList]);
-
-    // if (!defaultValue?.value && route.name !== "sign-up") return;
-
     return (
-        <Select
-            onValueChange={handleValueChange}
-            defaultValue={defaultValue}
-        >
-            <SelectTrigger className=''>
-                <SelectValue
-                    className='text-foreground text-sm native:text-lg'
-                    placeholder='Select a city'
-                />
-            </SelectTrigger>
-            <SelectContent
-                side="top"
-                insets={contentInsets}
-                className='w-full bg-white'
+        <>
+            <TouchableOpacity
+                style={styles.trigger}
+                onPress={() => setVisible(true)}
             >
-                <View>
-                    <Input
-                        placeholder='Search by Cities'
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                </View>
-                <ScrollView className='max-h-48'>
-                    <SelectGroup>
-                        <SelectLabel>Countries</SelectLabel>
-                        <FlatList
-                            scrollEnabled={false}
-                            data={filteredOptions}
-                            renderItem={renderItem}
-                            ListEmptyComponent={() => (
-                                <View>
-                                    <Text>Please select a country first</Text>
-                                </View>
-                            )}
+                <Text style={styles.triggerText}>
+                    {selected ? selected.label : placeholder || 'Select an option'}
+                </Text>
+            </TouchableOpacity>
+
+            <Modal visible={visible} animationType='fade' transparent>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <TextInput
+                            placeholder='Search...'
+                            value={search}
+                            onChangeText={setSearch}
+                            style={styles.searchInput}
+                            autoFocus
                         />
-                    </SelectGroup>
-                </ScrollView>
-            </SelectContent>
-        </Select>
-    )
-}
+                        <FlatList
+                            data={filtered}
+                            keyExtractor={item => item.id}
+                            keyboardShouldPersistTaps='handled'
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={styles.option}
+                                    onPress={() => handleSelect({
+                                        label: item.name,
+                                        value: item.id
+                                    })}
+                                >
+                                    <Text>{item.name}</Text>
+                                </TouchableOpacity>
+                            )}
+                            ListEmptyComponent={
+                                <Text style={styles.noResult}>No results found</Text>
+                            }
+                        />
+                        <TouchableOpacity onPress={() => setVisible(false)}>
+                            <Text style={styles.cancel}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        </>
+    );
+};
+
+const styles = StyleSheet.create({
+    trigger: {
+        padding: 12,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: '#ccc',
+        backgroundColor: '#fff',
+    },
+    triggerText: {
+        fontSize: 16,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: '#00000088',
+        justifyContent: 'center',
+        padding: 20,
+    },
+    modalContainer: {
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 16,
+        maxHeight: '80%',
+    },
+    searchInput: {
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: '#ccc',
+        marginBottom: 12,
+    },
+    option: {
+        paddingVertical: 10,
+        paddingHorizontal: 8,
+        borderBottomColor: '#eee',
+        borderBottomWidth: 1,
+    },
+    cancel: {
+        marginTop: 10,
+        textAlign: 'center',
+        color: 'red',
+        fontSize: 16,
+    },
+    noResult: {
+        textAlign: 'center',
+        color: '#666',
+        marginTop: 20,
+    },
+});
 
 export default CitiesDropdown

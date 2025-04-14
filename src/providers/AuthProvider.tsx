@@ -10,6 +10,7 @@ import useUser from '@/hooks/useUser'
 import { useToast } from 'react-native-toast-notifications'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import axios from 'axios'
+import useNotification from '@/hooks/useNotification'
 
 type Props = {
     children: React.ReactNode
@@ -17,7 +18,8 @@ type Props = {
 
 const AuthProvider = ({ children }: Props) => {
 
-    const { setUserDetails, userFirebaseToken, setLocalUserDetails, localUserDetails, userDetails } = useUser()
+    const { setUserDetails, setLocalUserDetails, userDetails } = useUser();
+    const { expoPushToken } = useNotification();
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [userAuthToken, setUserAuthToken] = useState<string>("");
@@ -103,7 +105,7 @@ const AuthProvider = ({ children }: Props) => {
         const logoutFormData = new FormData();
 
         logoutFormData.append("distributorId", userDetails?.id);
-        logoutFormData.append("deviceToken", userFirebaseToken);
+        logoutFormData.append("deviceToken", expoPushToken);
         logoutFormData.append("userType", userDetails?.userType);
 
         try {
