@@ -1,0 +1,123 @@
+import { ConfigContext, ExpoConfig } from "expo/config";
+
+const IS_DEV = process.env.APP_VARIANT === 'development';
+const IS_PREVIEW = process.env.APP_VARIANT === 'preview';
+
+const getUniqueIdentifier = () => {
+  if (IS_DEV) {
+    return 'com.daewoo.seqrloyalty.dev';
+  }
+
+  if (IS_PREVIEW) {
+    return 'com.daewoo.seqrloyalty.preview';
+  }
+
+  return 'com.daewoo.seqrloyalty';
+};
+
+const getAppName = () => {
+  if (IS_DEV) {
+    return 'Daewoo Loyalty (Dev)';
+  }
+
+  if (IS_PREVIEW) {
+    return 'Daewoo Loyalty (Preview)';
+  }
+
+  return 'Daewoo SeQR Loyalty';
+};
+
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: getAppName(),
+  slug: "daewoo-seqr-loyalty",
+  version: "1.0.0",
+  orientation: "portrait",
+  icon: "./src/assets/images/icon.png",
+  scheme: "myapp",
+  userInterfaceStyle: "automatic",
+  newArchEnabled: true,
+  ios: {
+    supportsTablet: true,
+    googleServicesFile: "./GoogleService-Info.plist",
+    infoPlist: {
+      UIBackgroundModes: ["remote-notification"],
+      ITSAppUsesNonExemptEncryption: false
+    },
+    bundleIdentifier: getUniqueIdentifier()
+  },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: "./src/assets/images/adaptive-icon.png",
+      backgroundColor: "#ffffff"
+    },
+    googleServicesFile: "./google-services.json",
+    package: getUniqueIdentifier(),
+    permissions: [
+      "android.permission.CAMERA",
+      "android.permission.RECORD_AUDIO"
+    ]
+  },
+  web: {
+    bundler: "metro",
+    output: "static",
+    favicon: "./src/assets/images/favicon.png"
+  },
+  plugins: [
+    "@react-native-firebase/app",
+    "@react-native-firebase/auth",
+    "@react-native-firebase/crashlytics",
+    "expo-router",
+    [
+      "expo-splash-screen",
+      {
+        image: "./src/assets/images/splash-icon.png",
+        imageWidth: 200,
+        resizeMode: "contain",
+        backgroundColor: "#ffffff"
+      }
+    ],
+    [
+      "expo-dev-client",
+      {
+        launchMode: "most-recent"
+      }
+    ],
+    [
+      "expo-build-properties",
+      {
+        ios: {
+          useFrameworks: "static"
+        }
+      }
+    ],
+    [
+      "expo-camera",
+      {
+        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera",
+        recordAudioAndroid: false
+      }
+    ],
+    [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "The app accesses your photos to let you share them with your friends."
+      }
+    ],
+    "expo-audio"
+  ],
+  experiments: {
+    typedRoutes: true
+  },
+  extra: {
+    router: {
+      origin: false
+    },
+    eas: {
+      projectId: "5390f040-20ce-47a1-bdd8-0a60d5da2a6b"
+    }
+  },
+  owner: "kaustubh-scube"
+});
