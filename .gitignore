@@ -40,5 +40,7 @@ yarn-error.*
 # Firebase
 google-services.json
 GoogleService-Info.plist
+google-services.base64.txt
+
 
 app-example

@@ -34,8 +34,6 @@ const SignUpScreen = ({ }: Props) => {
 
     const { userDetails } = useUser();
 
-    console.log(countryList, "COUNTRY_LIST");
-
     const { userType } = useLocalSearchParams<{ userType: string }>();
 
     const toast = useToast();

@@ -18,6 +18,7 @@ import axios from 'axios';
 import CouponErrorDialog from '@/components/CouponErrorDialog';
 import * as Haptics from 'expo-haptics';
 import { useAudioPlayer } from 'expo-audio';
+import CouponTypeRedeemDialog from '@/components/CouponTypeRedeemDialog';
 
 type Props = {}
 
@@ -36,6 +37,8 @@ const CameraScreen = ({ }: Props) => {
     const [isCouponInvalid, setIsCouponInvalid] = useState<boolean>(false);
     const [isCouponRedeemed, setIsCouponRedeem] = useState<boolean>(false);
     const [coupondRedeemedData, setCouponRedeemedData] = useState<IRedeemedCoupon | undefined>(undefined);
+    const [isCouponTypeMultiple, setIsCouponTypeMultiple] = useState<boolean>(false);
+    const [qrData, setQrData] = useState<string>("");
 
     const toast = useToast()
     const { userDetails } = useUser();
@@ -95,78 +98,85 @@ const CameraScreen = ({ }: Props) => {
         }
     };
 
-    // const getCheckCouponEndpoint = () => {
-    //     if (userDetails?.userType === 0) {
-    //         return {
-    //             endpoint: CHECK_COUPON,
-    //             user_id: "distributorId"
-    //         };
-    //     };
+    const getCheckCouponEndpoint = () => {
+        if (userDetails?.userType === 0) {
+            return {
+                endpoint: CHECK_COUPON,
+                user_id: "distributorId"
+            };
+        };
 
-    //     if (userDetails?.userType === 1) {
-    //         return {
-    //             endpoint: CHECK_COUPON,
-    //             user_id: "mechanicId"
-    //         };
-    //     };
+        if (userDetails?.userType === 1) {
+            return {
+                endpoint: CHECK_COUPON,
+                user_id: "mechanicId"
+            };
+        };
 
-    //     return {
-    //         endpoint: CHECK_COUPON,
-    //         user_id: "dealerId"
-    //     };
-    // }
+        return {
+            endpoint: CHECK_COUPON,
+            user_id: "dealerId"
+        };
+    }
 
     const handleBarCodeScanned = ({ bounds, data }: BarcodeScanningResult) => {
         if (scanned || isCouponRedeemed || isCouponInvalid) return;
 
         setScanned(true);
-        fetchCouponRedeemResults(data);
-
+        fetchBarCodeDataValidation(data);
+        setQrData(data);
         setTimeout(() => setScanned(false), 2000); // Enable scanning after 2 seconds
     };
 
     // Check if the coupon is valid via API
-    // const fetchBarCodeDataValidation = async (data: string) => {
-    //     const barCodeFormData = new FormData();
+    const fetchBarCodeDataValidation = async (data: string) => {
+        const barCodeFormData = new FormData();
 
-    //     barCodeFormData.append('qrText', data);
-    //     barCodeFormData.append(getCheckCouponEndpoint().user_id, userDetails?.id);
-    //     barCodeFormData.append('userType', userDetails?.userType);
+        barCodeFormData.append('qrText', data);
+        barCodeFormData.append(getCheckCouponEndpoint().user_id, userDetails?.id);
+        barCodeFormData.append('userType', userDetails?.userType);
 
-    //     try {
-    //         const response = await axiosInstance.post(CHECK_COUPON, barCodeFormData);
+        try {
+            const response = await axiosInstance.post(CHECK_COUPON, barCodeFormData);
 
-    //         if (response.data.stauts != 200) {
-    //             setCouponValidationData(response.data);
-    //             setIsCouponInvalid(true);
-    //             toast.show(response.data.message, {
-    //                 data: response
-    //             });
-    //         };
+            if (response.data.status != 200) {
+                setCouponValidationData(response.data);
+                setIsCouponInvalid(true);
+                toast.show(response.data.message, {
+                    data: response
+                });
+            };
 
-    //         setCouponValidationData(response.data);
-    //         fetchCouponRedeemResults(data);
-    //     } catch (error) {
-    //         if (axios.isAxiosError(error)) {
-    //             setCouponValidationData(error.response?.data);
-    //             setIsCouponInvalid(true);
-    //             toast.show(error.response?.data?.message || error.message, {
-    //                 data: error.response || error.message
-    //             });
-    //         };
-    //         setTimeout(() => setScanned(false), 2000);
-    //     }
-    // };
+            setCouponValidationData(response.data);
+            if (response.data?.redeemMethods.length as number > 1) {
+                setIsCouponTypeMultiple(true);
+            } else {
+                fetchCouponRedeemResults(data, response.data?.redeemMethods[0].redeem_type || "");
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                qrErrorAudio.play();
+                qrErrorAudio.seekTo(0);
+                setCouponValidationData(error.response?.data);
+                setIsCouponInvalid(true);
+                setIsCouponTypeMultiple(false);
+                Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Error
+                )
+            };
+            setTimeout(() => setScanned(false), 2000);
+        }
+    };
 
     // Check if the coupon can be redeemed and offer type
-    const fetchCouponRedeemResults = async (data: string) => {
-        // if (couponValidationData?.status != 200) return;
+    const fetchCouponRedeemResults = async (data: string, redeemedType: string) => {
+        if (couponValidationData?.status != 200) return;
 
         const redeemFormData = new FormData();
 
         redeemFormData.append(getRedeemCouponEndpoint().user_id, userDetails?.id as string);
         redeemFormData.append('qrText', data);
-        redeemFormData.append('redeemType', 0);
+        redeemFormData.append('redeemType', redeemedType);
         redeemFormData.append('userType', userDetails?.userType);
 
         try {
@@ -185,12 +195,14 @@ const CameraScreen = ({ }: Props) => {
             qrSuccessAudio.seekTo(0);
             setCouponRedeemedData(response.data)
             setIsCouponRedeem(true);
+            setIsCouponTypeMultiple(false)
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 qrErrorAudio.play();
                 qrErrorAudio.seekTo(0);
                 setCouponValidationData(error.response?.data);
                 setIsCouponInvalid(true);
+                setIsCouponTypeMultiple(false);
                 Haptics.notificationAsync(
                     Haptics.NotificationFeedbackType.Error
                 )
@@ -239,6 +251,15 @@ const CameraScreen = ({ }: Props) => {
                         isCouponInvalid={isCouponInvalid}
                         validationData={couponValidationData}
                         setIsCouponInvalid={setIsCouponInvalid}
+                    />
+                )}
+
+                {isCouponTypeMultiple && (
+                    <CouponTypeRedeemDialog
+                        isCouponTypeMultiple={isCouponTypeMultiple}
+                        validationData={couponValidationData}
+                        fetchCouponRedeemResults={fetchCouponRedeemResults}
+                        qrData={qrData}
                     />
                 )}
 

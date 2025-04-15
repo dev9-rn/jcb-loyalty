@@ -83,6 +83,40 @@ interface IDashboardData {
     totalAmountCouponsScanned: number;
 };
 
+interface ICouponDetails {
+    id: string;
+    po_no: string;
+    item_code: string;
+    item_description: string | null;
+    brand_id: string;
+    product_id: string;
+    quantity: string;
+    value: string;
+    loyalty_points: string | null;
+    start_date: string;
+    end_date: string;
+    redeem_types: string;
+    coupon_type: string;
+    brand_code: string;
+    serial_no: string | null;
+    created_date: string;
+    updated_date: string | null;
+    publish: string;
+    user_id: string;
+};
+
+interface IProductDetails {
+    id: string;
+    brand_id: string;
+    product_name: string;
+    product_code: string;
+    product_value: string;
+    product_type: string | null;
+    publish: string;
+    created_date: string;
+    updated_date: string | null;
+}
+
 interface IValidCoupon {
     status: number;  // 200
     message: string;  // "Coupon is valid."
@@ -91,7 +125,9 @@ interface IValidCoupon {
         details: {
             value: string;
         };
-    }[]
+    }[],
+    coupon_details: ICouponDetails;
+    product_details: IProductDetails;
 };
 
 interface IRedeemedCoupon extends IValidCoupon {

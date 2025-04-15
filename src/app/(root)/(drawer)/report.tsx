@@ -147,7 +147,7 @@ const ReportCouponScreen = ({ }: Props) => {
 
                 <View className='flex-row items-center justify-between'>
                     <TouchableOpacity onPress={() => handleFrontsideCouponImagePicker()}>
-                        <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-52 border border-dashed border-primary'>
+                        <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-44 xs:size-48 sm:size-52 border border-dashed border-primary'>
                             {!pickedFrontsideCouponImage ? (
                                 <View className='items-center'>
                                     <CloudUploadIcon className='text-primary' height={55} width={55} />
@@ -170,7 +170,7 @@ const ReportCouponScreen = ({ }: Props) => {
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => handleBacksideCouponImagePicker()}>
-                        <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-52 border border-dashed border-primary'>
+                        <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-44 xs:size-48 sm:size-52 border border-dashed border-primary'>
                             {!pickedBacksideCouponImage ? (
                                 <View className='items-center flex-shrink'>
                                     <CloudUploadIcon className='text-primary' height={55} width={55} />
