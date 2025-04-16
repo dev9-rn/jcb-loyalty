@@ -15,6 +15,7 @@ import { Text } from '@/components/ui/text';
 import { Button } from './ui/button';
 
 import { CircleCheckIcon } from "@/libs/icons/CircleCheckIcon"
+import { Separator } from './ui/separator';
 
 type Props = {
     isCouponRedeemed: boolean
@@ -28,26 +29,32 @@ const CouponRedeemedDialog = ({ redeemedData, isCouponRedeemed, setIsCouponRedee
         <Dialog open={isCouponRedeemed}>
             <DialogContent className='max-w-sm'>
                 <DialogHeader className='items-center'>
-                    <CircleCheckIcon className='text-green-500' height={40} width={40} />
+                    <View className='items-center gap-2'>
+                        <DialogTitle className='!text-primary'>
+                            {redeemedData?.redeemMethods[0].redeem_type === "1" ? "FOC Coupon" : "Cash Coupon"}
+                        </DialogTitle>
+                        <CircleCheckIcon className='text-green-500' height={35} width={35} />
+                    </View>
 
                     <DialogTitle className='text-center'>
                         {redeemedData?.message || "Coupon redeemed successfully."}
                     </DialogTitle>
                 </DialogHeader>
+                <Separator />
                 {redeemedData?.couponData && (
-                    <>
-                        <Text className='text-lg font-medium'>Product Details: </Text>
-                        <View className='flex-row items-center justify-between'>
+                    <View className='gap-2'>
+                        <Text className='text-lg font-semibold'>Product Details: </Text>
+                        <View className='flex-row items-center gap-2'>
                             <View>
-                                <Text className='font-semibold'>Prodcut Name:</Text>
-                                <Text className='font-semibold'>Denomination:</Text>
+                                <Text className='font-medium opacity-50'>Prodcut Name:</Text>
+                                <Text className='font-medium opacity-50'>Denomination:</Text>
                             </View>
                             <View className=''>
                                 <Text className='text-primary font-medium'>{redeemedData?.couponData.product_name}</Text>
                                 <Text className='text-primary font-medium'>{redeemedData?.couponData.value}</Text>
                             </View>
                         </View>
-                    </>
+                    </View>
                 )}
                 <DialogFooter>
                     <DialogClose asChild>

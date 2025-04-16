@@ -3,34 +3,9 @@ import { ConfigContext, ExpoConfig } from "expo/config";
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const IS_PREVIEW = process.env.APP_VARIANT === 'preview';
 
-const getUniqueIdentifier = () => {
-  if (IS_DEV) {
-    return 'com.daewoo.seqrloyalty.dev';
-  }
-
-  if (IS_PREVIEW) {
-    return 'com.daewoo.seqrloyalty.preview';
-  }
-
-  return 'com.daewoo.seqrloyalty';
-};
-
-const getAppName = () => {
-  if (IS_DEV) {
-    return 'Daewoo Loyalty (Dev)';
-  }
-
-  if (IS_PREVIEW) {
-    return 'Daewoo Loyalty (Preview)';
-  }
-
-  return 'Daewoo SeQR Loyalty';
-};
-
-
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: getAppName(),
+  name: "Daewoo SeQR Loyalty",
   slug: "daewoo-seqr-loyalty",
   version: "1.0.0",
   orientation: "portrait",
@@ -45,15 +20,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       UIBackgroundModes: ["remote-notification"],
       ITSAppUsesNonExemptEncryption: false
     },
-    bundleIdentifier: getUniqueIdentifier()
+    bundleIdentifier: "com.daewoo.seqrloyalty"
   },
   android: {
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff"
     },
-    googleServicesFile: "./google-services.json",
-    package: getUniqueIdentifier(),
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
+    package: "com.daewoo.seqrloyalty",
     permissions: [
       "android.permission.CAMERA",
       "android.permission.RECORD_AUDIO"

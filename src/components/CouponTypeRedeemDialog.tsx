@@ -55,7 +55,7 @@ const CouponTypeRedeemDialog = ({ isCouponTypeMultiple, fetchCouponRedeemResults
                 {validationData?.product_details && (
                     <>
                         <Text className='text-lg font-medium'>Product Details: </Text>
-                        <View className='flex-row items-center justify-between'>
+                        <View className='flex-row items-center gap-2'>
                             <View>
                                 <Text className='font-semibold'>Prodcut Name:</Text>
                                 <Text className='font-semibold'>Denomination:</Text>

@@ -114,7 +114,7 @@ const OtpVerificationScreen = ({ }: Props) => {
     };
 
     return (
-        <SafeAreaView className='flex-1 bg-white'>
+        <View className='flex-1 bg-white'>
 
             <View className='p-4 flex-1'>
                 <Text className='text-3xl font-semibold'>
@@ -165,7 +165,7 @@ const OtpVerificationScreen = ({ }: Props) => {
                     approvalDialogContent={approvalDialogContent}
                 />
             </View>
-        </SafeAreaView>
+        </View>
     )
 }
 

@@ -103,6 +103,7 @@ interface ICouponDetails {
     updated_date: string | null;
     publish: string;
     user_id: string;
+    product_name: string;
 };
 
 interface IProductDetails {
@@ -127,35 +128,20 @@ interface IValidCoupon {
         };
     }[],
     coupon_details: ICouponDetails;
-    product_details: IProductDetails;
+    product_details: IProductDetails | undefined;
 };
 
 interface IRedeemedCoupon extends IValidCoupon {
-    couponData: {
-        id: string;
-        po_no: string;
-        item_code: string;
-        item_description: string;
-        brand_id: string;
-        product_id: string | null;
-        quantity: string;
-        value: string;
-        loyalty_points: string;
-        start_date: string;  // Consider using Date if parsed
-        end_date: string;    // Consider using Date if parsed
-        redeem_types: string;
-        coupon_type: string;
-        brand_code: string;
-        serial_no: string | null;
-        created_date: string; // Consider using Date if parsed
-        updated_date: string | null;
-        publish: string;
-        user_id: string;
-        product_name: string;
-    };
+    redeemMethods: {
+        redeem_type: string;
+        details: {
+            value: string;
+        } | {};
+    }[],
+    couponData: ICouponDetails;
 };
 
-interface IRedeemedCoupon {
+interface IRedeemedCouponDetails {
     id: string;
     coupon_id: string;
     item_code: string;
@@ -187,8 +173,8 @@ interface IRedeemedCoupon {
 interface ICouponHistory {
     status: number;
     message: string;
-    redeemHistory: IRedeemedCoupon[];
-    scannedHistory: IRedeemedCoupon[];
+    redeemHistory: IRedeemedCouponDetails[];
+    scannedHistory: IRedeemedCouponDetails[];
     offset: number;
 };
 
