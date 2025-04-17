@@ -8,6 +8,7 @@ import useUser from '@/hooks/useUser'
 import { Text } from './ui/text'
 import { LogOutIcon } from '@/libs/icons/LogoutIcon';
 import useAuth from '@/hooks/useAuth'
+import MultiLangualDropdown from './MultiLangualDropdown'
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
@@ -16,10 +17,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
     return (
         <View className='flex-1'>
+            <Button size={"icon"} variant={"ghost"} onPress={() => props.navigation.closeDrawer()} className='mx-4 mt-4'>
+                <MenuIcon className='text-primary' />
+            </Button>
+
             <DrawerContentScrollView {...props}>
-                <Button size={"icon"} variant={"ghost"} onPress={() => props.navigation.closeDrawer()}>
-                    <MenuIcon className='text-primary' />
-                </Button>
                 <View className='items-center mb-4 bg-primary/20 rounded-md p-4 pt-0'>
                     <Image source={require("@/assets/images/app-logo.png")} className='size-40' resizeMode='contain' />
 
@@ -51,6 +53,10 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                     onPress={() => logout()}
                 />
             </DrawerContentScrollView>
+
+            <View>
+                <MultiLangualDropdown />
+            </View>
         </View >
     )
 }

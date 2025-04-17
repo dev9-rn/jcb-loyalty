@@ -46,8 +46,6 @@ const CountryDropdown = ({ options, selected, onSelect, placeholder }: Props) =>
         setVisible(false);
     };
 
-    console.log(selectedOption, "DEF_VAL");
-
     return (
         <>
             <TouchableOpacity
