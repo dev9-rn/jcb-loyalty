@@ -5,7 +5,7 @@ const IS_PREVIEW = process.env.APP_VARIANT === 'preview';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "Daewoo SeQR Loyalty",
+  name: "Daewoo Lubricants",
   slug: "daewoo-seqr-loyalty",
   version: "1.0.0",
   orientation: "portrait",
@@ -81,12 +81,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           "The app accesses your photos to let you share them with your friends."
       }
     ],
+    [
+      "expo-localization"
+    ],
     "expo-audio"
   ],
   experiments: {
     typedRoutes: true
   },
   extra: {
+    supportsRTL: true,
     router: {
       origin: false
     },

@@ -13,6 +13,7 @@ import axios, { AxiosResponse } from 'axios';
 import { router } from 'expo-router';
 import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN } from '@/utils/routes';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useTranslation } from 'react-i18next';
 
 type Props = {}
 
@@ -20,11 +21,13 @@ type FormData = {
     userPhone: string;
 };
 
-const USER_TYPES = ["distributor", "retailer"];
-
 const SignInScreen = ({ }: Props) => {
 
-    const [selectedSignInType, setSelectedSignInType] = useState("distributor");
+    const { t } = useTranslation();
+
+    const USER_TYPES = [t("login.distributor"), t("login.retailer")];
+
+    const [selectedSignInType, setSelectedSignInType] = useState(t("login.distributor"));
     const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
     const { isDarkColorScheme, setColorScheme, colorScheme } = useColorScheme();
@@ -93,7 +96,7 @@ const SignInScreen = ({ }: Props) => {
                     </View>
 
                     <View>
-                        <Text className='text-3xl font-medium'>Sign in as{" "}
+                        <Text className='text-3xl font-medium'>{t("login.signInAs")}{" "}
                             <Text className='text-3xl font-medium capitalize'>
                                 {selectedSignInType}
                             </Text>
@@ -103,25 +106,25 @@ const SignInScreen = ({ }: Props) => {
 
                 <View className='mt-10 p-4'>
                     <View className='gap-2'>
-                        <Text className='font-medium'>Phone Number</Text>
+                        <Text className='font-medium'>{t("login.phoneNumber")}</Text>
 
                         <Controller
                             control={control}
                             rules={{
-                                required: "Please enter your phone number",
+                                required: t("login.phoneRequired"),
                                 maxLength: {
                                     value: 10,
-                                    message: "Please enter a 10-digit phone number"
+                                    message: t("login.phoneInvalid")
                                 },
                                 minLength: {
                                     value: 10,
-                                    message: "Please enter a 10-digit phone number"
+                                    message: t("login.phoneInvalid")
                                 }
                             }}
                             render={({ field: { onBlur, onChange, value } }) => (
                                 <Input
                                     className={`rounded-lg focus:border-2 focus:border-primary ${errors.userPhone && "border-red-500 border-2"}`}
-                                    placeholder='Phone Number'
+                                    placeholder={t("login.phoneNumber")}
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
@@ -144,17 +147,17 @@ const SignInScreen = ({ }: Props) => {
                             <View className='flex-row gap-2'>
                                 <ActivityIndicator color={"#FFF"} />
                                 <Text>
-                                    Logging In
+                                    {t("login.loggingIn")}
                                 </Text>
                             </View>
                         ) : (
-                            <Text>Login</Text>
+                            <Text>{t("login.login")}</Text>
                         )}
                     </Button>
 
                     <View className='flex-row items-center gap-2'>
                         <Text>
-                            Don't have an account?
+                            {t("login.noAccount")}
                         </Text>
                         <Button
                             variant={"link"}
@@ -167,19 +170,19 @@ const SignInScreen = ({ }: Props) => {
                                 }
                             })}
                         >
-                            <Text>Sign Up</Text>
+                            <Text>{t("login.signUp")}</Text>
                         </Button>
                     </View>
 
                     <View className='flex-row items-center gap-4 my-6'>
                         <Separator className='flex-1' />
-                        <Text className='text-sm text-gray-600'>Or Sign In as</Text>
+                        <Text className='text-sm text-gray-600'>{t("login.orSignInAs")}</Text>
                         <Separator className='flex-1' />
                     </View>
 
                     <Button onPress={() => toggleSignInType()} className={`${colorScheme !== "light" ? "bg-[#144799]" : "bg-[#f0a028]"}`}>
                         <Text>
-                            Switch to{" "}
+                            {t("login.switchTo")}{" "}
                             <Text>{USER_TYPES[(USER_TYPES.indexOf(selectedSignInType) + 1) % USER_TYPES.length]}</Text>
                         </Text>
                     </Button>

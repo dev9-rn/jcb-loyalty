@@ -21,4 +21,5 @@ export const STORAGE_KEYS = {
     AUTH_TOKEN: "authToken",
     LOCAL_USER: "user",
     THEME_COLOR: "userTheme",
-}
+    LANGUAGE_KEYS: "language"
+};

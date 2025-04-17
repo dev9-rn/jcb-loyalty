@@ -13,6 +13,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NotificationProvider } from "@/providers/NotificationProvider";
 
 import "./globals.css"
+import '../libs/i18n';
 
 if (__DEV__) {
   require("../../ReactotronConfig");
