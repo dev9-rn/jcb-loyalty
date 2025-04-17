@@ -9,11 +9,13 @@ import { Text } from './ui/text'
 import { LogOutIcon } from '@/libs/icons/LogoutIcon';
 import useAuth from '@/hooks/useAuth'
 import MultiLangualDropdown from './MultiLangualDropdown'
+import { useTranslation } from 'react-i18next'
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
     const { userDetails } = useUser();
     const { logout } = useAuth()
+    const { t } = useTranslation();
 
     return (
         <View className='flex-1'>
@@ -26,7 +28,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                     <Image source={require("@/assets/images/app-logo.png")} className='size-40' resizeMode='contain' />
 
                     <View className='items-center'>
-                        <Text className='text-lg font-medium'>Welcome!</Text>
+                        <Text className='text-lg font-medium'>{t("layout.drawer.welcome")}</Text>
                         <Text className='text-xl font-semibold text-primary'>{userDetails?.name || userDetails?.full_name || userDetails?.dealer_name}</Text>
                     </View>
                 </View>
@@ -54,7 +56,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                 />
             </DrawerContentScrollView>
 
-            <View>
+            <View className='p-4 m-4 border-t border-gray-200'>
                 <MultiLangualDropdown />
             </View>
         </View >

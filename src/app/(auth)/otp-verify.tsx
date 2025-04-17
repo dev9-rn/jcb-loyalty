@@ -1,6 +1,5 @@
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, StyleSheet, Platform } from 'react-native'
 import React, { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams } from 'expo-router';
 
 import { OtpInput } from "react-native-otp-entry";
@@ -8,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import useAuth from '@/hooks/useAuth';
-import useUser from '@/hooks/useUser';
 import axios, { AxiosResponse } from 'axios';
-import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER, VERIFY_VALID_RETAILER } from '@/utils/routes';
+import { RETAILER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER, VERIFY_VALID_RETAILER } from '@/utils/routes';
 import RetailerApprovalDialog from '@/components/RetailerApprovalDialog';
+import useNotification from '@/hooks/useNotification';
+import { useTranslation } from 'react-i18next';
 
 type Props = {}
 
@@ -25,7 +25,8 @@ const OtpVerificationScreen = ({ }: Props) => {
     const [approvalDialogContent, setApprovalDialogContent] = useState<{ status: number, message: string } | undefined>(undefined);
 
     const { verify, login } = useAuth();
-    const { userFirebaseToken } = useUser()
+    const { expoPushToken } = useNotification();
+    const { t } = useTranslation()
 
     const { userPhone, userType, methodType } = useLocalSearchParams();
 
@@ -36,15 +37,15 @@ const OtpVerificationScreen = ({ }: Props) => {
     });
 
     const getVerifyEndpoint = () => {
-        if (userType === "mechanic") {
+        if (userType === t("login.mechanic")) {
             return VERIFY_MECHANIC
         };
 
-        if (userType === "distributor") {
+        if (userType === t("login.distributor")) {
             return VERIFY_OTP
         };
 
-        return methodType === "registration" ? VERIFY_VALID_RETAILER : VERIFY_RETAILER;
+        return methodType === t("login.retailer") ? VERIFY_VALID_RETAILER : VERIFY_RETAILER;
     };
 
     const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (formData) => {
@@ -53,7 +54,7 @@ const OtpVerificationScreen = ({ }: Props) => {
 
         verifyOtpFormData.append("mobileNo", userPhone as string);
         verifyOtpFormData.append("otp", formData.userOtp);
-        verifyOtpFormData.append('deviceToken', userFirebaseToken as string);
+        verifyOtpFormData.append('deviceToken', expoPushToken as string);
         verifyOtpFormData.append('deviceType', Platform.OS);
 
         const verifyResponse: AxiosResponse = await verify(getVerifyEndpoint(), verifyOtpFormData, userType as string);
@@ -79,12 +80,12 @@ const OtpVerificationScreen = ({ }: Props) => {
     };
 
     const getLoginEndpoint = () => {
-        if (userType === "mechanic") {
-            return MECHANIC_LOGIN
+        if (userType === t("login.mechanic")) {
+            return VERIFY_MECHANIC
         };
 
-        if (userType === "distributor") {
-            return USER_LOGIN
+        if (userType === t("login.distributor")) {
+            return VERIFY_OTP
         };
 
         return RETAILER_LOGIN
@@ -112,6 +113,8 @@ const OtpVerificationScreen = ({ }: Props) => {
             });
         };
     };
+
+    console.log(errors, "FORM_ERROR");
 
     return (
         <View className='flex-1 bg-white'>

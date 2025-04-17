@@ -4,6 +4,7 @@ import { BottomSheetModal, BottomSheetView, useBottomSheetModal } from '@gorhom/
 import { ToggleGroup, ToggleGroupIcon, ToggleGroupItem } from './ui/toggle-group'
 import { Text } from './ui/text'
 import { Button } from './ui/button'
+import { useTranslation } from 'react-i18next'
 
 type Props = {
     dealerList: IDealerListDetail[]
@@ -15,6 +16,7 @@ type Props = {
 const FilterBottomSheetModal = forwardRef<BottomSheetModal, Props>(({ dealerList, setStatusFilterValue, statusFilterValue, fetchDealerList }, ref) => {
 
     const { dismiss } = useBottomSheetModal();
+    const { t } = useTranslation();
 
     return (
         <View>
@@ -35,7 +37,7 @@ const FilterBottomSheetModal = forwardRef<BottomSheetModal, Props>(({ dealerList
                     <Text className='text-2xl font-semibold'>Filters</Text>
 
                     <View className='mt-8 flex-row items-center justify-between'>
-                        <Text className='text-lg'>Status Type</Text>
+                        <Text className='text-lg'>Status: </Text>
 
                         <View>
                             <ToggleGroup
@@ -47,13 +49,16 @@ const FilterBottomSheetModal = forwardRef<BottomSheetModal, Props>(({ dealerList
                                 }}
                             >
                                 <ToggleGroupItem value='All' aria-label='Toggle bold'>
-                                    <Text className='font-medium'>All</Text>
+                                    <Text>{t("dealers.status.all")}</Text>
                                 </ToggleGroupItem>
-                                <ToggleGroupItem value='Pending' aria-label='Toggle italic'>
-                                    <Text className='font-medium'>Pending</Text>
+                                <ToggleGroupItem value='Approved' aria-label='Toggle underline' size={"sm"}>
+                                    <Text className='font-medium text-sm'>{t("dealers.status.approved")}</Text>
                                 </ToggleGroupItem>
-                                <ToggleGroupItem value='Approved' aria-label='Toggle underline'>
-                                    <Text className='font-medium'>Approved</Text>
+                                <ToggleGroupItem value='Pending' aria-label='Toggle italic' size={"sm"}>
+                                    <Text className='font-medium text-sm'>{t("dealers.status.pending")}</Text>
+                                </ToggleGroupItem>
+                                <ToggleGroupItem value='Rejected' aria-label='Toggle underline' size={"sm"}>
+                                    <Text className='font-medium text-sm'>{t("dealers.status.rejected")}</Text>
                                 </ToggleGroupItem>
                             </ToggleGroup>
                         </View>

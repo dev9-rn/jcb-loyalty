@@ -1,4 +1,19 @@
 {
+    "layout": {
+        "drawer": {
+            "welcome": "स्वागत है!"
+        },
+        "headerTitle": {
+            "dashboard": "डैशबोर्ड",
+            "profile": "प्रोफ़ाइल",
+            "scan_coupons": "कूपन स्कैन करें",
+            "coupon_history": "कूपन इतिहास",
+            "cash_batch_report": "कैश बैच रिपोर्ट",
+            "report_coupon": "रिपोर्ट कूपन",
+            "report_history": "रिपोर्ट इतिहास",
+            "my_retailers": "मेरे व्यापारी"
+        }
+    },
     "login": {
         "signInAs": "साइन इन करें",
         "phoneNumber": "फ़ोन नंबर",
@@ -74,5 +89,84 @@
         },
         "addressInformation": "पता जानकारी",
         "addressInformationSubtitle": "आईडी प्रूफ के अनुसार विवरण दर्ज करें।"
+    },
+    "dashboard": {
+        "couponsScanned": "कूपन स्कैन किए गए",
+        "couponsScannedDesc": "कुल कूपनों की संख्या जो रिडीम किए गए",
+        "redeemed": "रिडीम",
+        "scanned": "स्कैन",
+        "points": "अंक",
+        "amount": "राशि",
+        "redeemedPoints": "रिडीम किए गए अंक",
+        "scannedAmount": "स्कैन की गई राशि",
+        "totalTillDate": "अब तक कुल {{type}}",
+        "scanButton": "स्कैन करें",
+        "couponScannedForCash": "नकद के लिए कूपन स्कैन किए गए",
+        "couponScannedForCashDesc": "नकद के लिए स्कैन किए गए कूपनों की कुल संख्या",
+        "couponScannedForScheme": "योजना के लिए कूपन स्कैन किए गए",
+        "couponScannedForSchemeDesc": "योजना के लिए स्कैन किए गए कूपनों की कुल संख्या",
+        "totalBalancePoints": "कुल बैलेंस अंक"
+    },
+    "coupon-history": {
+        "serial_no": "क्रम संख्या:",
+        "item_code": "आइटम कोड:",
+        "redeemed_date": "रिडीम दिनांक:",
+        "status": "स्थिति:",
+        "scanned": "स्कैन किया गया",
+        "from_date": "आरंभ तिथि",
+        "to_date": "अंत तिथि",
+        "no_data_found": "चयनित दिनांक सीमा के लिए कोई डेटा नहीं मिला। कृपया अपनी चयन सीमा समायोजित करें और पुनः प्रयास करें।"
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "कुल स्कैन किए गए कूपन",
+        "batch_id": "बैच आईडी",
+        "end_date": "अंतिम तिथि",
+        "status": "स्थिति",
+        "credit_note_no": "क्रेडिट नोट संख्या",
+        "credit_note_date": "क्रेडिट तिथि",
+        "credit_note_value": "क्रेडिट मूल्य",
+        "from_date": "आरंभ तिथि",
+        "to_date": "अंत तिथि",
+        "no_data": "कोई डेटा नहीं मिला। कृपया दूसरी तिथि सीमा आज़माएं।"
+    },
+    "reportCoupon": {
+        "title": "रिपोर्ट अपलोड करें",
+        "subtitle": "सुनिश्चित करें कि फ़ाइल प्रारूप .png या .jpg हो",
+        "frontImagePlaceholder": "फ्रंट साइड की छवि अपलोड करने के लिए यहां टैप करें",
+        "backImagePlaceholder": "बैक साइड की छवि अपलोड करने के लिए यहां टैप करें",
+        "editImageHint": "अपनी चयन को संपादित करने के लिए दोबारा टैप करें",
+        "serialLabel": "कूपन का सीरियल नंबर",
+        "serialPlaceholder": "कूपन का सीरियल नंबर दर्ज करें",
+        "serialError": "कृपया कूपन का सीरियल नंबर दर्ज करें",
+        "descriptionLabel": "कूपन के बारे में विवरण",
+        "descriptionPlaceholder": "कूपन के बारे में विवरण दर्ज करें",
+        "descriptionError": "कृपया रिपोर्ट का विवरण दर्ज करें",
+        "submit": "रिपोर्ट सबमिट करें",
+        "submitting": "रिपोर्ट सबमिट की जा रही है",
+        "missingImages": "कृपया रिपोर्ट करने के लिए छवि चुनें..!"
+    },
+    "reportHistory": {
+        "from_date": "आरंभ तिथि",
+        "to_date": "अंत तिथि",
+        "noDataTitle": "कोई डेटा नहीं मिला।",
+        "noDataSubtitle": "कृपया दूसरी तारीख चुनें।",
+        "serialNo": "सीरियल नंबर",
+        "description": "विवरण",
+        "reportedDate": "रिपोर्ट की गई तारीख"
+    },
+    "dealers": {
+        "filter": "फ़िल्टर:",
+        "status": {
+            "all": "सभी",
+            "approved": "स्वीकृत",
+            "pending": "लंबित",
+            "rejected": "अस्वीकृत"
+        },
+        "noRequestFound": "कोई अनुरोध नहीं मिला",
+        "name": "नाम",
+        "phoneNumber": "फ़ोन नंबर",
+        "shopName": "दुकान का नाम",
+        "address": "पता",
+        "dateRegistered": "पंजीकरण की तिथि"
     }
 }

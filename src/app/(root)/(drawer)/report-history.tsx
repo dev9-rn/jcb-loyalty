@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useToast } from 'react-native-toast-notifications';
 import ImageView from "react-native-image-viewing";
 import { ImageSource } from 'react-native-image-viewing/dist/@types';
+import { useTranslation } from 'react-i18next';
 
 type Props = {}
 
@@ -23,6 +24,7 @@ type SelectedImageToViewType = {
 const ReportHistory = ({ }: Props) => {
 
     const { userDetails } = useUser();
+    const { t } = useTranslation();
 
     const [reportedCouponHistoryData, setReportedCouponHistoryData] = useState<IReportedCouponsHistory | undefined>(undefined);
 
@@ -47,15 +49,15 @@ const ReportHistory = ({ }: Props) => {
             <View className='flex-row items-start justify-between gap-2' key={index}>
                 <View className='flex-shrink'>
                     <Text className='text-lg'>
-                        Serial No:{" "}
+                        {t("reportHistory.serialNo")}:{" "}
                         <Text className='text-lg font-medium'>{item.sr_no}</Text>
                     </Text>
                     <Text className='text-lg'>
-                        Description:{" "}
+                        {t("reportHistory.description")}:{" "}
                         <Text className='text-lg font-medium'>{item.description}</Text>
                     </Text>
                     <Text className='text-lg'>
-                        Reported Date:{" "}
+                        {t("reportHistory.reportedDate")}:{" "}
                         <Text className='text-lg font-medium'>{new Date(item.created).toLocaleDateString()}</Text>
                     </Text>
                 </View>
@@ -120,7 +122,7 @@ const ReportHistory = ({ }: Props) => {
                     <View className='items-center'>
                         <TouchableOpacity className='flex-row items-center gap-2 p-2' onPress={() => setShowFromDate(true)}>
                             <CalendarIcon className='text-primary' height={20} width={20} />
-                            <Text>From Date:</Text>
+                            <Text>{t("reportHistory.from_date")}:</Text>
                             <Text className='text-lg font-semibold'>{selectedFromDate.toLocaleDateString()}</Text>
                         </TouchableOpacity>
 
@@ -138,7 +140,7 @@ const ReportHistory = ({ }: Props) => {
                     <View>
                         <TouchableOpacity className='flex-row items-center gap-2 p-2' onPress={() => setShowToDate(true)}>
                             <CalendarIcon className='text-primary' height={20} width={20} />
-                            <Text>To Date</Text>
+                            <Text>{t("reportHistory.to_date")}</Text>
                             <Text className='text-lg font-semibold'>{selctedToDate.toLocaleDateString()}</Text>
                         </TouchableOpacity>
 
@@ -162,10 +164,8 @@ const ReportHistory = ({ }: Props) => {
                 ItemSeparatorComponent={() => <Separator className='my-4' />}
                 ListEmptyComponent={() => (
                     <View className='flex-1 items-center justify-center'>
-                        <Text className='text-xl font-medium'>
-                            No Data found.
-                            Try another date range.
-                        </Text>
+                        <Text className='text-xl font-medium'>{t("reportHistory.noDataTitle")}</Text>
+                        <Text className='text-base text-muted-foreground'>{t("reportHistory.noDataSubtitle")}</Text>
                     </View>
                 )}
             />

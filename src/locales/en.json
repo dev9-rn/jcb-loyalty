@@ -1,10 +1,25 @@
 {
+    "layout": {
+        "drawer": {
+            "welcome": "Welcome!"
+        },
+        "headerTitle": {
+            "dashboard": "Dashboard",
+            "profile": "Profile",
+            "scan_coupons": "Scan Coupons",
+            "coupon_history": "Coupon History",
+            "cash_batch_report": "Cash Batch Report",
+            "report_coupon": "Report Coupon",
+            "report_history": "Report History",
+            "my_retailers": "My Retailers"
+        }
+    },
     "login": {
         "signInAs": "Sign in as",
         "phoneNumber": "Phone Number",
-        "distributor": "Distributor",
-        "mechanic": "Mechanic",
-        "retailer": "Retailer",
+        "distributor": "distributor",
+        "mechanic": "mechanic",
+        "retailer": "retailer",
         "errors": {
             "phoneRequired": "Please enter your phone number",
             "phoneInvalid": "Please enter a 10-digit phone number"
@@ -74,5 +89,84 @@
         },
         "addressInformation": "Address Information",
         "addressInformationSubtitle": "Enter details as per your ID proof."
+    },
+    "dashboard": {
+        "couponsScanned": "Coupons Scanned",
+        "couponsScannedDesc": "Total numbers of coupons redeemed",
+        "redeemed": "Redeemed",
+        "scanned": "Scanned",
+        "points": "Points",
+        "amount": "Amount",
+        "redeemedPoints": "redeemed points",
+        "scannedAmount": "scanned amount",
+        "totalTillDate": "Total {{type}} till date",
+        "scanButton": "Scan",
+        "couponScannedForCash": "Coupons Scanned for Cash",
+        "couponScannedForCashDesc": "Total coupons scanned for cash",
+        "couponScannedForScheme": "Coupons Scanned for Scheme",
+        "couponScannedForSchemeDesc": "Total coupons scanned for scheme",
+        "totalBalancePoints": "Total Balance Points"
+    },
+    "coupon-history": {
+        "serial_no": "Serial No:",
+        "item_code": "Item Code:",
+        "redeemed_date": "Redeemed Date:",
+        "status": "Status:",
+        "scanned": "Scanned",
+        "from_date": "From Date",
+        "to_date": "To Date",
+        "no_data_found": "No data found for the selected date range. Please adjust your selection and try again."
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "Total Coupons Scanned",
+        "batch_id": "Batch ID",
+        "end_date": "End Date",
+        "status": "Status",
+        "credit_note_no": "Credited Note No.",
+        "credit_note_date": "Credited Date",
+        "credit_note_value": "Credited Value",
+        "from_date": "From Date",
+        "to_date": "To Date",
+        "no_data": "No data found. Try another date range."
+    },
+    "reportCoupon": {
+        "title": "Upload the report",
+        "subtitle": "Make sure the file format meets the requirement. It must be .png or .jpg",
+        "frontImagePlaceholder": "Tap here to upload front side of the images",
+        "backImagePlaceholder": "Tap here to upload back side of the images",
+        "editImageHint": "Tap here again to edit your selection",
+        "serialLabel": "Serial number of Coupon",
+        "serialPlaceholder": "Enter coupon's serial no.",
+        "serialError": "Please enter your coupon's serial no.",
+        "descriptionLabel": "Description about coupon.",
+        "descriptionPlaceholder": "Enter description about coupon.",
+        "descriptionError": "Please enter the description of the report",
+        "submit": "Submit Report",
+        "submitting": "Submitting report",
+        "missingImages": "Please pick an image to report..!"
+    },
+    "reportHistory": {
+        "from_date": "From Date",
+        "to_date": "To Date",
+        "noDataTitle": "No Data found.",
+        "noDataSubtitle": "Try another date range.",
+        "serialNo": "Serial No",
+        "description": "Description",
+        "reportedDate": "Reported Date"
+    },
+    "dealers": {
+        "filter": "Filter:",
+        "status": {
+            "all": "All",
+            "approved": "Approved",
+            "pending": "Pending",
+            "rejected": "Rejected"
+        },
+        "noRequestFound": "No request found",
+        "name": "Name",
+        "phoneNumber": "Phone Number",
+        "shopName": "Shop Name",
+        "address": "Address",
+        "dateRegistered": "Date Registered"
     }
 }

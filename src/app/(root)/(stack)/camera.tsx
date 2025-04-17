@@ -19,6 +19,7 @@ import CouponErrorDialog from '@/components/CouponErrorDialog';
 import * as Haptics from 'expo-haptics';
 import { useAudioPlayer } from 'expo-audio';
 import CouponTypeRedeemDialog from '@/components/CouponTypeRedeemDialog';
+import { useTranslation } from 'react-i18next';
 
 type Props = {}
 
@@ -40,18 +41,20 @@ const CameraScreen = ({ }: Props) => {
     const [isCouponTypeMultiple, setIsCouponTypeMultiple] = useState<boolean>(false);
     const [qrData, setQrData] = useState<string>("");
 
-    const toast = useToast()
     const { userDetails } = useUser();
+    const { t } = useTranslation();
+
+    const toast = useToast()
+
     const qrSuccessAudio = useAudioPlayer(require("@/assets/sounds/qr-scan-success_1.wav"));
     const qrErrorAudio = useAudioPlayer(require("@/assets/sounds/qr-scan-error_2.mp3"));
 
-    const cameraRef = useRef<CameraView | null>(null);
     const [permission, requestPermission] = useCameraPermissions();
 
     const navigation = useNavigation();
     useEffect(() => {
         navigation.setOptions({
-            title: "Scan Coupons",
+            title: t('layout.headerTitle.scan_coupons'),
             headerTransparent: true,
             headerTitleStyle: {
                 color: '#FFF'

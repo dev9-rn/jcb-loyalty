@@ -15,6 +15,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { POST_REPORT_COUPON } from '@/utils/routes';
 import { useToast } from 'react-native-toast-notifications';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 type Props = {}
 
@@ -30,6 +31,7 @@ const ReportCouponScreen = ({ }: Props) => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const { userDetails } = useUser();
+    const { t } = useTranslation();
 
     const toast = useToast();
 
@@ -43,9 +45,9 @@ const ReportCouponScreen = ({ }: Props) => {
     const handleCouponReportSubmit: SubmitHandler<ReportFormData | FieldValues> = async (formData) => {
 
         if (!pickedFrontsideCouponImage || !pickedBacksideCouponImage) {
-            toast.show("Please pick an image to report..!", {
-                data: { status: 400, }
-            })
+            toast.show(t("reportCoupon.missingImages"), {
+                data: { status: 400 }
+            });
             return;
         };
 
@@ -137,12 +139,8 @@ const ReportCouponScreen = ({ }: Props) => {
         <View className='flex-1 p-4 bg-white'>
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
                 <View className='gap-2'>
-                    <Text className='text-3xl font-bold text-primary'>
-                        Upload the report
-                    </Text>
-                    <Text className='text-gray-600'>
-                        Make sure the file format meets the requirement. It must be .*png or .*jpg
-                    </Text>
+                    <Text className='text-3xl font-bold text-primary'>{t("reportCoupon.title")}</Text>
+                    <Text className='text-gray-600'>{t("reportCoupon.subtitle")}</Text>
                 </View>
 
                 <View className='flex-row items-center justify-between'>
@@ -151,9 +149,7 @@ const ReportCouponScreen = ({ }: Props) => {
                             {!pickedFrontsideCouponImage ? (
                                 <View className='items-center'>
                                     <CloudUploadIcon className='text-primary' height={55} width={55} />
-                                    <Text className='font-medium text-gray-600 text-center'>
-                                        Tap here to upload front side of the images
-                                    </Text>
+                                    <Text className='font-medium text-gray-600 text-center'>{t("reportCoupon.frontImagePlaceholder")}</Text>
                                 </View>
                             ) : (
                                 <View className='p-4 gap-2 items-center relative w-full'>
@@ -161,9 +157,7 @@ const ReportCouponScreen = ({ }: Props) => {
                                         <X className='text-white' />
                                     </Button>
                                     <Image source={{ uri: pickedFrontsideCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
-                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>
-                                        Tap here again to edit your selection
-                                    </Text>
+                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>{t("reportCoupon.editImageHint")}</Text>
                                 </View>
                             )}
                         </View>
@@ -172,11 +166,9 @@ const ReportCouponScreen = ({ }: Props) => {
                     <TouchableOpacity onPress={() => handleBacksideCouponImagePicker()}>
                         <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-44 xs:size-48 sm:size-52 border border-dashed border-primary'>
                             {!pickedBacksideCouponImage ? (
-                                <View className='items-center flex-shrink'>
+                                <View className='items-center'>
                                     <CloudUploadIcon className='text-primary' height={55} width={55} />
-                                    <Text className='font-medium text-gray-600 text-center'>
-                                        Tap here to upload back side of the images
-                                    </Text>
+                                    <Text className='font-medium text-gray-600 text-center'>{t("reportCoupon.backImagePlaceholder")}</Text>
                                 </View>
                             ) : (
                                 <View className='p-4 gap-2 items-center relative w-full'>
@@ -184,9 +176,7 @@ const ReportCouponScreen = ({ }: Props) => {
                                         <X className='text-white' />
                                     </Button>
                                     <Image source={{ uri: pickedBacksideCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
-                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>
-                                        Tap here again to edit your selection
-                                    </Text>
+                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>{t("reportCoupon.editImageHint")}</Text>
                                 </View>
                             )}
                         </View>
@@ -195,17 +185,15 @@ const ReportCouponScreen = ({ }: Props) => {
 
                 <View className='gap-4 my-6'>
                     <View className='gap-2'>
-                        <Text className='font-medium'>Serial number of Coupon</Text>
+                        <Text className='font-medium'>{t("reportCoupon.serialLabel")}</Text>
                         <Controller
                             control={control}
-                            rules={{
-                                required: "Please enter your coupon's serial no."
-                            }}
+                            rules={{ required: t("reportCoupon.serialError") }}
                             name='couponSerial'
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <Input
                                     className={`rounded-lg focus:border-primary focus:border-2 ${errors.couponSerial && "border-2 border-red-500"}`}
-                                    placeholder="Enter coupon's serial no."
+                                    placeholder={t("reportCoupon.serialPlaceholder")}
                                     keyboardType='default'
                                     value={value}
                                     onBlur={onBlur}
@@ -217,17 +205,15 @@ const ReportCouponScreen = ({ }: Props) => {
                     </View>
 
                     <View className='gap-2'>
-                        <Text className='font-medium'>Description about coupon.</Text>
+                        <Text className='font-medium'>{t("reportCoupon.descriptionLabel")}</Text>
                         <Controller
                             control={control}
-                            rules={{
-                                required: "Please enter the description of the report"
-                            }}
+                            rules={{ required: t("reportCoupon.descriptionError") }}
                             name='couponDescription'
                             render={({ field: { onBlur, onChange, value } }) => (
                                 <Input
                                     className={`rounded-lg focus:border-primary focus:border-2 ${errors.couponDescription && "border-2 border-red-500"}`}
-                                    placeholder="Enter description about coupon."
+                                    placeholder={t("reportCoupon.descriptionPlaceholder")}
                                     value={value}
                                     onBlur={onBlur}
                                     onChangeText={onChange}
@@ -242,12 +228,10 @@ const ReportCouponScreen = ({ }: Props) => {
                     {isSubmitting ? (
                         <>
                             <ActivityIndicator className='mr-2' color={"#FFF"} />
-                            <Text>Submitting report</Text>
+                            <Text>{t("reportCoupon.submitting")}</Text>
                         </>
                     ) : (
-                        <Text>
-                            Submit Report
-                        </Text>
+                        <Text>{t("reportCoupon.submit")}</Text>
                     )}
                 </Button>
             </KeyboardAwareScrollView>

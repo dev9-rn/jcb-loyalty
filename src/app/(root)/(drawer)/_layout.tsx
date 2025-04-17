@@ -15,12 +15,14 @@ import { ClipboardPlusIcon } from '@/libs/icons/ClipboardPlus';
 import { FileClockIcon } from '@/libs/icons/FileClockIcon';
 import { TruckIcon } from '@/libs/icons/TruckIcon';
 import useUser from '@/hooks/useUser';
+import { useTranslation } from 'react-i18next';
 
 type Props = {}
 
 const DrawerLayout = ({ }: Props) => {
 
     const { userDetails } = useUser();
+    const { t } = useTranslation();
 
     return (
         <Drawer
@@ -47,8 +49,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name="profile" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Profile',
-                    title: 'Profile',
+                    drawerLabel: t('layout.headerTitle.profile'),
+                    title: t('layout.headerTitle.profile'),
                     drawerIcon: ({ focused, color }) => (
                         <UserIcon color={focused ? "#FFF" : color} />
                     )
@@ -58,8 +60,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name="index" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Dashboard',
-                    title: 'Dashboard',
+                    drawerLabel: t('layout.headerTitle.dashboard'),
+                    title: t('layout.headerTitle.dashboard'),
                     headerRight: ({ tintColor }) => (
                         <Button variant={"ghost"} size={"icon"} onPress={() => router.navigate("/(root)/(stack)/notification")}>
                             <BellIcon color={tintColor} />
@@ -74,7 +76,7 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name='camera'
                 options={{
-                    drawerLabel: 'Scan Coupons',
+                    drawerLabel: t('layout.headerTitle.scan_coupons'),
                     drawerIcon: ({ focused, color }) => (
                         <QrCodeIcon color={focused ? "#FFF" : color} />
                     )
@@ -84,8 +86,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name="coupon-history" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Coupon History',
-                    title: 'Coupon History',
+                    drawerLabel: t('layout.headerTitle.coupon_history'),
+                    title: t('layout.headerTitle.coupon_history'),
                     drawerIcon: ({ focused, color }) => (
                         <HistoryIcon color={focused ? "#FFF" : color} />
                     )
@@ -95,8 +97,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name="cash-batch" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Cash Batch Report',
-                    title: 'Cash Batch Reports',
+                    drawerLabel: t('layout.headerTitle.cash_batch_report'),
+                    title: t('layout.headerTitle.cash_batch_report'),
                     drawerIcon: ({ focused, color }) => (
                         <ClipboardList color={focused ? "#FFF" : color} />
                     )
@@ -106,8 +108,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name="report" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Report Coupon',
-                    title: 'Reports Coupon',
+                    drawerLabel: t('layout.headerTitle.report_coupon'),
+                    title: t('layout.headerTitle.report_coupon'),
                     drawerIcon: ({ focused, color }) => (
                         <ClipboardPlusIcon color={focused ? "#FFF" : color} />
                     )
@@ -117,8 +119,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name="report-history" // This is the name of the page and must match the url from root
                 options={{
-                    drawerLabel: 'Report History',
-                    title: 'Reports History',
+                    drawerLabel: t('layout.headerTitle.report_history'),
+                    title: t('layout.headerTitle.report_history'),
                     drawerIcon: ({ focused, color }) => (
                         <FileClockIcon color={focused ? "#FFF" : color} />
                     )
@@ -128,8 +130,8 @@ const DrawerLayout = ({ }: Props) => {
             <Drawer.Screen
                 name='my-dealers'
                 options={{
-                    drawerLabel: 'My Retailers',
-                    title: 'Retailers',
+                    drawerLabel: t('layout.headerTitle.my_retailers'),
+                    title: t('layout.headerTitle.my_retailers'),
                     drawerIcon: ({ focused, color }) => (
                         <TruckIcon color={focused ? "#FFF" : color} />
                     )

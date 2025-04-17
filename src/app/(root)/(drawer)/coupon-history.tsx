@@ -1,16 +1,11 @@
-import { ActivityIndicator, FlatList, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useRef, useState } from 'react'
 
 import PagerView from 'react-native-pager-view';
 import { Text } from '@/components/ui/text';
 
-import { CalendarIcon } from "@/libs/icons/CalendarIcon"
-import axiosInstance from '@/utils/axiosInstance';
-import { GET_MECHANIC_PASSBOOK, GET_REDEEM_HISTORY, GET_RETAILER_COUPON_HISTORY } from '@/utils/routes';
-import useUser from '@/hooks/useUser';
-import { Separator } from '@/components/ui/separator';
 import CashCouponHistoryTab from '@/components/CashCouponHistoryTab';
+import formatDateTime from '@/utils/formatDateTime';
 
 type Props = {};
 
@@ -53,7 +48,7 @@ const CouponHistoryScreen = ({ }: Props) => {
                 </Text>
                 <Text className='text-lg'>
                     Redeemed Date:{" "}
-                    <Text className='text-lg font-medium'>{new Date(item.date).toLocaleString()}</Text>
+                    <Text className='text-lg font-medium'>{formatDateTime(item.date)}</Text>
                 </Text>
 
                 <Text className='text-lg'>
@@ -90,7 +85,7 @@ const CouponHistoryScreen = ({ }: Props) => {
                 style={{ flex: 1, }}
                 onPageSelected={(e) => setActivePagerTab(e.nativeEvent.position)}
             >
-                <View  key="1">
+                <View key="1">
                     <CashCouponHistoryTab />
                 </View>
                 <View className='items-center justify-center' key="2">

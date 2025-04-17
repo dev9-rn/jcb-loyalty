@@ -52,11 +52,11 @@ const SignInScreen = ({ }: Props) => {
     };
 
     const getLoginEndpoint = () => {
-        if (selectedSignInType === "mechanic") {
+        if (selectedSignInType === t("login.mechanic")) {
             return MECHANIC_LOGIN
         };
 
-        if (selectedSignInType === "distributor") {
+        if (selectedSignInType === t("login.distributor")) {
             return USER_LOGIN
         };
 

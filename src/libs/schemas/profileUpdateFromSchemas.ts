@@ -1,80 +1,94 @@
+import { TFunction } from "i18next";
 import { z } from "zod";
 
-const baseSchema = z.object({
-    userType: z.enum(["distributor", "mechanic", "retailer"]),
-    userName: z.string().nonempty("Please enter your full name").refine((value) => /^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/.test(value ?? ""), {
-        message: "Name should only contain letters"
-    }),
-    userPhoneNumber: z.string().nonempty("Please enter your phone number").min(10, {
-        message: "Please enter a 10 digit phone number"
-    }).max(10, {
-        message: "Please enter a 10 digit phone number"
-    }).refine((value) => /^\d{10}$/.test(value), {
-        message: "Enter a valid 10-digit phone number"
-    }),
-    userPincode: z.string().nonempty("Please enter a pincode").min(6, {
-        message: "Please enter a 6 digit pincode",
-    }).max(6, {
-        message: "Please enter a 6 digit pincode",
-    }).refine((value) => /^\d+$/.test(value), {
-        message: "Please enter a valid 6-digit pincode"
-    }),
-    userCountry: z.object({
-        id: z.string().nonempty("Please select a country"),
-        name: z.string().nonempty("Please select a country"),
-    }),
-    userState: z.object({
-        id: z.string().nonempty("Please select a state"),
-        name: z.string().nonempty("Please select a state"),
-    }),
-    userCity: z.object({
-        id: z.string().nonempty("Please select a city"),
-        name: z.string().nonempty("Please select a city"),
-    }),
-});
 
-const distributorSchema = baseSchema.extend({
-    userType: z.literal("distributor"),
-    distributorEmail: z.string().nonempty("Please enter a email address").email({
-        message: "Please enter a valid email address"
-    }),
-    distributorAddress: z.string().nonempty("Please enter you full address"),
-    distributorCompanyName: z.string(),
-    distributorStreetAddress: z.string({
-        required_error: "Please enter your street name"
-    }).nonempty(),
-    distributorPanNumber: z.string()
-        .optional()
-        .refine((value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value), {
-            message: "Please enter a valid PAN Number"
+const createProfileUpdateForm = (t: TFunction<"translation", undefined>) => {
+
+    const baseSchema = z.object({
+        userType: z.enum(["distributor", "mechanic", "retailer"]),
+        userName: z.string().nonempty(t("signup.validation.nameRequired")).refine(
+            (value) => /^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/.test(value ?? ""),
+            { message: t("signup.validation.nameOnlyLetters") }
+        ),
+        userPhoneNumber: z
+            .string()
+            .nonempty(t("signup.validation.phoneRequired"))
+            .min(10, { message: t("signup.validation.phoneInvalid") })
+            .max(10, { message: t("signup.validation.phoneInvalid") })
+            .refine((value) => /^\d{10}$/.test(value), {
+                message: t("signup.validation.phoneInvalidFormat")
+            }),
+        userPincode: z
+            .string()
+            .nonempty(t("signup.validation.pincodeRequired"))
+            .min(6, { message: t("signup.validation.pincodeInvalid") })
+            .max(6, { message: t("signup.validation.pincodeInvalid") })
+            .refine((value) => /^\d+$/.test(value), {
+                message: t("signup.validation.pincodeDigits")
+            }),
+        userCountry: z.object({
+            id: z.string().nonempty(t("signup.validation.countryRequired")),
+            name: z.string().nonempty(t("signup.validation.countryRequired")),
         }),
-    distributorGstNumber: z.string(),
-    distributorBrand: z.object({
-        id: z.string({
-            required_error: "Please select a city"
-        }).nonempty(),
-        name: z.string({
-            message: "Please select a city"
-        }).nonempty(),
-    })
-});
+        userState: z.object({
+            id: z.string().nonempty(t("signup.validation.stateRequired")),
+            name: z.string().nonempty(t("signup.validation.stateRequired")),
+        }),
+        userCity: z.object({
+            id: z.string().nonempty(t("signup.validation.cityRequired")),
+            name: z.string().nonempty(t("signup.validation.cityRequired")),
+        }),
+    });
 
-const mechanicSchema = baseSchema.extend({
-    userType: z.literal("mechanic"),
-    mechanicPanNumber: z.string().nonempty("Please enter a PAN Number").refine((value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value), {
-        message: "Please enter a valid PAN Number"
-    }),
-});
+    const distributorSchema = baseSchema.extend({
+        userType: z.literal("distributor"),
+        distributorEmail: z
+            .string()
+            .nonempty(t("signup.validation.emailRequired"))
+            .email({ message: t("signup.validation.emailInvalid") }),
+        distributorAddress: z.string().nonempty(t("signup.validation.addressRequired")),
+        distributorCompanyName: z.string(),
+        distributorStreetAddress: z
+            .string({ required_error: t("signup.validation.streetRequired") })
+            .nonempty(t("signup.validation.streetRequired")),
+        distributorPanNumber: z
+            .string()
+            .optional()
+            .refine(
+                (value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value),
+                { message: t("signup.validation.panInvalid") }
+            ),
+        distributorGstNumber: z.string(),
+        distributorBrand: z.object({
+            id: z.string().nonempty(t("signup.validation.brandRequired")),
+            name: z.string().nonempty(t("signup.validation.brandRequired")),
+        }),
+    });
 
-const retailerSchema = baseSchema.extend({
-    userType: z.literal("retailer"),
-    retailerShopName: z.string().nonempty("Please enter a shop name")
-});
+    const mechanicSchema = baseSchema.extend({
+        userType: z.literal("mechanic"),
+        mechanicPanNumber: z
+            .string()
+            .nonempty(t("signup.validation.panRequired"))
+            .refine(
+                (value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value),
+                { message: t("signup.validation.panInvalid") }
+            ),
+    });
 
-const signUpForm = z.discriminatedUnion("userType", [
-    distributorSchema,
-    mechanicSchema,
-    retailerSchema
-]);
+    const retailerSchema = baseSchema.extend({
+        userType: z.literal("retailer"),
+        retailerShopName: z.string().nonempty(t("signup.validation.shopRequired")),
+    });
 
-export { signUpForm, distributorSchema, mechanicSchema, retailerSchema }
+    const profileUpdateForm = z.discriminatedUnion("userType", [
+        distributorSchema,
+        mechanicSchema,
+        retailerSchema
+    ]);
+
+    return profileUpdateForm
+};
+
+
+export { createProfileUpdateForm }

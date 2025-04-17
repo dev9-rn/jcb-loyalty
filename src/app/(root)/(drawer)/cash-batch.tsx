@@ -10,12 +10,15 @@ import { GET_CASH_BATCH_REPORTS } from '@/utils/routes';
 import { useToast } from 'react-native-toast-notifications';
 import axios from 'axios';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from 'react-i18next';
+import formatDateTime from '@/utils/formatDateTime';
 
 type Props = {}
 
 const CashBatchScreen = ({ }: Props) => {
 
     const { userDetails } = useUser();
+    const { t } = useTranslation();
 
     const toast = useToast();
 
@@ -35,7 +38,7 @@ const CashBatchScreen = ({ }: Props) => {
             <View className='py-2' key={index}>
                 <View className='flex-row items-center justify-between'>
                     <Text className='text-lg'>
-                        Total Coupons Scanned:{" "}
+                        {t("cash_batch.total_coupons_scanned")}:{" "}
                         <Text className='text-lg font-medium'>{item.total_coupons_scanned}</Text>
                     </Text>
                     <Text className='text-lg font-semibold'>
@@ -43,32 +46,32 @@ const CashBatchScreen = ({ }: Props) => {
                     </Text>
                 </View>
                 <Text className='text-lg'>
-                    Batch ID:{" "}
+                    {t("cash_batch.batch_id")}:{" "}
                     <Text className='text-lg font-medium'>{item.batch_id}</Text>
                 </Text>
                 <Text className='text-lg'>
-                    End Date:{" "}
-                    <Text className='text-lg font-medium'>{new Date(item.end_date).toLocaleDateString()}</Text>
+                    {t("cash_batch.end_date")}:{" "}
+                    <Text className='text-lg font-medium'>{formatDateTime(item.end_date)}</Text>
                 </Text>
 
                 <Text className='text-lg'>
-                    Status:{" "}
+                    {t("cash_batch.status")}:{" "}
                     <Text className='text-primary text-lg font-medium capitalize'>{item.status}</Text>
                 </Text>
                 {item.credit_note_no && (
                     <>
                         <Text className='text-lg'>
-                            Credited note no.:{" "}
+                            {t("cash_batch.credit_note_no")}:{" "}
                             <Text className='text-lg font-medium'>{item.credit_note_no}</Text>
                         </Text>
 
                         <Text className='text-lg'>
-                            Credited date:{" "}
+                            {t("cash_batch.credit_note_date")}:{" "}
                             <Text className='text-lg font-medium'>{new Date(item.credit_note_date as string).toLocaleDateString()}</Text>
                         </Text>
 
                         <Text className='text-lg'>
-                            Credited value:{" "}
+                            {t("cash_batch.credit_note_value")}:{" "}
                             <Text className='text-lg font-medium'>{item.credit_note_value}</Text>
                         </Text>
                     </>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
 import useUser from '@/hooks/useUser'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { signUpForm } from '@/libs/schemas/profileUpdateFromSchemas'
+import { createProfileUpdateForm, signUpForm } from '@/libs/schemas/profileUpdateFromSchemas'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -18,8 +18,7 @@ import axios from 'axios'
 import StateDropdown from '@/components/StateDropdown'
 import CitiesDropdown from '@/components/CitiesDropdown'
 import { getProfileEndpoint } from '@/libs/utils'
-import { PencilLineIcon } from "@/libs/icons/PencilLineIcon"
-import DiscardFormDialog from '@/components/DiscardFormDialog'
+import { useTranslation } from 'react-i18next'
 
 type Props = {}
 
@@ -40,8 +39,11 @@ const ProfileScreen = ({ }: Props) => {
     const [discardChanges, setDiscardChanges] = useState<boolean>(true);
 
     const { userDetails, fetchUserProfileDetails } = useUser();
+    const { t } = useTranslation();
 
     const toast = useToast();
+
+    const signUpFormprofileUpdateForm = createProfileUpdateForm(t)
 
     useEffect(() => {
         fetchCountryList();
@@ -49,9 +51,9 @@ const ProfileScreen = ({ }: Props) => {
         // fetchBrands();
     }, []);
 
-    const { control, handleSubmit, reset, getValues, resetField, formState: { errors, isDirty, disabled, dirtyFields } } = useForm<z.infer<typeof signUpForm>>({
+    const { control, handleSubmit, reset, getValues, resetField, formState: { errors, isDirty, disabled, dirtyFields } } = useForm<z.infer<typeof signUpFormprofileUpdateForm>>({
         mode: "onChange",
-        resolver: zodResolver(signUpForm),
+        resolver: zodResolver(signUpFormprofileUpdateForm),
         disabled: !isFormDisabled,
         defaultValues: {
             userType: userTypeMap[userDetails?.userType || 0],
@@ -95,8 +97,6 @@ const ProfileScreen = ({ }: Props) => {
 
         fetchCitiesList();
     }, [getValues().userState.id]);
-
-    console.log(getValues(), "FORM_VALS");
 
     useEffect(() => {
         if (!profileDetails || !brands) return;
@@ -294,7 +294,6 @@ const ProfileScreen = ({ }: Props) => {
 
     const toggleFormState = () => {
         setIsFormDisabled(!isFormDisabled);
-
     };
 
     return (
@@ -303,10 +302,10 @@ const ProfileScreen = ({ }: Props) => {
                 <KeyboardAwareScrollView bottomOffset={100} showsVerticalScrollIndicator={false}>
                     <View className='flex-row items-center justify-between'>
                         <View>
-                            <Text className='text-2xl font-semibold'>
-                                {userDetails?.userType === 0 ? "Distributor" : userDetails?.userType === 1 ? "Mechanic" : "Retailer"} Information
+                            <Text className='text-2xl font-semibold capitalize'>
+                                {userDetails?.userType === 0 ? t("login.distributor") : userDetails?.userType === 1 ? t("login.mechanic") : t("login.retailer")} {t("signup.distributorTitle")}
                             </Text>
-                            <Text className='text-gray-500 text-sm'>Provide information to edit your account</Text>
+                            <Text className='text-gray-500 text-sm'>{t("signup.subtitle")}</Text>
                         </View>
 
                         {/* <Button className='flex-row items-center gap-4' onPress={() => toggleFormState()} variant={isFormDisabled ? "default" : "destructive"}>
@@ -319,7 +318,7 @@ const ProfileScreen = ({ }: Props) => {
 
                     <View className='mt-4 gap-3'>
                         <View className='gap-1'>
-                            <Text>Full Name</Text>
+                            <Text>{t("signup.fields.fullName")}</Text>
 
                             <Controller
                                 control={control}
@@ -328,7 +327,7 @@ const ProfileScreen = ({ }: Props) => {
                                 render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.userName && "border-red-500"}`}
-                                        placeholder='Enter full name'
+                                        placeholder={t("signup.fields.fullNamePlaceholder")}
                                         value={value}
                                         onChangeText={onChange}
                                         onBlur={onBlur}
@@ -340,7 +339,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Phone Number</Text>
+                            <Text>{t("signup.fields.phoneNumber")}</Text>
 
                             <Controller
                                 control={control}
@@ -349,7 +348,7 @@ const ProfileScreen = ({ }: Props) => {
                                 render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.userPhoneNumber && "border-red-500"}`}
-                                        placeholder='Enter phone number'
+                                        placeholder={t("signup.fields.phoneNumberPlaceholder")}
                                         value={value}
                                         onChangeText={onChange}
                                         onBlur={onBlur}
@@ -363,7 +362,7 @@ const ProfileScreen = ({ }: Props) => {
 
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
-                                <Text>Email Address</Text>
+                                <Text>{t("signup.fields.email")}</Text>
 
                                 <Controller
                                     control={control}
@@ -372,7 +371,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorEmail && "border-red-500"}`}
-                                            placeholder='Enter email address'
+                                            placeholder={t("signup.fields.email")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -387,7 +386,7 @@ const ProfileScreen = ({ }: Props) => {
                         {userDetails?.userType === 0 ? (
                             <View className='gap-1'>
                                 <Text>
-                                    Company name
+                                    {t("signup.fields.companyName")}
                                 </Text>
 
                                 <Controller
@@ -397,7 +396,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorCompanyName && "border-red-500"}`}
-                                            placeholder="Enter Company Name"
+                                            placeholder={t("signup.fields.companyNamePlaceholder")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -409,7 +408,7 @@ const ProfileScreen = ({ }: Props) => {
                         ) : (
                             <View className='gap-1'>
                                 <Text>
-                                    Shop name
+                                    {t("signup.fields.shopName")}
                                 </Text>
 
                                 <Controller
@@ -419,7 +418,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.retailerShopName && "border-red-500"}`}
-                                            placeholder="Enter Shop Name"
+                                            placeholder={t("signup.fields.shopNamePlaceholder")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -433,7 +432,7 @@ const ProfileScreen = ({ }: Props) => {
 
                         {userDetails?.userType === 0 ? (
                             <View className='gap-1'>
-                                <Text>PAN Number</Text>
+                                <Text>{t("signup.fields.panNumber")}</Text>
 
                                 <Controller
                                     control={control}
@@ -442,7 +441,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorPanNumber && "border-red-500"}`}
-                                            placeholder='Ex. AXNP7853G'
+                                            placeholder={t("signup.fields.panNumberPlaceholder")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -454,7 +453,7 @@ const ProfileScreen = ({ }: Props) => {
                             </View>
                         ) : (
                             <View className='gap-1'>
-                                <Text>PAN Number</Text>
+                                <Text>{t("signup.fields.panNumber")}</Text>
 
                                 <Controller
                                     control={control}
@@ -463,7 +462,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.mechanicPanNumber && "border-red-500"}`}
-                                            placeholder='Ex. AXNP7853G'
+                                            placeholder={t("signup.fields.panNumberPlaceholder")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -477,7 +476,7 @@ const ProfileScreen = ({ }: Props) => {
 
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
-                                <Text>GST Number</Text>
+                                <Text>{t("signup.fields.gstNumber")}</Text>
 
                                 <Controller
                                     control={control}
@@ -486,7 +485,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorGstNumber && "border-red-500"}`}
-                                            placeholder='Enter GSTIN number'
+                                            placeholder={t("signup.fields.gstNumberPlaceholder")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -501,7 +500,7 @@ const ProfileScreen = ({ }: Props) => {
 
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
-                                <Text>Brand</Text>
+                                <Text>{t("signup.fields.selectBrand")}</Text>
 
                                 <Controller
                                     control={control}
@@ -525,14 +524,14 @@ const ProfileScreen = ({ }: Props) => {
                     </View>
 
                     <View className='py-4'>
-                        <Text className='font-semibold text-lg xs:text-xl'>Address Information</Text>
-                        <Text className='text-xs xs:text-sm text-gray-500'>Enter the details as per the ID Proof.</Text>
+                        <Text className='font-semibold text-lg xs:text-xl'>{t("signup.addressInformation")}</Text>
+                        <Text className='text-xs xs:text-sm text-gray-500'>{t("signup.addressInformationSubtitle")}</Text>
                     </View>
 
                     <View className='gap-3'>
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
-                                <Text className=''>Street</Text>
+                                <Text className=''>{t("signup.fields.street")}</Text>
 
                                 <Controller
                                     control={control}
@@ -541,7 +540,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Input
                                             className={`focus:border-2 focus:border-primary ${errors.distributorStreetAddress && "border-red-500"}`}
-                                            placeholder='Enter street'
+                                            placeholder={t("signup.fields.streetPlaceholder")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -554,7 +553,7 @@ const ProfileScreen = ({ }: Props) => {
                         )}
 
                         <View className='gap-1'>
-                            <Text>Select Country</Text>
+                            <Text>{t("signup.fields.selectCountry")}</Text>
 
                             <Controller
                                 control={control}
@@ -575,7 +574,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Select State</Text>
+                            <Text>{t("signup.fields.selectState")}</Text>
 
                             <Controller
                                 control={control}
@@ -596,7 +595,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Select City</Text>
+                            <Text>{t("signup.fields.selectCity")}</Text>
 
                             <Controller
                                 control={control}
@@ -617,7 +616,7 @@ const ProfileScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>Pincode <Text className='text-red-500'>*</Text></Text>
+                            <Text>{t("signup.fields.pincode")} <Text className='text-red-500'>*</Text></Text>
 
                             <Controller
                                 control={control}
@@ -626,7 +625,7 @@ const ProfileScreen = ({ }: Props) => {
                                 render={({ field: { onBlur, onChange, value, disabled } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.userPincode && "border-red-500"}`}
-                                        placeholder='Enter your pincode'
+                                        placeholder={t("signup.fields.pincodePlaceholder")}
                                         keyboardType='numeric'
                                         value={value}
                                         onChangeText={onChange}
@@ -640,7 +639,7 @@ const ProfileScreen = ({ }: Props) => {
 
                         {userDetails?.userType === 0 && (
                             <View className='gap-1'>
-                                <Text>Address <Text className='text-red-500'>*</Text></Text>
+                                <Text>{t("signup.fields.address")} <Text className='text-red-500'>*</Text></Text>
 
                                 <Controller
                                     control={control}
@@ -649,7 +648,7 @@ const ProfileScreen = ({ }: Props) => {
                                     render={({ field: { onBlur, onChange, value, disabled } }) => (
                                         <Textarea
                                             className={`focus:border-2 focus:border-primary ${errors.distributorAddress && "border-red-500"}`}
-                                            placeholder='Enter your full address'
+                                            placeholder={t("signup.fields.addressPlaceholder")}
                                             value={value}
                                             onChangeText={onChange}
                                             onBlur={onBlur}
@@ -666,7 +665,7 @@ const ProfileScreen = ({ }: Props) => {
                     <View className='my-6'>
                         <Button
                             onPress={handleSubmit(handleProfileSubmit)}
-                        // disabled={!isDirty}
+                            disabled={!isDirty}
                         >
                             <Text>Submit</Text>
                         </Button>

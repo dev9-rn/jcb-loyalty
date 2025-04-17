@@ -6,12 +6,15 @@ import useUser from '@/hooks/useUser';
 import { Separator } from './ui/separator';
 import axiosInstance from '@/utils/axiosInstance';
 import { GET_MECHANIC_PASSBOOK, GET_REDEEM_HISTORY, GET_RETAILER_COUPON_HISTORY } from '@/utils/routes';
+import formatDateTime from '@/utils/formatDateTime';
+import { useTranslation } from 'react-i18next';
 
 type Props = {}
 
 const CashCouponHistoryTab = ({ }: Props) => {
 
     const { userDetails } = useUser();
+    const { t } = useTranslation();
 
     const [couponHistoryData, setCouponHistoryData] = useState<ICouponHistory | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
@@ -31,7 +34,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
             <View className='py-2' key={index}>
                 <View className='flex-row items-center justify-between'>
                     <Text className='text-lg'>
-                        Serial No:{" "}
+                        {t("coupon-history.serial_no")}{" "}
                         <Text className='text-lg font-medium'>{item.id}</Text>
                     </Text>
                     <Text className='text-lg font-semibold'>
@@ -40,18 +43,20 @@ const CashCouponHistoryTab = ({ }: Props) => {
                 </View>
                 {item.item_code && (
                     <Text className='text-lg'>
-                        Item Code:{" "}
+                        {t("coupon-history.item_code")}{" "}
                         <Text className='text-lg font-medium'>{item.item_code}</Text>
                     </Text>
                 )}
                 <Text className='text-lg'>
-                    Redeemed Date:{" "}
-                    <Text className='text-lg font-medium'>{new Date(item.distributor_redemption_date || item?.scanned_date).toLocaleString()}</Text>
+                    {t("coupon-history.redeemed_date")}{" "}
+                    <Text className='text-lg font-medium'>{formatDateTime(item.distributor_redemption_date || item?.scanned_date)}</Text>
                 </Text>
 
                 <Text className='text-lg'>
-                    Status:{" "}
-                    <Text className='text-green-600 text-lg font-medium'>{item.distributor_redemption_flag || "Scanned"}</Text>
+                    {t("coupon-history.status")}{" "}
+                    <Text className='text-green-600 text-lg font-medium'>
+                        {item.distributor_redemption_flag || t("coupon-history.scanned")}
+                    </Text>
                 </Text>
             </View>
         )
@@ -122,7 +127,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
                 <View className='items-center'>
                     <TouchableOpacity className='flex-row items-center gap-2 p-2' onPress={() => setShowFromDate(true)}>
                         <CalendarIcon className='text-primary' height={20} width={20} />
-                        <Text>From Date:</Text>
+                        <Text>{t("coupon-history.from_date")}</Text>
                         <Text className='text-lg font-semibold'>{selectedFromDate.toLocaleDateString()}</Text>
                     </TouchableOpacity>
 
@@ -140,7 +145,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
                 <View>
                     <TouchableOpacity className='flex-row items-center gap-2 p-2' onPress={() => setShowToDate(true)}>
                         <CalendarIcon className='text-primary' height={20} width={20} />
-                        <Text>To Date</Text>
+                        <Text>{t("coupon-history.to_date")}</Text>
                         <Text className='text-lg font-semibold'>{selctedToDate.toLocaleDateString()}</Text>
                     </TouchableOpacity>
 
@@ -166,7 +171,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
                 ListEmptyComponent={() => (
                     <View className='items-center'>
                         <Text className='font-medium text-lg text-center'>
-                            No data found for the selected date range. Please adjust your selection and try again.
+                            {t("coupon-history.no_data_found")}
                         </Text>
                     </View>
                 )}
