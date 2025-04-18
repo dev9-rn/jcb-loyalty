@@ -80,8 +80,8 @@ const MultiLangualDropdown = ({ }: Props) => {
             <Text className='text-lg font-medium'>Language:</Text>
             <Select
                 defaultValue={{
-                    label: previousLanguage?.name,
-                    value: previousLanguage?.langCode
+                    label: previousLanguage?.name || "English",
+                    value: previousLanguage?.langCode || "en"
                 }}
             >
                 <SelectTrigger className='w-[200px]'>
