@@ -1,0 +1,172 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "خوش آمدید!"
+        },
+        "headerTitle": {
+            "dashboard": "ڈیش بورڈ",
+            "profile": "پروفائل",
+            "scan_coupons": "کوپن اسکین کریں",
+            "coupon_history": "کوپن کی تاریخ",
+            "cash_batch_report": "نقد بیچ رپورٹ",
+            "report_coupon": "کوپن رپورٹ کریں",
+            "report_history": "رپورٹ کی تاریخ",
+            "my_retailers": "میرے تاجر"
+        }
+    },
+    "login": {
+        "signInAs": "بطور سائن ان کریں",
+        "phoneNumber": "فون نمبر",
+        "distributor": "ڈسٹری بیوٹر",
+        "mechanic": "میکینک",
+        "retailer": "تاجر",
+        "errors": {
+            "phoneRequired": "براہ کرم اپنا فون نمبر درج کریں",
+            "phoneInvalid": "براہ کرم 10 ہندسوں کا درست فون نمبر درج کریں"
+        },
+        "login": "لاگ ان کریں",
+        "loggingIn": "لاگ ان ہو رہا ہے",
+        "noAccount": "کیا آپ کا اکاؤنٹ نہیں ہے؟",
+        "signUp": "سائن اپ کریں",
+        "orSignInAs": "یا بطور سائن ان کریں",
+        "switchTo": "تبدیل کریں"
+    },
+    "signup": {
+        "distributorTitle": "تفصیلات",
+        "mechanicTitle": "تفصیلات",
+        "retailerTitle": "تفصیلات",
+        "subtitle": "اکاؤنٹ بنانے کے لیے معلومات فراہم کریں",
+        "fields": {
+            "fullName": "مکمل نام",
+            "fullNamePlaceholder": "اپنا مکمل نام درج کریں",
+            "phoneNumber": "فون نمبر",
+            "phoneNumberPlaceholder": "اپنا فون نمبر درج کریں",
+            "email": "ای میل ایڈریس",
+            "emailPlaceholder": "اپنا ای میل درج کریں",
+            "companyName": "کمپنی کا نام",
+            "shopName": "دکان کا نام",
+            "companyNamePlaceholder": "کمپنی کا نام درج کریں",
+            "shopNamePlaceholder": "دکان کا نام درج کریں",
+            "distributorCode": "ڈسٹری بیوٹر کوڈ",
+            "distributorCodePlaceholder": "ڈسٹری بیوٹر کوڈ درج کریں",
+            "panNumber": "PAN نمبر",
+            "panNumberPlaceholder": "مثلاً AXNP7853G",
+            "gstNumber": "GST نمبر",
+            "gstNumberPlaceholder": "GST نمبر درج کریں",
+            "selectBrand": "برانڈ منتخب کریں",
+            "street": "گلی/سڑک",
+            "streetPlaceholder": "گلی یا سڑک کا نام درج کریں",
+            "selectCountry": "ملک منتخب کریں",
+            "selectState": "ریاست منتخب کریں",
+            "selectCity": "شہر منتخب کریں",
+            "pincode": "پن کوڈ",
+            "pincodePlaceholder": "اپنا پن کوڈ درج کریں",
+            "address": "پتہ",
+            "addressPlaceholder": "مکمل پتہ درج کریں"
+        },
+        "validation": {
+            "userTypeRequired": "براہ کرم صارف کی قسم منتخب کریں",
+            "nameRequired": "اپنا نام درج کریں",
+            "nameOnlyLetters": "نام میں صرف حروف ہونے چاہئیں",
+            "phoneRequired": "فون نمبر درج کریں",
+            "phoneInvalid": "درست 10 ہندسوں کا فون نمبر درج کریں",
+            "validPhone": "درست فون نمبر درج کریں",
+            "pincodeRequired": "پن کوڈ درج کریں",
+            "pincodeInvalid": "6 ہندسوں کا پن کوڈ درج کریں",
+            "validPincode": "درست پن کوڈ درج کریں",
+            "selectCountry": "ملک منتخب کریں",
+            "selectState": "ریاست منتخب کریں",
+            "selectCity": "شہر منتخب کریں",
+            "emailRequired": "ای میل درج کریں",
+            "emailInvalid": "درست ای میل درج کریں",
+            "addressRequired": "مکمل پتہ درج کریں",
+            "streetRequired": "گلی یا سڑک درج کریں",
+            "invalidPAN": "درست PAN نمبر درج کریں",
+            "selectBrand": "برانڈ منتخب کریں",
+            "panRequired": "PAN نمبر درج کریں",
+            "shopNameRequired": "دکان کا نام درج کریں",
+            "codeRequired": "کوڈ درج کریں"
+        },
+        "addressInformation": "پتہ کی معلومات",
+        "addressInformationSubtitle": "شناختی دستاویز کے مطابق تفصیلات درج کریں"
+    },
+    "dashboard": {
+        "couponsScanned": "اسکین کیے گئے کوپن",
+        "couponsScannedDesc": "مکمل اسکین اور ریڈیم کیے گئے کوپن کی تعداد",
+        "redeemed": "ریڈیم شدہ",
+        "scanned": "اسکین شدہ",
+        "points": "پوائنٹس",
+        "amount": "رقم",
+        "redeemedPoints": "ریڈیم شدہ پوائنٹس",
+        "scannedAmount": "اسکین کی گئی رقم",
+        "totalTillDate": "اب تک کا کل {{type}}",
+        "scanButton": "ابھی اسکین کریں",
+        "couponScannedForCash": "نقد کے لیے اسکین کیے گئے کوپن",
+        "couponScannedForCashDesc": "نقد کے لیے اسکین کیے گئے کوپن کی کل تعداد",
+        "couponScannedForScheme": "سکیم کے لیے اسکین کیے گئے کوپن",
+        "couponScannedForSchemeDesc": "سکیم کے لیے اسکین کیے گئے کوپن کی کل تعداد",
+        "totalBalancePoints": "کل بیلنس پوائنٹس"
+    },
+    "coupon-history": {
+        "serial_no": "سیریل نمبر:",
+        "item_code": "آئٹم کوڈ:",
+        "redeemed_date": "ریڈیم کی تاریخ:",
+        "status": "حیثیت:",
+        "scanned": "اسکین شدہ",
+        "from_date": "شروع کی تاریخ",
+        "to_date": "اختتامی تاریخ",
+        "no_data_found": "منتخب تاریخ کے لیے کوئی ڈیٹا نہیں ملا۔ براہ کرم تاریخ تبدیل کریں اور دوبارہ کوشش کریں۔"
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "مکمل اسکین کیے گئے کوپن",
+        "batch_id": "بیچ آئی ڈی",
+        "end_date": "اختتامی تاریخ",
+        "status": "حیثیت",
+        "credit_note_no": "کریڈٹ نوٹ نمبر",
+        "credit_note_date": "کریڈٹ نوٹ تاریخ",
+        "credit_note_value": "کریڈٹ قیمت",
+        "from_date": "شروع کی تاریخ",
+        "to_date": "اختتامی تاریخ",
+        "no_data": "کوئی ڈیٹا نہیں ملا۔ براہ کرم دوسری تاریخ منتخب کریں۔"
+    },
+    "reportCoupon": {
+        "title": "رپورٹ اپلوڈ کریں",
+        "subtitle": "براہ کرم .png یا .jpg فارمیٹ استعمال کریں",
+        "frontImagePlaceholder": "سامنے کی تصویر اپلوڈ کرنے کے لیے ٹیپ کریں",
+        "backImagePlaceholder": "پیچھے کی تصویر اپلوڈ کرنے کے لیے ٹیپ کریں",
+        "editImageHint": "تصویر میں ترمیم کے لیے دوبارہ ٹیپ کریں",
+        "serialLabel": "کوپن سیریل نمبر",
+        "serialPlaceholder": "کوپن کا سیریل نمبر درج کریں",
+        "serialError": "براہ کرم کوپن سیریل نمبر درج کریں",
+        "descriptionLabel": "کوپن کی تفصیل",
+        "descriptionPlaceholder": "کوپن کی مکمل تفصیل درج کریں",
+        "descriptionError": "براہ کرم رپورٹ کی تفصیل درج کریں",
+        "submit": "رپورٹ جمع کروائیں",
+        "submitting": "رپورٹ جمع کی جا رہی ہے",
+        "missingImages": "رپورٹ کرنے کے لیے ایک تصویر منتخب کریں!"
+    },
+    "reportHistory": {
+        "from_date": "شروع کی تاریخ",
+        "to_date": "اختتامی تاریخ",
+        "noDataTitle": "کوئی ڈیٹا نہیں ملا۔",
+        "noDataSubtitle": "براہ کرم کوئی اور تاریخ منتخب کریں۔",
+        "serialNo": "سیریل نمبر",
+        "description": "تفصیل",
+        "reportedDate": "رپورٹ کی تاریخ"
+    },
+    "dealers": {
+        "filter": "فلٹر:",
+        "status": {
+            "all": "تمام",
+            "approved": "منظور شدہ",
+            "pending": "زیر التوا",
+            "rejected": "مسترد شدہ"
+        },
+        "noRequestFound": "کوئی درخواست نہیں ملی",
+        "name": "نام",
+        "phoneNumber": "فون نمبر",
+        "shopName": "دکان کا نام",
+        "address": "پتہ",
+        "dateRegistered": "رجسٹریشن کی تاریخ"
+    }
+}

@@ -32,14 +32,17 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 403 && (!error.config?.url?.includes("/login") && !error.config?.url?.includes("/verifyOtp"))) {
-            Toast.show(error.response.data.message, {
-                data: error.response
-            });
-            tokenStorage.clearAll();
-            storage.clearAll();
-            router.replace("/(auth)")
-            // Optionally: Trigger logout or token refresh
+        if (axios.isAxiosError(error)) {
+            if (error.response?.status === 403 && (!error.config?.url?.includes("/login") && !error.config?.url?.includes("/verifyOtp"))) {
+                
+                Toast.show(error.response.data.message, {
+                    data: error.response
+                });
+                tokenStorage.clearAll();
+                storage.clearAll();
+                router.replace("/(auth)")
+                // Optionally: Trigger logout or token refresh
+            }
         }
         return Promise.reject(error);
     }

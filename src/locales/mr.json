@@ -1,0 +1,172 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "स्वागत आहे!"
+        },
+        "headerTitle": {
+            "dashboard": "डॅशबोर्ड",
+            "profile": "प्रोफाइल",
+            "scan_coupons": "कूपन स्कॅन करा",
+            "coupon_history": "कूपन इतिहास",
+            "cash_batch_report": "कॅश बॅच रिपोर्ट",
+            "report_coupon": "रिपोर्ट कूपन",
+            "report_history": "रिपोर्ट इतिहास",
+            "my_retailers": "माझे रिटेलर्स"
+        }
+    },
+    "login": {
+        "signInAs": "साइन इन करा",
+        "phoneNumber": "फोन नंबर",
+        "distributor": "वितरक",
+        "mechanic": "यांत्रिक",
+        "retailer": "व्यापारी",
+        "errors": {
+            "phoneRequired": "कृपया आपला फोन नंबर टाका",
+            "phoneInvalid": "कृपया १० अंकी फोन नंबर टाका"
+        },
+        "login": "लॉगिन करा",
+        "loggingIn": "लॉगिन होत आहे",
+        "noAccount": "तुमचे खाते नाही का?",
+        "signUp": "साइन अप करा",
+        "orSignInAs": "किंवा साइन इन करा म्हणून",
+        "switchTo": "स्विच करा"
+    },
+    "signup": {
+        "distributorTitle": "माहिती",
+        "mechanicTitle": "माहिती",
+        "retailerTitle": "माहिती",
+        "subtitle": "खाता तयार करण्यासाठी माहिती द्या",
+        "fields": {
+            "fullName": "पूर्ण नाव",
+            "fullNamePlaceholder": "पूर्ण नाव टाका",
+            "phoneNumber": "फोन नंबर",
+            "phoneNumberPlaceholder": "फोन नंबर टाका",
+            "email": "ईमेल आयडी",
+            "emailPlaceholder": "ईमेल आयडी टाका",
+            "companyName": "कंपनीचे नाव",
+            "shopName": "दुकानचे नाव",
+            "companyNamePlaceholder": "कंपनीचे नाव टाका",
+            "shopNamePlaceholder": "दुकानचे नाव टाका",
+            "distributorCode": "वितरक कोड",
+            "distributorCodePlaceholder": "वितरक कोड टाका",
+            "panNumber": "पॅन नंबर",
+            "panNumberPlaceholder": "जसे. AXNP7853G",
+            "gstNumber": "GST नंबर",
+            "gstNumberPlaceholder": "GST नंबर टाका",
+            "selectBrand": "ब्रँड निवडा",
+            "street": "रस्ता",
+            "streetPlaceholder": "रस्ता टाका",
+            "selectCountry": "देश निवडा",
+            "selectState": "राज्य निवडा",
+            "selectCity": "शहर निवडा",
+            "pincode": "पिनकोड",
+            "pincodePlaceholder": "आपला पिनकोड टाका",
+            "address": "पत्ता",
+            "addressPlaceholder": "पूर्ण पत्ता टाका"
+        },
+        "validation": {
+            "userTypeRequired": "कृपया वापरकर्ता प्रकार निवडा",
+            "nameRequired": "कृपया आपले पूर्ण नाव टाका",
+            "nameOnlyLetters": "नावात फक्त अक्षरे असावीत",
+            "phoneRequired": "कृपया फोन नंबर टाका",
+            "phoneInvalid": "कृपया १० अंकी फोन नंबर टाका",
+            "validPhone": "कृपया वैध १० अंकी फोन नंबर टाका",
+            "pincodeRequired": "कृपया पिनकोड टाका",
+            "pincodeInvalid": "कृपया ६ अंकी पिनकोड टाका",
+            "validPincode": "कृपया वैध ६ अंकी पिनकोड टाका",
+            "selectCountry": "कृपया देश निवडा",
+            "selectState": "कृपया राज्य निवडा",
+            "selectCity": "कृपया शहर निवडा",
+            "emailRequired": "कृपया ईमेल आयडी टाका",
+            "emailInvalid": "कृपया वैध ईमेल आयडी टाका",
+            "addressRequired": "कृपया पूर्ण पत्ता टाका",
+            "streetRequired": "कृपया रस्त्याचे नाव टाका",
+            "invalidPAN": "कृपया वैध पॅन नंबर टाका",
+            "selectBrand": "कृपया ब्रँड निवडा",
+            "panRequired": "कृपया पॅन नंबर टाका",
+            "shopNameRequired": "कृपया दुकानाचे नाव टाका",
+            "codeRequired": "कृपया कोड टाका"
+        },
+        "addressInformation": "पत्ता माहिती",
+        "addressInformationSubtitle": "आयडी प्रमाणे तपशील भरा."
+    },
+    "dashboard": {
+        "couponsScanned": "स्कॅन केलेले कूपन",
+        "couponsScannedDesc": "एकूण कूपन ज्यांना रिडीम केले गेले आहे",
+        "redeemed": "रिडीम",
+        "scanned": "स्कॅन",
+        "points": "अंक",
+        "amount": "रक्कम",
+        "redeemedPoints": "रिडीम केलेले अंक",
+        "scannedAmount": "स्कॅन केलेली रक्कम",
+        "totalTillDate": "आत्तापर्यंत एकूण {{type}}",
+        "scanButton": "स्कॅन करा",
+        "couponScannedForCash": "रोख साठी स्कॅन केलेले कूपन",
+        "couponScannedForCashDesc": "रोख साठी स्कॅन केलेले कूपनचे एकूण संख्या",
+        "couponScannedForScheme": "योजनेसाठी स्कॅन केलेले कूपन",
+        "couponScannedForSchemeDesc": "योजनेसाठी स्कॅन केलेले कूपनचे एकूण संख्या",
+        "totalBalancePoints": "एकूण शिल्लक अंक"
+    },
+    "coupon-history": {
+        "serial_no": "क्रमांक:",
+        "item_code": "आयटम कोड:",
+        "redeemed_date": "रिडीम दिनांक:",
+        "status": "स्थिती:",
+        "scanned": "स्कॅन केले",
+        "from_date": "प्रारंभ दिनांक",
+        "to_date": "अंतिम दिनांक",
+        "no_data_found": "निवडलेल्या दिनांक श्रेणीसाठी काही डेटा सापडला नाही. कृपया आपली निवडक श्रेणी समायोजित करा आणि पुन्हा प्रयत्न करा."
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "एकूण स्कॅन केलेले कूपन",
+        "batch_id": "बॅच आयडी",
+        "end_date": "अंतिम दिनांक",
+        "status": "स्थिती",
+        "credit_note_no": "क्रेडिट नोट क्रमांक",
+        "credit_note_date": "क्रेडिट दिनांक",
+        "credit_note_value": "क्रेडिट मूल्य",
+        "from_date": "प्रारंभ दिनांक",
+        "to_date": "अंतिम दिनांक",
+        "no_data": "कोणताही डेटा सापडला नाही. कृपया दुसरी तारीख श्रेणी वापरून पाहा."
+    },
+    "reportCoupon": {
+        "title": "रिपोर्ट अपलोड करा",
+        "subtitle": "तुम्ही फाईल फॉर्मॅट .png किंवा .jpg असल्याची खात्री करा",
+        "frontImagePlaceholder": "फ्रंट साइड इमेज अपलोड करण्यासाठी येथे टॅप करा",
+        "backImagePlaceholder": "बॅक साइड इमेज अपलोड करण्यासाठी येथे टॅप करा",
+        "editImageHint": "तुमच्या निवडीसाठी संपादित करण्यासाठी पुन्हा टॅप करा",
+        "serialLabel": "कूपन सिरियल नंबर",
+        "serialPlaceholder": "कूपन सिरियल नंबर टाका",
+        "serialError": "कृपया कूपन सिरियल नंबर टाका",
+        "descriptionLabel": "कूपनाचे वर्णन",
+        "descriptionPlaceholder": "कूपनाचे वर्णन टाका",
+        "descriptionError": "कृपया रिपोर्टचे वर्णन टाका",
+        "submit": "रिपोर्ट सादर करा",
+        "submitting": "रिपोर्ट सादर केला जात आहे",
+        "missingImages": "कृपया रिपोर्ट करण्यासाठी इमेज निवडा..!"
+    },
+    "reportHistory": {
+        "from_date": "प्रारंभ दिनांक",
+        "to_date": "अंतिम दिनांक",
+        "noDataTitle": "कोणताही डेटा नाही.",
+        "noDataSubtitle": "कृपया दुसरी तारीख निवडा.",
+        "serialNo": "सिरीयल नंबर",
+        "description": "वर्णन",
+        "reportedDate": "रिपोर्ट केलेली तारीख"
+    },
+    "dealers": {
+        "filter": "फिल्टर:",
+        "status": {
+            "all": "सर्व",
+            "approved": "मंजूर",
+            "pending": "प्रलंबित",
+            "rejected": "नाकारले"
+        },
+        "noRequestFound": "कोणतीही विनंती सापडली नाही",
+        "name": "नाव",
+        "phoneNumber": "फोन नंबर",
+        "shopName": "दुकानाचे नाव",
+        "address": "पत्ता",
+        "dateRegistered": "नोंदणी तारीख"
+    }
+}

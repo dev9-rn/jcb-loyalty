@@ -1,0 +1,172 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "સ્વાગત છે!"
+        },
+        "headerTitle": {
+            "dashboard": "ડેશબોર્ડ",
+            "profile": "પ્રોફાઇલ",
+            "scan_coupons": "કૂપન સ્કેન કરો",
+            "coupon_history": "કૂપન ઇતિહાસ",
+            "cash_batch_report": "કેશ બેચ રિપોર્ટ",
+            "report_coupon": "કૂપન રિપોર્ટ કરો",
+            "report_history": "રિપોર્ટ ઇતિહાસ",
+            "my_retailers": "મારા વેપારીઓ"
+        }
+    },
+    "login": {
+        "signInAs": "રૂપે સાઇન ઇન કરો",
+        "phoneNumber": "ફોન નંબર",
+        "distributor": "વિતરક",
+        "mechanic": "મેકેનિક",
+        "retailer": "વેપારી",
+        "errors": {
+            "phoneRequired": "કૃપા કરીને તમારું ફોન નંબર દાખલ કરો",
+            "phoneInvalid": "કૃપા કરીને 10 અંકનો માન્ય ફોન નંબર દાખલ કરો"
+        },
+        "login": "લૉગિન કરો",
+        "loggingIn": "લૉગિન થઈ રહ્યું છે",
+        "noAccount": "શું તમારું એકાઉન્ટ નથી?",
+        "signUp": "સાઇન અપ કરો",
+        "orSignInAs": "અથવા રૂપે સાઇન ઇન કરો",
+        "switchTo": "રૂપાંતર કરો"
+    },
+    "signup": {
+        "distributorTitle": "માહિતી",
+        "mechanicTitle": "માહિતી",
+        "retailerTitle": "માહિતી",
+        "subtitle": "એકાઉન્ટ બનાવવા માટે માહિતી આપો",
+        "fields": {
+            "fullName": "પૂરું નામ",
+            "fullNamePlaceholder": "તમારું પૂરું નામ દાખલ કરો",
+            "phoneNumber": "ફોન નંબર",
+            "phoneNumberPlaceholder": "ફોન નંબર દાખલ કરો",
+            "email": "ઇમેઇલ સરનામું",
+            "emailPlaceholder": "ઇમેઇલ સરનામું દાખલ કરો",
+            "companyName": "કંપનીનું નામ",
+            "shopName": "દુકાનનું નામ",
+            "companyNamePlaceholder": "કંપનીનું નામ દાખલ કરો",
+            "shopNamePlaceholder": "દુકાનનું નામ દાખલ કરો",
+            "distributorCode": "વિતરક કોડ",
+            "distributorCodePlaceholder": "વિતરક કોડ દાખલ કરો",
+            "panNumber": "પાન નંબર",
+            "panNumberPlaceholder": "જેમ કે: AXNP7853G",
+            "gstNumber": "GST નંબર",
+            "gstNumberPlaceholder": "GST નંબર દાખલ કરો",
+            "selectBrand": "બ્રાન્ડ પસંદ કરો",
+            "street": "માર્ગ",
+            "streetPlaceholder": "માર્ગ દાખલ કરો",
+            "selectCountry": "દેશ પસંદ કરો",
+            "selectState": "રાજ્ય પસંદ કરો",
+            "selectCity": "શહેર પસંદ કરો",
+            "pincode": "પિનકોડ",
+            "pincodePlaceholder": "પિનકોડ દાખલ કરો",
+            "address": "સરનામું",
+            "addressPlaceholder": "પૂર્ણ સરનામું દાખલ કરો"
+        },
+        "validation": {
+            "userTypeRequired": "કૃપા કરીને વપરાશકર્તા પ્રકાર પસંદ કરો",
+            "nameRequired": "કૃપા કરીને તમારું નામ દાખલ કરો",
+            "nameOnlyLetters": "નામમાં ફક્ત અક્ષરો હોવા જોઈએ",
+            "phoneRequired": "કૃપા કરીને તમારું ફોન નંબર દાખલ કરો",
+            "phoneInvalid": "કૃપા કરીને 10 અંકનો ફોન નંબર દાખલ કરો",
+            "validPhone": "કૃપા કરીને માન્ય 10 અંકનો ફોન નંબર દાખલ કરો",
+            "pincodeRequired": "કૃપા કરીને પિનકોડ દાખલ કરો",
+            "pincodeInvalid": "કૃપા કરીને 6 અંકનો પિનકોડ દાખલ કરો",
+            "validPincode": "કૃપા કરીને માન્ય 6 અંકનો પિનકોડ દાખલ કરો",
+            "selectCountry": "કૃપા કરીને દેશ પસંદ કરો",
+            "selectState": "કૃપા કરીને રાજ્ય પસંદ કરો",
+            "selectCity": "કૃપા કરીને શહેર પસંદ કરો",
+            "emailRequired": "કૃપા કરીને ઇમેઇલ દાખલ કરો",
+            "emailInvalid": "કૃપા કરીને માન્ય ઇમેઇલ દાખલ કરો",
+            "addressRequired": "કૃપા કરીને પૂરું સરનામું દાખલ કરો",
+            "streetRequired": "કૃપા કરીને રસ્તાનું નામ દાખલ કરો",
+            "invalidPAN": "કૃપા કરીને માન્ય પાન નંબર દાખલ કરો",
+            "selectBrand": "કૃપા કરીને બ્રાન્ડ પસંદ કરો",
+            "panRequired": "કૃપા કરીને પાન નંબર દાખલ કરો",
+            "shopNameRequired": "કૃપા કરીને દુકાનનું નામ દાખલ કરો",
+            "codeRequired": "કૃપા કરીને કોડ દાખલ કરો"
+        },
+        "addressInformation": "સરનામાની માહિતી",
+        "addressInformationSubtitle": "આઈડી પ્રૂફ પ્રમાણે વિગતો દાખલ કરો."
+    },
+    "dashboard": {
+        "couponsScanned": "સ્કેન કરેલ કૂપન્સ",
+        "couponsScannedDesc": "કુલ કૂપન્સ જે રીડીમ કરવામાં આવ્યા",
+        "redeemed": "રીડીમ",
+        "scanned": "સ્કેન",
+        "points": "પોઈન્ટ્સ",
+        "amount": "રકમ",
+        "redeemedPoints": "રીડીમ કરેલ પોઈન્ટ્સ",
+        "scannedAmount": "સ્કેન કરેલી રકમ",
+        "totalTillDate": "અત્યારે સુધી કુલ {{type}}",
+        "scanButton": "સ્કેન કરો",
+        "couponScannedForCash": "નગદ માટે કૂપન સ્કેન કર્યાં",
+        "couponScannedForCashDesc": "નગદ માટે સ્કેન કરેલા કૂપન્સની કુલ સંખ્યા",
+        "couponScannedForScheme": "યોજના માટે કૂપન સ્કેન કર્યાં",
+        "couponScannedForSchemeDesc": "યોજના માટે સ્કેન કરેલા કૂપન્સની કુલ સંખ્યા",
+        "totalBalancePoints": "કુલ બેલેન્સ પોઈન્ટ્સ"
+    },
+    "coupon-history": {
+        "serial_no": "ક્રમ સંખ્યા:",
+        "item_code": "આઇટમ કોડ:",
+        "redeemed_date": "રીડીમ તારીખ:",
+        "status": "સ્થિતિ:",
+        "scanned": "સ્કેન કરેલ",
+        "from_date": "પ્રારંભ તારીખ",
+        "to_date": "અંત તારીખ",
+        "no_data_found": "પસંદ કરેલી તારીખ માટે કોઈ માહિતી મળી નથી. કૃપા કરીને તમારા પસંદગીઓ ફેરવો અને ફરી પ્રયાસ કરો."
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "કુલ સ્કેન કરેલા કૂપન્સ",
+        "batch_id": "બેચ આઈડી",
+        "end_date": "અંત તારીખ",
+        "status": "સ્થિતિ",
+        "credit_note_no": "ક્રેડિટ નોટ નં.",
+        "credit_note_date": "ક્રેડિટ તારીખ",
+        "credit_note_value": "ક્રેડિટ મૂલ્ય",
+        "from_date": "પ્રારંભ તારીખ",
+        "to_date": "અંત તારીખ",
+        "no_data": "કોઈ માહિતી મળી નથી. કૃપા કરીને બીજી તારીખ પસંદ કરો."
+    },
+    "reportCoupon": {
+        "title": "રિપોર્ટ અપલોડ કરો",
+        "subtitle": "ખાતરી કરો કે ફાઇલ ફોર્મેટ .png અથવા .jpg છે",
+        "frontImagePlaceholder": "ફ્રન્ટ ઈમેજ અપલોડ કરવા અહીં ટેપ કરો",
+        "backImagePlaceholder": "બેક ઈમેજ અપલોડ કરવા અહીં ટેપ કરો",
+        "editImageHint": "પસંદગીમાં ફેરફાર કરવા માટે ફરીથી ટેપ કરો",
+        "serialLabel": "કૂપનનો ક્રમ સંખ્યા",
+        "serialPlaceholder": "કૂપનનો ક્રમ સંખ્યા દાખલ કરો",
+        "serialError": "કૃપા કરીને કૂપનનો ક્રમ સંખ્યા દાખલ કરો",
+        "descriptionLabel": "કૂપન વિશેનું વર્ણન",
+        "descriptionPlaceholder": "કૂપનનું વર્ણન દાખલ કરો",
+        "descriptionError": "કૃપા કરીને રિપોર્ટનું વર્ણન દાખલ કરો",
+        "submit": "રિપોર્ટ સબમિટ કરો",
+        "submitting": "રિપોર્ટ સબમિટ કરી રહ્યા છે",
+        "missingImages": "કૃપા કરીને રિપોર્ટ માટે છબી પસંદ કરો..!"
+    },
+    "reportHistory": {
+        "from_date": "પ્રારંભ તારીખ",
+        "to_date": "અંત તારીખ",
+        "noDataTitle": "કોઈ માહિતી મળી નથી.",
+        "noDataSubtitle": "કૃપા કરીને બીજી તારીખ પસંદ કરો.",
+        "serialNo": "ક્રમ સંખ્યા",
+        "description": "વર્ણન",
+        "reportedDate": "રિપોર્ટ થયેલી તારીખ"
+    },
+    "dealers": {
+        "filter": "ફિલ્ટર:",
+        "status": {
+            "all": "બધા",
+            "approved": "મંજૂર",
+            "pending": "બાકી છે",
+            "rejected": "અસ્વીકાર થયેલ"
+        },
+        "noRequestFound": "કોઈ વિનંતી મળી નથી",
+        "name": "નામ",
+        "phoneNumber": "ફોન નંબર",
+        "shopName": "દુકાનનું નામ",
+        "address": "સરનામું",
+        "dateRegistered": "રજિસ્ટ્રેશન તારીખ"
+    }
+}

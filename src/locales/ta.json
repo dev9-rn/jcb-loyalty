@@ -1,0 +1,171 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "வரவேற்கிறோம்!"
+        },
+        "headerTitle": {
+            "dashboard": "டாஷ்போர்டு",
+            "profile": "சுயவிவரம்",
+            "scan_coupons": "கூப்பன்களை ஸ்கேன் செய்",
+            "coupon_history": "கூப்பன் வரலாறு",
+            "cash_batch_report": "பண பேட்ச் அறிக்கை",
+            "report_coupon": "கூப்பனை புகார் செய்",
+            "report_history": "புகார் வரலாறு",
+            "my_retailers": "எனது வியாபாரிகள்"
+        }
+    },
+    "login": {
+        "signInAs": "உள்நுழைய",
+        "phoneNumber": "தொலைபேசி எண்",
+        "distributor": "விநியோகஸ்தர்",
+        "mechanic": "மேக்கானிக்",
+        "retailer": "வியாபாரி",
+        "errors": {
+            "phoneRequired": "தயவுசெய்து உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்",
+            "phoneInvalid": "தயவுசெய்து 10 இலக்க தொலைபேசி எண்ணை உள்ளிடவும்"
+        },
+        "login": "உள்நுழைய",
+        "loggingIn": "உள்நுழையப்படுகிறது",
+        "noAccount": "உங்களுக்கு கணக்கு இல்லையா?",
+        "signUp": "பதிவு செய்",
+        "orSignInAs": "அல்லது உள்நுழைய",
+        "switchTo": "மாற்று"
+    },
+    "signup": {
+        "distributorTitle": "விநியோகஸ்தர்",
+        "mechanicTitle": "மேக்கானிக்",
+        "retailerTitle": "வியாபாரி",
+        "subtitle": "உங்கள் கணக்கை உருவாக்க விவரங்களை உள்ளிடவும்",
+        "fields": {
+            "fullName": "முழு பெயர்",
+            "fullNamePlaceholder": "உங்கள் முழு பெயரை உள்ளிடவும்",
+            "phoneNumber": "தொலைபேசி எண்",
+            "phoneNumberPlaceholder": "தொலைபேசி எண்ணை உள்ளிடவும்",
+            "email": "மின்னஞ்சல் முகவரி",
+            "emailPlaceholder": "மின்னஞ்சல் முகவரியை உள்ளிடவும்",
+            "companyName": "நிறுவனத்தின் பெயர்",
+            "shopName": "கடையின் பெயர்",
+            "companyNamePlaceholder": "நிறுவனத்தின் பெயரை உள்ளிடவும்",
+            "shopNamePlaceholder": "கடையின் பெயரை உள்ளிடவும்",
+            "distributorCode": "விநியோகஸ்தர் குறியீடு",
+            "distributorCodePlaceholder": "விநியோகஸ்தர் குறியீட்டை உள்ளிடவும்",
+            "panNumber": "பான் எண்",
+            "panNumberPlaceholder": "உதாரணம்: AXNP7853G",
+            "gstNumber": "GST எண்",
+            "gstNumberPlaceholder": "GST எண்ணை உள்ளிடவும்",
+            "selectBrand": "பிராண்ட் தேர்ந்தெடுக்கவும்",
+            "street": "தெரு",
+            "streetPlaceholder": "தெரு பெயரை உள்ளிடவும்",
+            "selectCountry": "நாட்டை தேர்ந்தெடுக்கவும்",
+            "selectState": "மாநிலத்தை தேர்ந்தெடுக்கவும்",
+            "selectCity": "நகரத்தை தேர்ந்தெடுக்கவும்",
+            "pincode": "அஞ்சல் குறியீடு",
+            "pincodePlaceholder": "அஞ்சல் குறியீட்டை உள்ளிடவும்",
+            "address": "முகவரி",
+            "addressPlaceholder": "முழுமையான முகவரியை உள்ளிடவும்"
+        },
+        "validation": {
+            "userTypeRequired": "தயவுசெய்து பயனர் வகையை தேர்ந்தெடுக்கவும்",
+            "nameRequired": "முழு பெயரை உள்ளிடவும்",
+            "nameOnlyLetters": "பெயரில் எழுத்துக்கள் மட்டுமே இருக்க வேண்டும்",
+            "phoneRequired": "தொலைபேசி எண்ணை உள்ளிடவும்",
+            "phoneInvalid": "தயவுசெய்து 10 இலக்க எண்ணை உள்ளிடவும்",
+            "validPhone": "சரியான 10 இலக்க எண்ணை உள்ளிடவும்",
+            "pincodeRequired": "அஞ்சல் குறியீட்டை உள்ளிடவும்",
+            "pincodeInvalid": "6 இலக்க அஞ்சல் குறியீட்டை உள்ளிடவும்",
+            "validPincode": "சரியான 6 இலக்க அஞ்சல் குறியீட்டை உள்ளிடவும்",
+            "selectCountry": "நாட்டை தேர்ந்தெடுக்கவும்",
+            "selectState": "மாநிலத்தை தேர்ந்தெடுக்கவும்",
+            "selectCity": "நகரத்தை தேர்ந்தெடுக்கவும்",
+            "emailRequired": "மின்னஞ்சல் முகவரியை உள்ளிடவும்",
+            "emailInvalid": "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்",
+            "addressRequired": "முகவரியை உள்ளிடவும்",
+            "streetRequired": "தெரு பெயரை உள்ளிடவும்",
+            "invalidPAN": "சரியான பான் எண்ணை உள்ளிடவும்",
+            "selectBrand": "பிராண்ட் தேர்ந்தெடுக்கவும்",
+            "panRequired": "பான் எண்ணை உள்ளிடவும்",
+            "shopNameRequired": "கடையின் பெயரை உள்ளிடவும்",
+            "codeRequired": "குறியீட்டை உள்ளிடவும்"
+        },
+        "addressInformation": "முகவரி விவரங்கள்",
+        "addressInformationSubtitle": "உங்கள் அடையாளத்தின் அடிப்படையில் தகவல்களை வழங்கவும்."
+    },
+    "dashboard": {
+        "couponsScanned": "ஸ்கேன் செய்யப்பட்ட கூப்பன்கள்",
+        "couponsScannedDesc": "ரிடீம் செய்யப்பட்ட கூப்பன்கள்",
+        "redeemed": "ரிடீம் செய்தது",
+        "scanned": "ஸ்கேன் செய்தது",
+        "points": "புள்ளிகள்",
+        "redeemedPoints": "ரிடீம் செய்யப்பட்ட புள்ளிகள்",
+        "scannedAmount": "ஸ்கேன் செய்யப்பட்ட தொகை",
+        "totalTillDate": "இதுவரை மொத்தம் {{type}}",
+        "scanButton": "ஸ்கேன் செய்",
+        "couponScannedForCash": "பணத்திற்கு கூப்பன்கள் ஸ்கேன் செய்யப்பட்டது",
+        "couponScannedForCashDesc": "பணத்திற்கு ஸ்கேன் செய்யப்பட்ட கூப்பன்களின் மொத்த எண்ணிக்கை",
+        "couponScannedForScheme": "திட்டத்திற்கு கூப்பன்கள் ஸ்கேன் செய்யப்பட்டது",
+        "couponScannedForSchemeDesc": "திட்டத்திற்கு ஸ்கேன் செய்யப்பட்ட கூப்பன்களின் மொத்த எண்ணிக்கை",
+        "totalBalancePoints": "மொத்த நிலுவை புள்ளிகள்"
+    },
+    "coupon-history": {
+        "serial_no": "தொடர் எண்:",
+        "item_code": "பொருள் குறியீடு:",
+        "redeemed_date": "ரிடீம் தேதி:",
+        "status": "நிலைமை:",
+        "scanned": "ஸ்கேன் செய்யப்பட்டது",
+        "from_date": "தொடக்க தேதி",
+        "to_date": "முடிவு தேதி",
+        "no_data_found": "தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு தரவுகள் கிடைக்கவில்லை. மீண்டும் முயற்சிக்கவும்."
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "மொத்த ஸ்கேன் செய்யப்பட்ட கூப்பன்கள்",
+        "batch_id": "பேட்ச் ஐடி",
+        "end_date": "முடிவு தேதி",
+        "status": "நிலைமை",
+        "credit_note_no": "கிரெடிட் நோட்டு எண்",
+        "credit_note_date": "கிரெடிட் நோட்டு தேதி",
+        "credit_note_value": "கிரெடிட் நோட்டு மதிப்பு",
+        "from_date": "தொடக்க தேதி",
+        "to_date": "முடிவு தேதி",
+        "no_data": "தரவு இல்லை. வேறு தேதி வரம்பை முயற்சிக்கவும்."
+    },
+    "reportCoupon": {
+        "title": "கூப்பன் புகாரை பதிவேற்றவும்",
+        "subtitle": ".png அல்லது .jpg வடிவத்தில் உள்ளதை உறுதிப்படுத்தவும்",
+        "frontImagePlaceholder": "முன்பக்கப் படத்தை பதிவேற்ற இங்கே தட்டவும்",
+        "backImagePlaceholder": "பின்னப்பக்கப் படத்தை பதிவேற்ற இங்கே தட்டவும்",
+        "editImageHint": "மாற்ற இங்கே மீண்டும் தட்டவும்",
+        "serialLabel": "கூப்பன் தொடரெண்",
+        "serialPlaceholder": "கூப்பன் தொடரெண் உள்ளிடவும்",
+        "serialError": "தயவுசெய்து கூப்பன் தொடரெண் உள்ளிடவும்",
+        "descriptionLabel": "கூப்பன் விளக்கம்",
+        "descriptionPlaceholder": "கூப்பன் விளக்கம் உள்ளிடவும்",
+        "descriptionError": "தயவுசெய்து விளக்கத்தை உள்ளிடவும்",
+        "submit": "புகாரை சமர்ப்பிக்கவும்",
+        "submitting": "சமர்ப்பிக்கப்படுகிறது...",
+        "missingImages": "தயவுசெய்து புகாருக்கான படங்களை தேர்ந்தெடுக்கவும்..!"
+    },
+    "reportHistory": {
+        "from_date": "தொடக்க தேதி",
+        "to_date": "முடிவு தேதி",
+        "noDataTitle": "தரவு இல்லை",
+        "noDataSubtitle": "வேறு தேதி வரம்பை முயற்சிக்கவும்.",
+        "serialNo": "தொடர் எண்",
+        "description": "விளக்கம்",
+        "reportedDate": "புகார் செய்த தேதி"
+    },
+    "dealers": {
+        "filter": "வடிகட்டு:",
+        "status": {
+            "all": "அனைத்தும்",
+            "approved": "அனுமதிக்கப்பட்டது",
+            "pending": "நிலுவையில் உள்ளது",
+            "rejected": "நிராகரிக்கப்பட்டது"
+        },
+        "noRequestFound": "எந்த கோரிக்கையும் கிடைக்கவில்லை",
+        "name": "பெயர்",
+        "phoneNumber": "தொலைபேசி எண்",
+        "shopName": "கடையின் பெயர்",
+        "address": "முகவரி",
+        "dateRegistered": "பதிவு செய்த தேதி"
+    }
+}

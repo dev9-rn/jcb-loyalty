@@ -1,0 +1,171 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "ਸਵਾਗਤ ਹੈ!"
+        },
+        "headerTitle": {
+            "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+            "profile": "ਪ੍ਰੋਫਾਈਲ",
+            "scan_coupons": "ਕੂਪਨ ਸਕੈਨ ਕਰੋ",
+            "coupon_history": "ਕੂਪਨ ਇਤਿਹਾਸ",
+            "cash_batch_report": "ਕੈਸ਼ ਬੈਚ ਰਿਪੋਰਟ",
+            "report_coupon": "ਰਿਪੋਰਟ ਕੂਪਨ",
+            "report_history": "ਰਿਪੋਰਟ ਇਤਿਹਾਸ",
+            "my_retailers": "ਮੇਰੇ ਰੀਟੇਲਰ"
+        }
+    },
+    "login": {
+        "signInAs": "ਸਾਈਨ ਇਨ ਕਰੋ",
+        "phoneNumber": "ਫੋਨ ਨੰਬਰ",
+        "distributor": "ਵਿਤਰਕ",
+        "mechanic": "ਮਕੈਨਿਕ",
+        "retailer": "ਵਪਾਰੀ",
+        "errors": {
+            "phoneRequired": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "phoneInvalid": "ਕਿਰਪਾ ਕਰਕੇ 10 ਅੰਕਾਂ ਦਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ"
+        },
+        "login": "ਲਾਗਿਨ ਕਰੋ",
+        "loggingIn": "ਲਾਗਿਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ",
+        "noAccount": "ਤੁਹਾਡੇ ਕੋਲ ਖਾਤਾ ਨਹੀਂ ਹੈ?",
+        "signUp": "ਸਾਈਨ ਅਪ ਕਰੋ",
+        "orSignInAs": "ਜਾਂ ਸਾਈਨ ਇਨ ਕਰੋ",
+        "switchTo": "ਸਵਿੱਚ ਕਰੋ"
+    },
+    "signup": {
+        "distributorTitle": "ਮਹਿਤੀ",
+        "mechanicTitle": "ਮਹਿਤੀ",
+        "retailerTitle": "ਮਹਿਤੀ",
+        "subtitle": "ਖਾਤਾ ਬਣਾਉਣ ਲਈ ਜਾਣਕਾਰੀ ਦਿਓ",
+        "fields": {
+            "fullName": "ਪੂਰਾ ਨਾਮ",
+            "fullNamePlaceholder": "ਪੂਰਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+            "phoneNumber": "ਫੋਨ ਨੰਬਰ",
+            "phoneNumberPlaceholder": "ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "email": "ਈਮੇਲ ਆਈਡੀ",
+            "emailPlaceholder": "ਈਮੇਲ ਆਈਡੀ ਦਰਜ ਕਰੋ",
+            "companyName": "ਕੰਪਨੀ ਦਾ ਨਾਮ",
+            "shopName": "ਦੁਕਾਨ ਦਾ ਨਾਮ",
+            "companyNamePlaceholder": "ਕੰਪਨੀ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+            "shopNamePlaceholder": "ਦੁਕਾਨ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+            "distributorCode": "ਵਿਤਰਕ ਕੋਡ",
+            "distributorCodePlaceholder": "ਵਿਤਰਕ ਕੋਡ ਦਰਜ ਕਰੋ",
+            "panNumber": "ਪੈਨ ਨੰਬਰ",
+            "panNumberPlaceholder": "ਜਿਵੇਂ. AXNP7853G",
+            "gstNumber": "GST ਨੰਬਰ",
+            "gstNumberPlaceholder": "GST ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "selectBrand": "ਬ੍ਰਾਂਡ ਚੁਣੋ",
+            "street": "ਗਲੀ",
+            "streetPlaceholder": "ਗਲੀ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+            "selectCountry": "ਦੇਸ਼ ਚੁਣੋ",
+            "selectState": "ਰਾਜ ਚੁਣੋ",
+            "selectCity": "ਸ਼ਹਿਰ ਚੁਣੋ",
+            "pincode": "ਪਿੰਨਕੋਡ",
+            "pincodePlaceholder": "ਆਪਣਾ ਪਿੰਨਕੋਡ ਦਰਜ ਕਰੋ",
+            "address": "ਪਤਾ",
+            "addressPlaceholder": "ਪੂਰਾ ਪਤਾ ਦਰਜ ਕਰੋ"
+        },
+        "validation": {
+            "userTypeRequired": "ਕਿਰਪਾ ਕਰਕੇ ਵਰਤੋਂਕਾਰ ਪ੍ਰਕਾਰ ਚੁਣੋ",
+            "nameRequired": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪੂਰਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+            "nameOnlyLetters": "ਨਾਮ ਵਿੱਚ ਸਿਰਫ ਅੱਖਰ ਹੋਣੇ ਚਾਹੀਦੇ ਹਨ",
+            "phoneRequired": "ਕਿਰਪਾ ਕਰਕੇ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "phoneInvalid": "ਕਿਰਪਾ ਕਰਕੇ 10 ਅੰਕਾਂ ਦਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "validPhone": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 10 ਅੰਕਾਂ ਦਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "pincodeRequired": "ਕਿਰਪਾ ਕਰਕੇ ਪਿੰਨਕੋਡ ਦਰਜ ਕਰੋ",
+            "pincodeInvalid": "ਕਿਰਪਾ ਕਰਕੇ 6 ਅੰਕਾਂ ਦਾ ਪਿੰਨਕੋਡ ਦਰਜ ਕਰੋ",
+            "validPincode": "ਕਿਰਪਾ ਕਰਕੇ ਵੈਧ 6 ਅੰਕਾਂ ਦਾ ਪਿੰਨਕੋਡ ਦਰਜ ਕਰੋ",
+            "selectCountry": "ਕਿਰਪਾ ਕਰਕੇ ਦੇਸ਼ ਚੁਣੋ",
+            "selectState": "ਕਿਰਪਾ ਕਰਕੇ ਰਾਜ ਚੁਣੋ",
+            "selectCity": "ਕਿਰਪਾ ਕਰਕੇ ਸ਼ਹਿਰ ਚੁਣੋ",
+            "emailRequired": "ਕਿਰਪਾ ਕਰਕੇ ਈਮੇਲ ਆਈਡੀ ਦਰਜ ਕਰੋ",
+            "emailInvalid": "ਕਿਰਪਾ ਕਰਕੇ ਵੈਧ ਈਮੇਲ ਆਈਡੀ ਦਰਜ ਕਰੋ",
+            "addressRequired": "ਕਿਰਪਾ ਕਰਕੇ ਪੂਰਾ ਪਤਾ ਦਰਜ ਕਰੋ",
+            "streetRequired": "ਕਿਰਪਾ ਕਰਕੇ ਗਲੀ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+            "invalidPAN": "ਕਿਰਪਾ ਕਰਕੇ ਵੈਧ ਪੈਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "selectBrand": "ਕਿਰਪਾ ਕਰਕੇ ਬ੍ਰਾਂਡ ਚੁਣੋ",
+            "panRequired": "ਕਿਰਪਾ ਕਰਕੇ ਪੈਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+            "shopNameRequired": "ਕਿਰਪਾ ਕਰਕੇ ਦੁਕਾਨ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+            "codeRequired": "ਕਿਰਪਾ ਕਰਕੇ ਕੋਡ ਦਰਜ ਕਰੋ"
+        },
+        "addressInformation": "ਪਤਾ ਜਾਣਕਾਰੀ",
+        "addressInformationSubtitle": "ਆਈਡੀ ਦੇ ਅਨੁਸਾਰ ਵੇਰਵੇ ਭਰੋ।"
+    },
+    "dashboard": {
+        "couponsScanned": "ਸਕੈਨ ਕੀਤੇ ਗਏ ਕੂਪਨ",
+        "couponsScannedDesc": "ਕੂਪਨ ਜੋ ਰੀਡੀਮ ਕੀਤੇ ਗਏ ਹਨ",
+        "redeemed": "ਰੀਡੀਮ ਕੀਤਾ",
+        "scanned": "ਸਕੈਨ ਕੀਤਾ",
+        "points": "ਪਾਇੰਟ",
+        "redeemedPoints": "ਰੀਡੀਮ ਕੀਤੇ ਗਏ ਪਾਇੰਟ",
+        "scannedAmount": "ਸਕੈਨ ਕੀਤੀ ਰਕਮ",
+        "totalTillDate": "ਅਜੇ ਤੱਕ ਕੁੱਲ {{type}}",
+        "scanButton": "ਸਕੈਨ ਕਰੋ",
+        "couponScannedForCash": "ਕੈਸ਼ ਲਈ ਸਕੈਨ ਕੀਤਾ ਕੂਪਨ",
+        "couponScannedForCashDesc": "ਕੈਸ਼ ਲਈ ਸਕੈਨ ਕੀਤੇ ਗਏ ਕੂਪਨ ਦੀ ਕੁੱਲ ਗਿਣਤੀ",
+        "couponScannedForScheme": "ਯੋਜਨਾ ਲਈ ਸਕੈਨ ਕੀਤਾ ਕੂਪਨ",
+        "couponScannedForSchemeDesc": "ਯੋਜਨਾ ਲਈ ਸਕੈਨ ਕੀਤੇ ਗਏ ਕੂਪਨ ਦੀ ਕੁੱਲ ਗਿਣਤੀ",
+        "totalBalancePoints": "ਕੁੱਲ ਬੈਲੈਂਸ ਪਾਇੰਟ"
+    },
+    "coupon-history": {
+        "serial_no": "ਸਿਰੀਅਲ ਨੰਬਰ:",
+        "item_code": "ਆਈਟਮ ਕੋਡ:",
+        "redeemed_date": "ਰੀਡੀਮ ਮਿਤੀ:",
+        "status": "ਹਾਲਤ:",
+        "scanned": "ਸਕੈਨ ਕੀਤਾ",
+        "from_date": "ਸ਼ੁਰੂਆਤ ਮਿਤੀ",
+        "to_date": "ਅੰਤ ਮਿਤੀ",
+        "no_data_found": "ਚੁਣੀ ਗਈ ਮਿਤੀ ਰੇਂਜ ਲਈ ਕੋਈ ਡੇਟਾ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਚੁਣੀ ਗਈ ਰੇਂਜ ਨੂੰ ਅਜੇਹਾ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "ਕੁੱਲ ਸਕੈਨ ਕੀਤੇ ਕੂਪਨ",
+        "batch_id": "ਬੈਚ ਆਈਡੀ",
+        "end_date": "ਅੰਤ ਮਿਤੀ",
+        "status": "ਹਾਲਤ",
+        "credit_note_no": "ਕ੍ਰੈਡਿਟ ਨੋਟ ਨੰਬਰ",
+        "credit_note_date": "ਕ੍ਰੈਡਿਟ ਮਿਤੀ",
+        "credit_note_value": "ਕ੍ਰੈਡਿਟ ਮੁੱਲ",
+        "from_date": "ਸ਼ੁਰੂਆਤ ਮਿਤੀ",
+        "to_date": "ਅੰਤ ਮਿਤੀ",
+        "no_data": "ਕੋਈ ਡੇਟਾ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੂਜੀ ਮਿਤੀ ਰੇਂਜ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
+    },
+    "reportCoupon": {
+        "title": "ਰਿਪੋਰਟ ਅਪਲੋਡ ਕਰੋ",
+        "subtitle": "ਕਿਰਪਾ ਕਰਕੇ ਇਹ ਸੁਨਿਸ਼ਚਿਤ ਕਰੋ ਕਿ ਫਾਈਲ ਫਾਰਮੈਟ .png ਜਾਂ .jpg ਹੈ",
+        "frontImagePlaceholder": "ਫਰੰਟ ਸਾਈਡ ਚਿੱਤਰ ਅਪਲੋਡ ਕਰਨ ਲਈ ਇਥੇ ਟੈਪ ਕਰੋ",
+        "backImagePlaceholder": "ਬੈਕ ਸਾਈਡ ਚਿੱਤਰ ਅਪਲੋਡ ਕਰਨ ਲਈ ਇਥੇ ਟੈਪ ਕਰੋ",
+        "editImageHint": "ਆਪਣੀ ਚੋਣ ਨੂੰ ਸੋਧਣ ਲਈ ਦੁਬਾਰਾ ਟੈਪ ਕਰੋ",
+        "serialLabel": "ਕੂਪਨ ਸਿਰੀਅਲ ਨੰਬਰ",
+        "serialPlaceholder": "ਕੂਪਨ ਸਿਰੀਅਲ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+        "serialError": "ਕਿਰਪਾ ਕਰਕੇ ਕੂਪਨ ਸਿਰੀਅਲ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+        "descriptionLabel": "ਕੂਪਨ ਵੇਰਵਾ",
+        "descriptionPlaceholder": "ਕੂਪਨ ਵੇਰਵਾ ਦਰਜ ਕਰੋ",
+        "descriptionError": "ਕਿਰਪਾ ਕਰਕੇ ਰਿਪੋਰਟ ਦਾ ਵੇਰਵਾ ਦਰਜ ਕਰੋ",
+        "submit": "ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਕਰੋ",
+        "submitting": "ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ",
+        "missingImages": "ਕਿਰਪਾ ਕਰਕੇ ਰਿਪੋਰਟ ਕਰਨ ਲਈ ਚਿੱਤਰ ਚੁਣੋ..!"
+    },
+    "reportHistory": {
+        "from_date": "ਸ਼ੁਰੂਆਤ ਮਿਤੀ",
+        "to_date": "ਅੰਤ ਮਿਤੀ",
+        "noDataTitle": "ਕੋਈ ਡੇਟਾ ਨਹੀਂ।",
+        "noDataSubtitle": "ਕਿਰਪਾ ਕਰਕੇ ਦੂਜੀ ਮਿਤੀ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+        "serialNo": "ਸਰੀਅਲ ਨੰਬਰ",
+        "description": "ਵੇਰਵਾ",
+        "reportedDate": "ਰਿਪੋਰਟ ਕੀਤੀ ਮਿਤੀ"
+    },
+    "dealers": {
+        "filter": "ਫਿਲਟਰ:",
+        "status": {
+            "all": "ਸਾਰੇ",
+            "approved": "ਮੰਜ਼ੂਰ ਕੀਤਾ",
+            "pending": "ਪੈਂਡਿੰਗ",
+            "rejected": "ਅਸਵੀਕਾਰ ਕੀਤਾ"
+        },
+        "noRequestFound": "ਕੋਈ ਵੀ ਬੇਨਤੀ ਨਹੀਂ ਮਿਲੀ",
+        "name": "ਨਾਮ",
+        "phoneNumber": "ਫੋਨ ਨੰਬਰ",
+        "shopName": "ਦੁਕਾਨ ਦਾ ਨਾਮ",
+        "address": "ਪਤਾ",
+        "dateRegistered": "ਨੰਬਰ ਰਜਿਸਟਰ"
+    }
+}

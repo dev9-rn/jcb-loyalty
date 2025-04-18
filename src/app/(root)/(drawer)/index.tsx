@@ -25,7 +25,7 @@ import { useToast } from 'react-native-toast-notifications'
 type Props = {}
 
 const HomeScreen = ({ }: Props) => {
-	
+
 	const [dashboardData, setDashboardData] = useState<IDashboardData | undefined>(undefined)
 
 	const { userDetails } = useUser()
@@ -74,7 +74,8 @@ const HomeScreen = ({ }: Props) => {
 				getDashboardEndpoints().endpoint,
 				dashboardFormData
 			)
-			if (response.data.message !== 'success') {
+
+			if (response.data.status !== 200) {
 				toast.show(response.data.message, {
 					data: response,
 				})
@@ -130,32 +131,32 @@ const HomeScreen = ({ }: Props) => {
 					</Card>
 
 					{/* Uncomment and translate if needed
-          {userDetails?.userType === 1 && (
-            <Card className="w-[48%]">
-              <CardHeader className="gap-2">
-                <CardTitle>{t('dashboard.couponScannedForCash')}</CardTitle>
-                <CardDescription>{t('dashboard.couponScannedForCashDesc')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Text className="text-2xl font-semibold text-primary">
-                  {dashboardData?.totalCouponsRedeemedCash || dashboardData?.totalBalancedPoint}
-                </Text>
-              </CardContent>
-            </Card>
-          )}
+					{userDetails?.userType === 1 && (
+						<Card className="w-[48%]">
+							<CardHeader className="gap-2">
+								<CardTitle>{t('dashboard.couponScannedForCash')}</CardTitle>
+								<CardDescription>{t('dashboard.couponScannedForCashDesc')}</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<Text className="text-2xl font-semibold text-primary">
+									{dashboardData?.totalCouponsRedeemedCash || dashboardData?.totalBalancedPoint}
+								</Text>
+							</CardContent>
+						</Card>
+					)}
 
-          <Card className="w-[48%]">
-            <CardHeader className="gap-2">
-              <CardTitle>{t('dashboard.couponScannedForScheme')}</CardTitle>
-              <CardDescription>{t('dashboard.couponScannedForSchemeDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Text className="text-2xl font-semibold text-primary">
-                {dashboardData?.totalCouponsRedeemedFOC}
-              </Text>
-            </CardContent>
-          </Card>
-          */}
+					<Card className="w-[48%]">
+						<CardHeader className="gap-2">
+							<CardTitle>{t('dashboard.couponScannedForScheme')}</CardTitle>
+							<CardDescription>{t('dashboard.couponScannedForSchemeDesc')}</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<Text className="text-2xl font-semibold text-primary">
+								{dashboardData?.totalCouponsRedeemedFOC}
+							</Text>
+						</CardContent>
+					</Card> */}
+
 				</View>
 
 				<Button className="flex-row gap-4" size="lg" onPress={() => router.navigate('/(root)/(stack)/camera')}>

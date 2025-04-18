@@ -1,0 +1,93 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "ସ୍ଵାଗତ!"
+        },
+        "headerTitle": {
+            "dashboard": "ଡ୍ୟାଶବୋର୍ଡ",
+            "profile": "ପ୍ରୋଫାଇଲ୍",
+            "scan_coupons": "କୁପନ୍ ସ୍କ୍ୟାନ୍ କରନ୍ତୁ",
+            "coupon_history": "କୁପନ୍ ଇତିହାସ",
+            "cash_batch_report": "ନଗଦ ବ୍ୟାଚ୍ ରିପୋର୍ଟ",
+            "report_coupon": "କୁପନ୍ ରିପୋର୍ଟ କରନ୍ତୁ",
+            "report_history": "ରିପୋର୍ଟ ଇତିହାସ",
+            "my_retailers": "ମୋ ବ୍ୟାପାରୀ"
+        }
+    },
+    "login": {
+        "signInAs": "ଭାବରେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ",
+        "phoneNumber": "ଫୋନ୍ ନମ୍ବର",
+        "distributor": "ବିତରକ",
+        "mechanic": "ମେକାନିକ୍",
+        "retailer": "ବ୍ୟାପାରୀ",
+        "errors": {
+            "phoneRequired": "ଦୟାକରି ଆପଣଙ୍କର ଫୋନ୍ ନମ୍ବର ଦିଅନ୍ତୁ",
+            "phoneInvalid": "ଦୟାକରି ବୈଧ 10-ଡିଜିଟ୍ ଫୋନ୍ ନମ୍ବର ଦିଅନ୍ତୁ"
+        },
+        "login": "ଲଗିନ୍",
+        "loggingIn": "ଲଗିନ୍ ହେଉଛି...",
+        "noAccount": "ଆପଣଙ୍କର ଖାତା ନାହିଁ?",
+        "signUp": "ସାଇନ୍ ଅପ୍ କରନ୍ତୁ",
+        "orSignInAs": "ଅଥବା ଭାବରେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ",
+        "switchTo": "ପରିବର୍ତ୍ତନ କରନ୍ତୁ"
+    },
+    "signup": {
+        "distributorTitle": "ବିବରଣୀ",
+        "mechanicTitle": "ବିବରଣୀ",
+        "retailerTitle": "ବିବରଣୀ",
+        "subtitle": "ଖାତା ତିଆରି କରିବାକୁ ତଥ୍ୟ ପୂରଣ କରନ୍ତୁ",
+        "fields": {
+            "fullName": "ପୂର୍ଣ୍ଣ ନାମ",
+            "fullNamePlaceholder": "ଆପଣଙ୍କର ପୂର୍ଣ୍ଣ ନାମ ଦିଅନ୍ତୁ",
+            "phoneNumber": "ଫୋନ୍ ନମ୍ବର",
+            "phoneNumberPlaceholder": "ଆପଣଙ୍କର ଫୋନ୍ ନମ୍ବର ଦିଅନ୍ତୁ",
+            "email": "ଇମେଲ୍ ଠିକଣା",
+            "emailPlaceholder": "ଆପଣଙ୍କର ଇମେଲ୍ ଦିଅନ୍ତୁ",
+            "companyName": "କମ୍ପାନୀ ନାମ",
+            "shopName": "ଦୋକାନ ନାମ",
+            "companyNamePlaceholder": "କମ୍ପାନୀ ନାମ ଦିଅନ୍ତୁ",
+            "shopNamePlaceholder": "ଦୋକାନ ନାମ ଦିଅନ୍ତୁ",
+            "distributorCode": "ବିତରକ କୋଡ୍",
+            "distributorCodePlaceholder": "ବିତରକ କୋଡ୍ ଦିଅନ୍ତୁ",
+            "panNumber": "PAN ନମ୍ବର",
+            "panNumberPlaceholder": "ଉଦାହରଣ: AXNP7853G",
+            "gstNumber": "GST ନମ୍ବର",
+            "gstNumberPlaceholder": "ଆପଣଙ୍କର GST ନମ୍ବର ଦିଅନ୍ତୁ",
+            "selectBrand": "ବ୍ରାଣ୍ଡ ବାଛନ୍ତୁ",
+            "street": "ସଡକ/ଗଲି",
+            "streetPlaceholder": "ସଡକ କିମ୍ବା ଗଲିର ନାମ ଦିଅନ୍ତୁ",
+            "selectCountry": "ଦେଶ ବାଛନ୍ତୁ",
+            "selectState": "ରାଜ୍ୟ ବାଛନ୍ତୁ",
+            "selectCity": "ସହର ବାଛନ୍ତୁ",
+            "pincode": "ପିନକୋଡ୍",
+            "pincodePlaceholder": "ପିନକୋଡ୍ ଦିଅନ୍ତୁ",
+            "address": "ଠିକଣା",
+            "addressPlaceholder": "ପୂର୍ଣ୍ଣ ଠିକଣା ଦିଅନ୍ତୁ"
+        },
+        "validation": {
+            "userTypeRequired": "ଦୟାକରି ଉପଯୋଗକାରୀ ପ୍ରକାର ବାଛନ୍ତୁ",
+            "nameRequired": "ନାମ ଦିଅନ୍ତୁ",
+            "nameOnlyLetters": "ନାମରେ କେବଳ ଅକ୍ଷର ହେବା ଉଚିତ୍",
+            "phoneRequired": "ଫୋନ୍ ନମ୍ବର ଦିଅନ୍ତୁ",
+            "phoneInvalid": "ଠିକ୍ 10-ଡିଜିଟ୍ ଫୋନ୍ ନମ୍ବର ଦିଅନ୍ତୁ",
+            "validPhone": "ବୈଧ ଫୋନ୍ ନମ୍ବର ଦିଅନ୍ତୁ",
+            "pincodeRequired": "ପିନକୋଡ୍ ଦିଅନ୍ତୁ",
+            "pincodeInvalid": "6-ଡିଜିଟ୍ ପିନକୋଡ୍ ଦିଅନ୍ତୁ",
+            "validPincode": "ବୈଧ ପିନକୋଡ୍ ଦିଅନ୍ତୁ",
+            "selectCountry": "ଦେଶ ବାଛନ୍ତୁ",
+            "selectState": "ରାଜ୍ୟ ବାଛନ୍ତୁ",
+            "selectCity": "ସହର ବାଛନ୍ତୁ",
+            "emailRequired": "ଇମେଲ୍ ଦିଅନ୍ତୁ",
+            "emailInvalid": "ଠିକ୍ ଇମେଲ୍ ଦିଅନ୍ତୁ",
+            "addressRequired": "ଠିକଣା ଦିଅନ୍ତୁ",
+            "streetRequired": "ସଡକ କିମ୍ବା ଗଲି ଦିଅନ୍ତୁ",
+            "invalidPAN": "ବୈଧ PAN ନମ୍ବର ଦିଅନ୍ତୁ",
+            "selectBrand": "ବ୍ରାଣ୍ଡ ବାଛନ୍ତୁ",
+            "panRequired": "PAN ନମ୍ବର ଦିଅନ୍ତୁ",
+            "shopNameRequired": "ଦୋକାନ ନାମ ଦିଅନ୍ତୁ",
+            "codeRequired": "କୋଡ୍ ଦିଅନ୍ତୁ"
+        },
+        "addressInformation": "ଠିକଣା ବିବରଣୀ",
+        "addressInformationSubtitle": "ଆପଣଙ୍କର ପରିଚୟ ପତ୍ର ଅନୁଯାୟୀ ଠିକଣା ଦିଅନ୍ତୁ"
+    }
+}

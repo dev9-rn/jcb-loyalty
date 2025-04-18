@@ -1,0 +1,172 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "ಸ್ವಾಗತ!"
+        },
+        "headerTitle": {
+            "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+            "profile": "ಪ್ರೊಫೈಲ್",
+            "scan_coupons": "ಕೂಪನ್‌ಗಳನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+            "coupon_history": "ಕೂಪನ್ ಇತಿಹಾಸ",
+            "cash_batch_report": "ನಗದು ಬ್ಯಾಚ್ ವರದಿ",
+            "report_coupon": "ಕೂಪನ್ ವರದಿ",
+            "report_history": "ವರದಿ ಇತಿಹಾಸ",
+            "my_retailers": "ನನ್ನ ಚಿಲ್ಲರೆ ವ್ಯಾಪಾರಿಗಳು"
+        }
+    },
+    "login": {
+        "signInAs": "ಆಗಿ ಸೈನ್ ಇನ್ ಮಾಡಿ",
+        "phoneNumber": "ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+        "distributor": "ವಿತರಣಾಕಾರ",
+        "mechanic": "ಮೆಕ್ಯಾನಿಕ್",
+        "retailer": "ಚಿಲ್ಲರೆ ವ್ಯಾಪಾರಿ",
+        "errors": {
+            "phoneRequired": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ದೂರವಾಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "phoneInvalid": "ದಯವಿಟ್ಟು 10 ಅಂಕಿಗಳ ದೂರವಾಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ"
+        },
+        "login": "ಲಾಗಿನ್ ಮಾಡಿ",
+        "loggingIn": "ಲಾಗಿನ್ ಆಗುತ್ತಿದೆ",
+        "noAccount": "ಖಾತೆ ಇಲ್ಲವೇ?",
+        "signUp": "ಸೈನ್ ಅಪ್ ಮಾಡಿ",
+        "orSignInAs": "ಅಥವಾ ಆಗಿ ಸೈನ್ ಇನ್ ಮಾಡಿ",
+        "switchTo": "ಬದಲಾಯಿಸಿ"
+    },
+    "signup": {
+        "distributorTitle": "ಮಾಹಿತಿ",
+        "mechanicTitle": "ಮಾಹಿತಿ",
+        "retailerTitle": "ಮಾಹಿತಿ",
+        "subtitle": "ಖಾತೆ ರಚಿಸಲು ಮಾಹಿತಿ ನೀಡಿ",
+        "fields": {
+            "fullName": "ಪೂರ್ಣ ಹೆಸರು",
+            "fullNamePlaceholder": "ಪೂರ್ಣ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+            "phoneNumber": "ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+            "phoneNumberPlaceholder": "ದೂರವಾಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "email": "ಇಮೇಲ್ ವಿಳಾಸ",
+            "emailPlaceholder": "ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ",
+            "companyName": "ಕಂಪನಿಯ ಹೆಸರು",
+            "shopName": "ಅಂಗಡಿಯ ಹೆಸರು",
+            "companyNamePlaceholder": "ಕಂಪನಿಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+            "shopNamePlaceholder": "ಅಂಗಡಿಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+            "distributorCode": "ವಿತರಣಾಕಾರರ ಕೋಡ್",
+            "distributorCodePlaceholder": "ವಿತರಣಾಕಾರರ ಕೋಡ್ ನಮೂದಿಸಿ",
+            "panNumber": "ಪ್ಯಾನ್ ಸಂಖ್ಯೆ",
+            "panNumberPlaceholder": "ಉದಾ. AXNP7853G",
+            "gstNumber": "GST ಸಂಖ್ಯೆ",
+            "gstNumberPlaceholder": "GST ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "selectBrand": "ಬ್ರ್ಯಾಂಡ್ ಆಯ್ಕೆಮಾಡಿ",
+            "street": "ರಸ್ತೆ",
+            "streetPlaceholder": "ರಸ್ತೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+            "selectCountry": "ದೇಶ ಆಯ್ಕೆಮಾಡಿ",
+            "selectState": "ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ",
+            "selectCity": "ನಗರ ಆಯ್ಕೆಮಾಡಿ",
+            "pincode": "ಪಿನ್‌ಕೋಡ್",
+            "pincodePlaceholder": "ನಿಮ್ಮ ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ",
+            "address": "ವಿಳಾಸ",
+            "addressPlaceholder": "ಪೂರ್ಣ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ"
+        },
+        "validation": {
+            "userTypeRequired": "ದಯವಿಟ್ಟು ಬಳಕೆದಾರರ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+            "nameRequired": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+            "nameOnlyLetters": "ಹೆಸರಿನಲ್ಲಿ ಅಕ್ಷರಗಳಷ್ಟೇ ಇರಬೇಕು",
+            "phoneRequired": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ದೂರವಾಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "phoneInvalid": "ದಯವಿಟ್ಟು 10 ಅಂಕಿಗಳ ದೂರವಾಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "validPhone": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 10 ಅಂಕಿಗಳ ದೂರವಾಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "pincodeRequired": "ದಯವಿಟ್ಟು ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ",
+            "pincodeInvalid": "ದಯವಿಟ್ಟು 6 ಅಂಕಿಗಳ ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ",
+            "validPincode": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 6 ಅಂಕಿಗಳ ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ",
+            "selectCountry": "ದಯವಿಟ್ಟು ದೇಶ ಆಯ್ಕೆಮಾಡಿ",
+            "selectState": "ದಯವಿಟ್ಟು ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ",
+            "selectCity": "ದಯವಿಟ್ಟು ನಗರ ಆಯ್ಕೆಮಾಡಿ",
+            "emailRequired": "ದಯವಿಟ್ಟು ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ",
+            "emailInvalid": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ",
+            "addressRequired": "ದಯವಿಟ್ಟು ಪೂರ್ಣ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ",
+            "streetRequired": "ದಯವಿಟ್ಟು ರಸ್ತೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+            "invalidPAN": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಪ್ಯಾನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "selectBrand": "ದಯವಿಟ್ಟು ಬ್ರ್ಯಾಂಡ್ ಆಯ್ಕೆಮಾಡಿ",
+            "panRequired": "ದಯವಿಟ್ಟು ಪ್ಯಾನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+            "shopNameRequired": "ದಯವಿಟ್ಟು ಅಂಗಡಿಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+            "codeRequired": "ದಯವಿಟ್ಟು ಕೋಡ್ ನಮೂದಿಸಿ"
+        },
+        "addressInformation": "ವಿಳಾಸ ಮಾಹಿತಿ",
+        "addressInformationSubtitle": "ಐಡಿ ಪ್ರೂಫ್‌ನ ಪ್ರಕಾರ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ."
+    },
+    "dashboard": {
+        "couponsScanned": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
+        "couponsScannedDesc": "ಮತ್ತೊಮ್ಮೆ ಬಳಸಿದ ಕೂಪನ್‌ಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ",
+        "redeemed": "ರಿಡೀಮ್ ಮಾಡಲಾಗಿದೆ",
+        "scanned": "ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗಿದೆ",
+        "points": "ಅಂಕಗಳು",
+        "amount": "ಮೊತ್ತ",
+        "redeemedPoints": "ರಿಡೀಮ್ ಮಾಡಿದ ಅಂಕಗಳು",
+        "scannedAmount": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಮೊತ್ತ",
+        "totalTillDate": "ಇಂದಿನವರೆಗೆ ಒಟ್ಟು {{type}}",
+        "scanButton": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+        "couponScannedForCash": "ನಗದುಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
+        "couponScannedForCashDesc": "ನಗದುಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ",
+        "couponScannedForScheme": "ಯೋಜನೆಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
+        "couponScannedForSchemeDesc": "ಯೋಜನೆಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ",
+        "totalBalancePoints": "ಒಟ್ಟು ಬಲಾನ್ಸ್ ಅಂಕಗಳು"
+    },
+    "coupon-history": {
+        "serial_no": "ಕ್ರಮ ಸಂಖ್ಯೆ:",
+        "item_code": "ಐಟೆಂ ಕೋಡ್:",
+        "redeemed_date": "ರಿಡೀಮ್ ದಿನಾಂಕ:",
+        "status": "ಸ್ಥಿತಿ:",
+        "scanned": "ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗಿದೆ",
+        "from_date": "ಆರಂಭ ದಿನಾಂಕ",
+        "to_date": "ಅಂತಿಮ ದಿನಾಂಕ",
+        "no_data_found": "ಆಯ್ಕೆಯ ದಿನಾಂಕ ಶ್ರೇಣಿಗಾಗಿ ಯಾವುದೇ ಡೇಟಾ ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಆಯ್ಕೆ ಶ್ರೇಣಿಯನ್ನು ತಿದ್ದುಮಾಡಿ ಮತ್ತು ಪುನಃ ಪ್ರಯತ್ನಿಸಿ."
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "ಒಟ್ಟು ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
+        "batch_id": "ಬ್ಯಾಚ್ ಐಡಿ",
+        "end_date": "ಅಂತಿಮ ದಿನಾಂಕ",
+        "status": "ಸ್ಥಿತಿ",
+        "credit_note_no": "ಕ್ರೆಡಿಟ್ ನೋಟು ಸಂಖ್ಯೆ",
+        "credit_note_date": "ಕ್ರೆಡಿಟ್ ದಿನಾಂಕ",
+        "credit_note_value": "ಕ್ರೆಡಿಟ್ ಮೌಲ್ಯ",
+        "from_date": "ಆರಂಭ ದಿನಾಂಕ",
+        "to_date": "ಅಂತಿಮ ದಿನಾಂಕ",
+        "no_data": "ಯಾವುದೇ ಡೇಟಾ ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಬೇರೆ ದಿನಾಂಕ ಶ್ರೇಣಿಯನ್ನು ಪ್ರಯತ್ನಿಸಿ."
+    },
+    "reportCoupon": {
+        "title": "ವರದಿ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+        "subtitle": "ಫೈಲ್ ಫಾರ್ಮಾಟ್ .png ಅಥವಾ .jpg ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ",
+        "frontImagePlaceholder": "ಮುಖ್ಯ ಚಿತ್ರವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಇಲ್ಲಿ ಟ್ಯಾಪ್ ಮಾಡಿ",
+        "backImagePlaceholder": "ಹಿಂಭಾಗ ಚಿತ್ರವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಇಲ್ಲಿ ಟ್ಯಾಪ್ ಮಾಡಿ",
+        "editImageHint": "ನಿಮ್ಮ ಆಯ್ಕೆಯನ್ನು ಸಂಪಾದಿಸಲು ಪುನಃ ಟ್ಯಾಪ್ ಮಾಡಿ",
+        "serialLabel": "ಕೂಪನ್ ಸರಣಿ ಸಂಖ್ಯೆ",
+        "serialPlaceholder": "ಕೂಪನ್ ಸರಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+        "serialError": "ದಯವಿಟ್ಟು ಕूपನ್ ಸರಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+        "descriptionLabel": "ಕೂಪನ್ ವಿವರಣೆ",
+        "descriptionPlaceholder": "ಕೂಪನ್ ಬಗ್ಗೆ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ",
+        "descriptionError": "ದಯವಿಟ್ಟು ವರದಿ ವಿವರಣೆ ನೀಡಿರಿ",
+        "submit": "ವರದಿ ಸಲ್ಲಿಸಿ",
+        "submitting": "ವರದಿ ಸಲ್ಲಿಸಲಾಗುತ್ತಿದೆ",
+        "missingImages": "ದಯವಿಟ್ಟು ವರದಿ ಮಾಡಲು ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ..!"
+    },
+    "reportHistory": {
+        "from_date": "ಆರಂಭ ದಿನಾಂಕ",
+        "to_date": "ಅಂತಿಮ ದಿನಾಂಕ",
+        "noDataTitle": "ಯಾವುದೇ ಡೇಟಾ ಇಲ್ಲ.",
+        "noDataSubtitle": "ದಯವಿಟ್ಟು ಬೇರೆ ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+        "serialNo": "ಸಿರಿಯಲ್ ಸಂಖ್ಯೆ",
+        "description": "ವಿವರಣೆ",
+        "reportedDate": "ವರದಿ ದಿನಾಂಕ"
+    },
+    "dealers": {
+        "filter": "ಫಿಲ್ಟರ್:",
+        "status": {
+            "all": "ಎಲ್ಲಾ",
+            "approved": "ಅನುಮೋದಿತ",
+            "pending": "ಉತ್ತೆಜಿತ",
+            "rejected": "ಅस्वೀಕೃತ"
+        },
+        "noRequestFound": "ಯಾವುದೇ ವಿನಂತಿ ಕಂಡುಬಂದಿಲ್ಲ",
+        "name": "ಹೆಸರು",
+        "phoneNumber": "ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+        "shopName": "ಅಂಗಡಿಯ ಹೆಸರು",
+        "address": "ವಿಳಾಸ",
+        "dateRegistered": "ಪಂಜಿಕೃತ ದಿನಾಂಕ"
+    }
+}

@@ -1,0 +1,172 @@
+{
+    "layout": {
+        "drawer": {
+            "welcome": "স্বাগতম!"
+        },
+        "headerTitle": {
+            "dashboard": "ড্যাশবোর্ড",
+            "profile": "প্রোফাইল",
+            "scan_coupons": "কুপন স্ক্যান করুন",
+            "coupon_history": "কুপনের ইতিহাস",
+            "cash_batch_report": "নগদ ব্যাচ রিপোর্ট",
+            "report_coupon": "কুপন রিপোর্ট করুন",
+            "report_history": "রিপোর্ট ইতিহাস",
+            "my_retailers": "আমার ব্যবসায়ী"
+        }
+    },
+    "login": {
+        "signInAs": "সাইন ইন করুন",
+        "phoneNumber": "ফোন নম্বর",
+        "distributor": "বিতরণকারী",
+        "mechanic": "মেকানিক",
+        "retailer": "ব্যবসায়ী",
+        "errors": {
+            "phoneRequired": "অনুগ্রহ করে আপনার ফোন নম্বর লিখুন",
+            "phoneInvalid": "অনুগ্রহ করে ১০ সংখ্যার একটি ফোন নম্বর লিখুন"
+        },
+        "login": "লগইন করুন",
+        "loggingIn": "লগইন হচ্ছে",
+        "noAccount": "আপনার কি কোনো অ্যাকাউন্ট নেই?",
+        "signUp": "সাইন আপ করুন",
+        "orSignInAs": "অথবা সাইন ইন করুন একজন",
+        "switchTo": "সুইচ করুন"
+    },
+    "signup": {
+        "distributorTitle": "তথ্য",
+        "mechanicTitle": "তথ্য",
+        "retailerTitle": "তথ্য",
+        "subtitle": "একটি অ্যাকাউন্ট তৈরি করতে তথ্য প্রদান করুন",
+        "fields": {
+            "fullName": "পুরো নাম",
+            "fullNamePlaceholder": "আপনার পুরো নাম লিখুন",
+            "phoneNumber": "ফোন নম্বর",
+            "phoneNumberPlaceholder": "আপনার ফোন নম্বর লিখুন",
+            "email": "ইমেল ঠিকানা",
+            "emailPlaceholder": "আপনার ইমেল ঠিকানা লিখুন",
+            "companyName": "কোম্পানির নাম",
+            "shopName": "দোকানের নাম",
+            "companyNamePlaceholder": "কোম্পানির নাম লিখুন",
+            "shopNamePlaceholder": "দোকানের নাম লিখুন",
+            "distributorCode": "বিতরণকারী কোড",
+            "distributorCodePlaceholder": "বিতরণকারী কোড লিখুন",
+            "panNumber": "PAN নম্বর",
+            "panNumberPlaceholder": "যেমন AXNP7853G",
+            "gstNumber": "GST নম্বর",
+            "gstNumberPlaceholder": "GST নম্বর লিখুন",
+            "selectBrand": "ব্র্যান্ড নির্বাচন করুন",
+            "street": "রাস্তা",
+            "streetPlaceholder": "রাস্তার নাম লিখুন",
+            "selectCountry": "দেশ নির্বাচন করুন",
+            "selectState": "রাজ্য নির্বাচন করুন",
+            "selectCity": "শহর নির্বাচন করুন",
+            "pincode": "পিনকোড",
+            "pincodePlaceholder": "আপনার পিনকোড লিখুন",
+            "address": "ঠিকানা",
+            "addressPlaceholder": "সম্পূর্ণ ঠিকানা লিখুন"
+        },
+        "validation": {
+            "userTypeRequired": "অনুগ্রহ করে ব্যবহারকারীর ধরন নির্বাচন করুন",
+            "nameRequired": "অনুগ্রহ করে আপনার নাম লিখুন",
+            "nameOnlyLetters": "নামে কেবল অক্ষর থাকা উচিত",
+            "phoneRequired": "অনুগ্রহ করে ফোন নম্বর লিখুন",
+            "phoneInvalid": "অনুগ্রহ করে একটি বৈধ ১০ সংখ্যার ফোন নম্বর লিখুন",
+            "validPhone": "অনুগ্রহ করে একটি বৈধ ফোন নম্বর লিখুন",
+            "pincodeRequired": "পিনকোড লিখুন",
+            "pincodeInvalid": "৬ সংখ্যার একটি পিনকোড লিখুন",
+            "validPincode": "বৈধ পিনকোড লিখুন",
+            "selectCountry": "দেশ নির্বাচন করুন",
+            "selectState": "রাজ্য নির্বাচন করুন",
+            "selectCity": "শহর নির্বাচন করুন",
+            "emailRequired": "ইমেল ঠিকানা লিখুন",
+            "emailInvalid": "বৈধ ইমেল ঠিকানা লিখুন",
+            "addressRequired": "সম্পূর্ণ ঠিকানা লিখুন",
+            "streetRequired": "রাস্তার নাম লিখুন",
+            "invalidPAN": "বৈধ PAN নম্বর লিখুন",
+            "selectBrand": "ব্র্যান্ড নির্বাচন করুন",
+            "panRequired": "PAN নম্বর লিখুন",
+            "shopNameRequired": "দোকানের নাম লিখুন",
+            "codeRequired": "কোড লিখুন"
+        },
+        "addressInformation": "ঠিকানা সংক্রান্ত তথ্য",
+        "addressInformationSubtitle": "পরিচয়পত্র অনুযায়ী বিশদ লিখুন"
+    },
+    "dashboard": {
+        "couponsScanned": "স্ক্যান করা কুপন",
+        "couponsScannedDesc": "মোট স্ক্যান করা এবং রিডিম হওয়া কুপনের সংখ্যা",
+        "redeemed": "রিডিমড",
+        "scanned": "স্ক্যানড",
+        "points": "পয়েন্টস",
+        "amount": "পরিমাণ",
+        "redeemedPoints": "রিডিমড পয়েন্টস",
+        "scannedAmount": "স্ক্যান করা পরিমাণ",
+        "totalTillDate": "এখন পর্যন্ত মোট {{type}}",
+        "scanButton": "স্ক্যান করুন",
+        "couponScannedForCash": "নগদের জন্য স্ক্যান করা কুপন",
+        "couponScannedForCashDesc": "নগদের জন্য স্ক্যান করা কুপনের মোট সংখ্যা",
+        "couponScannedForScheme": "স্কিমের জন্য স্ক্যান করা কুপন",
+        "couponScannedForSchemeDesc": "স্কিমের জন্য স্ক্যান করা কুপনের মোট সংখ্যা",
+        "totalBalancePoints": "মোট ব্যালেন্স পয়েন্টস"
+    },
+    "coupon-history": {
+        "serial_no": "ক্রমিক নম্বর:",
+        "item_code": "আইটেম কোড:",
+        "redeemed_date": "রিডিমের তারিখ:",
+        "status": "স্ট্যাটাস:",
+        "scanned": "স্ক্যানড",
+        "from_date": "শুরুর তারিখ",
+        "to_date": "শেষ তারিখ",
+        "no_data_found": "নির্বাচিত তারিখের জন্য কোনো ডেটা পাওয়া যায়নি। দয়া করে তারিখ পরিবর্তন করুন ও আবার চেষ্টা করুন।"
+    },
+    "cash_batch": {
+        "total_coupons_scanned": "মোট স্ক্যান করা কুপন",
+        "batch_id": "ব্যাচ আইডি",
+        "end_date": "শেষ তারিখ",
+        "status": "স্ট্যাটাস",
+        "credit_note_no": "ক্রেডিট নোট নম্বর",
+        "credit_note_date": "ক্রেডিট তারিখ",
+        "credit_note_value": "ক্রেডিট মূল্য",
+        "from_date": "শুরুর তারিখ",
+        "to_date": "শেষ তারিখ",
+        "no_data": "কোনো ডেটা পাওয়া যায়নি। অন্য একটি তারিখ চেষ্টা করুন।"
+    },
+    "reportCoupon": {
+        "title": "রিপোর্ট আপলোড করুন",
+        "subtitle": ".png অথবা .jpg ফরম্যাট নিশ্চিত করুন",
+        "frontImagePlaceholder": "ফ্রন্ট ইমেজ আপলোড করতে এখানে ট্যাপ করুন",
+        "backImagePlaceholder": "ব্যাক ইমেজ আপলোড করতে এখানে ট্যাপ করুন",
+        "editImageHint": "ইমেজ সম্পাদনা করতে আবার ট্যাপ করুন",
+        "serialLabel": "কুপনের সিরিয়াল নম্বর",
+        "serialPlaceholder": "কুপনের সিরিয়াল নম্বর লিখুন",
+        "serialError": "অনুগ্রহ করে কুপনের সিরিয়াল নম্বর লিখুন",
+        "descriptionLabel": "কুপনের বিবরণ",
+        "descriptionPlaceholder": "কুপনের সম্পর্কে বিবরণ লিখুন",
+        "descriptionError": "রিপোর্টের বিবরণ লিখুন",
+        "submit": "রিপোর্ট সাবমিট করুন",
+        "submitting": "রিপোর্ট সাবমিট হচ্ছে",
+        "missingImages": "রিপোর্ট করতে একটি ছবি নির্বাচন করুন..!"
+    },
+    "reportHistory": {
+        "from_date": "শুরুর তারিখ",
+        "to_date": "শেষ তারিখ",
+        "noDataTitle": "কোনো ডেটা পাওয়া যায়নি।",
+        "noDataSubtitle": "দয়া করে অন্য তারিখ নির্বাচন করুন।",
+        "serialNo": "সিরিয়াল নম্বর",
+        "description": "বিবরণ",
+        "reportedDate": "রিপোর্টের তারিখ"
+    },
+    "dealers": {
+        "filter": "ফিল্টার:",
+        "status": {
+            "all": "সব",
+            "approved": "অনুমোদিত",
+            "pending": "বিচারাধীন",
+            "rejected": "প্রত্যাখ্যাত"
+        },
+        "noRequestFound": "কোনো অনুরোধ পাওয়া যায়নি",
+        "name": "নাম",
+        "phoneNumber": "ফোন নম্বর",
+        "shopName": "দোকানের নাম",
+        "address": "ঠিকানা",
+        "dateRegistered": "নিবন্ধনের তারিখ"
+    }
+}
