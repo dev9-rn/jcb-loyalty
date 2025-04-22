@@ -35,6 +35,16 @@ const StackLayout = ({ }: Props) => {
                     },
                 }}
             />
+
+            <Stack.Screen
+                name='remove-account'
+                options={{
+                    title: "Remove Account",
+                    headerTitleStyle: {
+                        color: '#FFF'
+                    },
+                }}
+            />
         </Stack>
     )
 }

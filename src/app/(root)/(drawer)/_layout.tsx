@@ -62,11 +62,11 @@ const DrawerLayout = ({ }: Props) => {
                 options={{
                     drawerLabel: t('layout.headerTitle.dashboard'),
                     title: t('layout.headerTitle.dashboard'),
-                    headerRight: ({ tintColor }) => (
-                        <Button variant={"ghost"} size={"icon"} onPress={() => router.navigate("/(root)/(stack)/notification")}>
-                            <BellIcon color={tintColor} />
-                        </Button>
-                    ),
+                    // headerRight: ({ tintColor }) => (
+                    //     <Button variant={"ghost"} size={"icon"} onPress={() => router.navigate("/(root)/(stack)/notification")}>
+                    //         <BellIcon color={tintColor} />
+                    //     </Button>
+                    // ),
                     drawerIcon: ({ focused, color }) => (
                         <HouseIcon color={focused ? "#FFF" : color} />
                     )

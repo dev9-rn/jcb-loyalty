@@ -84,13 +84,13 @@ const MultiLangualDropdown = ({ }: Props) => {
                     value: previousLanguage?.langCode || "en"
                 }}
             >
-                <SelectTrigger className='w-[200px]'>
+                <SelectTrigger className='w-52'>
                     <SelectValue
                         className='text-foreground text-sm native:text-lg'
                         placeholder='Select a language'
                     />
                 </SelectTrigger>
-                <SelectContent insets={contentInsets} className='size-[200px]' side="top">
+                <SelectContent insets={contentInsets} className='size-52' side="top">
                     <ScrollView>
                         <SelectGroup>
                             <SelectLabel>Languages</SelectLabel>

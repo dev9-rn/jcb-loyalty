@@ -67,7 +67,7 @@ const CouponHistoryScreen = ({ }: Props) => {
     return (
         <View className='flex-1 bg-white'>
 
-            <View className='bg-white'>
+            {/* <View className='bg-white'>
                 <View className='flex-row items-center justify-around pt-4'>
                     {TABS.map((tab, index) => (
                         <TouchableOpacity key={tab.id} className={`flex-1 py-2 ${activePagerTab == index ? "border-b-2 border-primary" : "border-0"} `} onPress={() => handleTabSwitch(index)}>
@@ -77,9 +77,13 @@ const CouponHistoryScreen = ({ }: Props) => {
                         </TouchableOpacity>
                     ))}
                 </View>
+            </View> */}
+
+            <View key="1">
+                <CashCouponHistoryTab />
             </View>
 
-            <PagerView
+            {/* <PagerView
                 ref={pagerRef}
                 initialPage={0}
                 style={{ flex: 1, }}
@@ -91,7 +95,7 @@ const CouponHistoryScreen = ({ }: Props) => {
                 <View className='items-center justify-center' key="2">
                     <Text>Second page</Text>
                 </View>
-            </PagerView>
+            </PagerView> */}
         </View >
     )
 }

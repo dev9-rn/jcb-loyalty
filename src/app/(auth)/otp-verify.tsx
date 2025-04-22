@@ -114,8 +114,6 @@ const OtpVerificationScreen = ({ }: Props) => {
         };
     };
 
-    console.log(errors, "FORM_ERROR");
-
     return (
         <View className='flex-1 bg-white'>
 

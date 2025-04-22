@@ -19,6 +19,8 @@ import StateDropdown from '@/components/StateDropdown'
 import CitiesDropdown from '@/components/CitiesDropdown'
 import { getProfileEndpoint } from '@/libs/utils'
 import { useTranslation } from 'react-i18next'
+import { Separator } from '@/components/ui/separator'
+import { router } from 'expo-router'
 
 type Props = {}
 
@@ -668,6 +670,19 @@ const ProfileScreen = ({ }: Props) => {
                             disabled={!isDirty}
                         >
                             <Text>Submit</Text>
+                        </Button>
+
+                        <View className='flex-row items-center my-4'>
+                            <View className='h-px flex-1 bg-gray-500' />
+                            <Text className='uppercase mx-2'>or</Text>
+                            <View className='h-px flex-1 bg-gray-500' />
+                        </View>
+
+                        <Button
+                            onPress={() => router.navigate("/remove-account")}
+                            variant={"destructive"}
+                        >
+                            <Text>Remove Account</Text>
                         </Button>
                     </View>
                 </KeyboardAwareScrollView>

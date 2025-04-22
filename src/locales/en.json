@@ -168,5 +168,23 @@
         "shopName": "Shop Name",
         "address": "Address",
         "dateRegistered": "Date Registered"
+    },
+    "removeAccount": {
+        "pageTitle": "You can use this page to remove your account from our solution.",
+        "dataStoredTitle": "We store the following data related to your account:",
+        "dataPoints": {
+            "profileInfo": "Your basic profile information such as name, phone number, email ID, and login password.",
+            "loginHistory": "Timestamps of all your login and logout sessions along with device ID, for security purposes.",
+            "couponHistory": "Whenever you scan a coupon for verification, we keep a history of your scans and any associated payments, if applicable."
+        },
+        "dataDeletionNote": "If you agree to remove your account, we will delete all the above-mentioned data.",
+        "warningTitle": "Warning:",
+        "warningText": "Before removing your account, the following will apply:",
+        "warnings": {
+            "noReRegister": "You will not be able to re-register on our app or web app using the same mobile number and/or email ID.",
+            "couponLoss": "All coupons verified by you so far will be deleted and disassociated from your account. You will have to re-scan them and/or request payment again, if applicable."
+        },
+        "checkboxLabel": "I have read the above and agree.",
+        "goBack": "Go Back"
     }
 }
