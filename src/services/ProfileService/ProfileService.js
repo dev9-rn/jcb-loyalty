@@ -15,6 +15,7 @@ class ProfileService {
 
 	async getDistributorProfile(pFormData) {
 		var lUrl = URL + 'getDistributorProfile';
+
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
@@ -26,7 +27,7 @@ class ProfileService {
 			body: pFormData,
 		})
 			.then((response) => response.json())
-			.then((responseJson) => {
+			.then((responseJson) => { 
 				// alert(JSON.stringify(responseJson));
 				this.setRespData(responseJson);
 			})

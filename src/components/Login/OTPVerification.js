@@ -242,7 +242,7 @@ export default class OTPVerification extends React.Component {
 				<Header style={{ backgroundColor: '#0000FF' }}>
 					<Left />
 					<Body style={{ marginLeft: -30 }}>
-						<Title style={{ color: '#FFFFFF', fontSize: 16 }}>Nandan PetroChem</Title>
+						<Title style={{ color: '#FFFFFF', fontSize: 16 }}>Hyundai</Title>
 					</Body>
 					<Right />
 				</Header>

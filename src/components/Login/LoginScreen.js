@@ -276,7 +276,7 @@ import MyColors from '../../Utility/Colors';
         <View style={styles.containerLevel1}>
           <View>
             <Image
-              style={{ width: 350, height: 1000 }}
+              style={{ width: 310, height: 1000, padding:10 }}
               resizeMode='contain'
               source={require('../../images/iTunesArtwork.png')}
             />

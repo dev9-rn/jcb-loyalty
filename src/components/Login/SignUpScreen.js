@@ -593,7 +593,7 @@ export default class SignUpScreen extends React.Component {
 						</TouchableOpacity>
 					</Left>
 					<Body style={{ flex: 0.9 }}>
-						<Title style={{ color: '#FFFFFF' }}>Nandan PetroChem</Title>
+						<Title style={{ color: '#FFFFFF' }}>Hyundai</Title>
 					</Body>
 
 				</Header>
@@ -607,7 +607,7 @@ export default class SignUpScreen extends React.Component {
 						</TouchableOpacity>
 					</Left>
 					<Body style={{ flex: 0.9, alignItems: 'center' }}>
-						<Title style={{ color: '#FFFFFF', fontSize: 16 }}>Nandan PetroChem</Title>
+						<Title style={{ color: '#FFFFFF', fontSize: 16 }}>Hyundai</Title>
 					</Body>
 
 				</Header>

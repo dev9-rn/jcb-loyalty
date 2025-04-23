@@ -159,6 +159,7 @@ class ScanScreen extends React.Component {
         debugger;
         this.setState({ isModalVisible: !this.state.isModalVisible, isCheckedScheme: false, isCheckedCash: false });
         let redeemType = this.state.redeemType;
+        
         // if (this.state.isCheckedScheme) {
         //     redeemType = '1';
         // } else if (this.state.isCheckedCash) {
@@ -175,12 +176,21 @@ class ScanScreen extends React.Component {
         //         { cancelable: true }
         //     )
         // }
+        
         if (redeemType) {
 
             const formData = new FormData();
             formData.append('qrText', this.qrText);
             formData.append('distributorId', this.distributorId);
             formData.append('redeemType', redeemType);
+            formData.append('userType', 0);
+
+            console.log("redeemType" + redeemType);
+
+            console.log("forqrTextmData" + this.qrText);
+            console.log("distributorId" + this.distributorId);
+            console.log("redeemType" + redeemType);
+            console.log("userType" + 0);
 
             var scanApiObj = new ScanService();
 
@@ -241,6 +251,7 @@ class ScanScreen extends React.Component {
         }
         else if (lResponseData.status == 200) {
             redeemMethodsT = lResponseData.redeemMethods;
+            console.log("lResponseData.redeemMethods" + lResponseData.redeemMethods);
             this.setState({ redeemMethods: lResponseData.redeemMethodsT, redeemType: redeemMethodsT[0].redeem_type })
             for (var i = 0; i < redeemMethodsT.length; i++) {
                 if (redeemMethodsT[i].redeem_type == "1") {

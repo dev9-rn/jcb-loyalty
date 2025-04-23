@@ -39,6 +39,11 @@ class ScanService {
 	async redeemCoupon(pFormData) {
 		debugger
 		var lUrl = URL + 'redeemCoupon';
+
+		console.log("URL" + lUrl);
+		console.log("pFormData" + pFormData);
+		console.log("URL" + APIKEY);
+		console.log("ACCESSTOKEN" + ACCESSTOKEN);
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {

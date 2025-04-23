@@ -147,6 +147,7 @@ class ReportScreen extends Component {
         });
     
     }
+    
     _onPressSendButton = (distributorId) => {
         this.setState({ showHideLoading: true })
         const photo = {

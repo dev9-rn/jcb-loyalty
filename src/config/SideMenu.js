@@ -165,10 +165,12 @@ class SideMenu extends Component {
         this.setState({
          name: lData.data.company_name ? lData.data.company_name : lData.data.shop_name, imageURL: lData.data.brand_logo, userType: lData.data.userType,
           menuList: [
+        { title: strings('login.payment_screen_waller_details'), nav1:  'BankDetailScreen' },
+        { title: strings('login.sidemenu_mywallet'), nav1:  'WalletScreen' },
         { title: strings('login.profile'), nav1:  'ProfileScreen' },
         { title: strings('login.sdemenu_scan'), nav1: 'ScanScreen' },
         { title: strings('login.sidemenu_couponhistory'), nav1: 'HistoryScreen' },
-        { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
+        // { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
         { title: strings('login.sidemenu_report'), nav1: 'ReportScreen' } ,
         { title: strings('login.sidemenu_reporthistory'), nav1: 'ReportHistory' } ,
         { title: strings('login.Manual')},
@@ -283,6 +285,8 @@ class SideMenu extends Component {
     //if (item.title == 'SCAN' || item.title == 'HISTORY' || item.title == 'PROFILE' || item.title == 'REPORT' || item.title == 'REPORT HISTORY' || item.title == 'COUPON HISTORY') {
       if (
         item.title == 'SCAN' || item.title == 'স্ক্যান' || item.title == "Analyse" || item.title == "સ્કેન" || item.title == "स्कैन" || item.title == "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ" || item.title == "स्कॅन" || item.title == "ସ୍କାନ୍ କରନ୍ତୁ |" || item.title == "ਸਕੈਨ" || item.title == "ஊடுகதிர்" || item.title == "స్కాన్" || item.title == "اسکین" || item.title == 'Kanuni' ||
+        item.title == 'MY WALLET' ||
+        item.title == 'BANK DETAILS' ||
         item.title == 'PROFILE' || item.title == 'प्रोफ़ाइल' || item.title == 'Profil' || item.title == 'प्रोफाइल' || item.title == 'ਪ੍ਰੋਫਾਈਲ' || item.title == 'પ્રોફાઇલ' || item.title == 'ప్రొఫైల్' || item.title == 'சுயவிவரம்' || item.title == 'নথিপত্র' || item.title == 'پروفائل' || item.title == 'ಪ್ರೊಫೈಲ್' || item.title == 'ପ୍ରୋଫାଇଲ୍ |' || item.title == 'MWANDISHI' ||
         item.title == 'COUPON HISTORY' || item.title == 'कूपन इतिहास' || item.title == 'Historique des coupons' || item.title == 'कूपन इतिहास' || item.title == 'ਕੂਪਨ ਇਤਿਹਾਸ' || item.title == 'કૂપન ઇતિહાસ' || item.title == 'కూపన్ చరిత్ర' || item.title == 'கூப்பன் வரலாறு' || item.title == 'কুপন ইতিহাস' || item.title == 'کوپن کی تاریخ' || item.title == 'ಕೂಪನ್ ಇತಿಹಾಸ' || item.title == 'କୁପନ୍ ଇତିହାସ |' || item.title == 'Historia ya coupon' ||
         item.title == 'CASH-BATCH REPORT' || item.title == "कैश-बैच रिपोर्ट" || item.title == "নগদ-ব্যাচের প্রতিবেদন" || item.title == "Rapport Cash-Batch" || item.title == "કેશ-બેચ રિપોર્ટ" || item.title == "ನಗದು-ಬ್ಯಾಚ್ ವರದಿ" || item.title == "रोख-बॅच अहवाल" || item.title == "ନଗଦ-ବ୍ୟାଚ୍ ରିପୋର୍ଟ" || item.title == "ਨਕਦ-ਬੈਚ ਦੀ ਰਿਪੋਰਟ" || item.title == "Cash-Batch-rapport" || item.title == "பண-தொகுதி அறிக்கை" || item.title == "నగదు-బ్యాచ్ నివేదిక" || item.title == "کیش بیچ کی رپورٹ" ||
@@ -311,6 +315,15 @@ class SideMenu extends Component {
                 <Icon type="FontAwesome" name="qrcode" style={{ fontSize: 18, color: 'black' }} />
                 :
                 (
+                  item.title == 'MY WALLET'  ?
+                  <Icon type="FontAwesome" name="money" style={{ fontSize: 18, color: 'black' }} />
+                  :
+                  (
+                    item.title == 'BANK DETAILS'  ?
+                    <Icon type="FontAwesome" name="bank" style={{ fontSize: 18, color: 'black' }} />
+                    :                                    
+                (
+                  
                   item.title == 'PROFILE' || item.title == 'प्रोफ़ाइल' || item.title == 'Profil' || item.title == 'प्रोफाइल' || item.title == 'ਪ੍ਰੋਫਾਈਲ' || item.title == 'પ્રોફાઇલ' || item.title == 'ప్రొఫైల్' || item.title == 'சுயவிவரம்' || item.title == 'নথিপত্র' || item.title == 'پروفائل' || item.title == 'ಪ್ರೊಫೈಲ್' || item.title == 'ପ୍ରୋଫାଇଲ୍ |' || item.title == 'MWANDISHI' ?
                   <Icon type="FontAwesome" name="user" style={{ fontSize: 18, color: 'black' }} />
                     :
@@ -340,6 +353,8 @@ class SideMenu extends Component {
                         )
                     )
                     )
+                    )
+                  )
                 )
               }
               {"   "}{item.title}
@@ -444,10 +459,12 @@ class SideMenu extends Component {
 
     this.setState({
       menuList: [
+        { title: strings('login.payment_screen_waller_details'), nav1:  'WalletScreen' },
+        { title: strings('login.sidemenu_mywallet'), nav1:  'WalletScreen' },
         { title: strings('login.profile'), nav1:  'ProfileScreen' },
         { title: strings('login.sdemenu_scan'), nav1: 'ScanScreen' },
         { title: strings('login.sidemenu_couponhistory'), nav1: 'HistoryScreen' },
-        { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
+        // { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
         { title: strings('login.sidemenu_report'), nav1: 'ReportScreen' } ,
         { title: strings('login.sidemenu_reporthistory'), nav1: 'ReportHistory' } ,
         { title: strings('login.Manual')},

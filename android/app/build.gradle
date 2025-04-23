@@ -157,8 +157,8 @@ android {
         applicationId "com.npl_seqrloyalty"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4194321
-        versionName "2.3.1"
+        versionCode 4
+        versionName "3.0"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()

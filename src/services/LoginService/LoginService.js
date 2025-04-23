@@ -44,6 +44,10 @@ class LoginService {
 	async login(pFormData) {
 		debugger
 		var lUrl = URL + 'login';
+
+		console.log(pFormData)
+		console.log("URL" + URL)
+		console.log("APIKEY" + APIKEY)
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
@@ -57,7 +61,7 @@ class LoginService {
 			.then((responseJson) => {
 				// alert(JSON.stringify(responseJson))
 				console.log("===============-=------------------------------====-=========");
-				console.log(responseJson);
+				console.log("responseJson" + responseJson);
 				this.setRespData(responseJson);
 			})
 			.catch((error) => {
@@ -72,7 +76,7 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
+				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
 			}
 		})
 			.then((response) => response.json())
@@ -86,16 +90,19 @@ class LoginService {
 
 	async getCountries() {
 		var lUrl = URL + 'getCountries';
+
+		console.log(lUrl);
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
+				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
 			}
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
+				console.log("working Country");
 				this.setRespData(responseJson);
 			})
 			.catch((error) => {
@@ -110,7 +117,7 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
+				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
 			},
 			body: pFormData
 		})
@@ -132,7 +139,7 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
+				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
 			},
 			body: pFormData
 		})
@@ -153,7 +160,7 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
+				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
 			},
 			body: pFormData,
 		}).then((response) => response.json())

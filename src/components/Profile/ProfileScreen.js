@@ -132,6 +132,7 @@ var isCityData = false;
 	async _getUserData() {
 		const formData = new FormData();
 		formData.append('distributorId', this.distributorId);
+		console.log("this.distributorId" + this.distributorId)
 
 		var profileApiObj = new ProfileService();
 		this.setState({ loading: true });
@@ -142,6 +143,9 @@ var isCityData = false;
 		} else if (lResponseData.status == 500 || lResponseData.status == 400 || lResponseData.status == 403) {
 			utilities.showToastMsg(lResponseData.message);
 		} else if (lResponseData.status == 200) {
+			console.log("lResponseData.data ---" + lResponseData.data.country_id);
+			console.log("lResponseData.data ---" + lResponseData.data.state_id);
+			console.log("lResponseData.data ---" + lResponseData.data.city_id);
 			this.userdata = lResponseData.data;
 			this.setState({
 				name: lResponseData.data.name,
@@ -156,7 +160,6 @@ var isCityData = false;
 				selectedCity: lResponseData.data.city_id,
 				selectedStates: lResponseData.data.state_id,
 				selectedCountry: lResponseData.data.country_id
-
 			});
 
 		} else {

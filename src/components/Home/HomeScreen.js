@@ -438,7 +438,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#EBF5FB',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2  }}>{strings('login.Value_of_Coupons_Scanned')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCouponsScanned}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCouponsScanned}</Text>
                   </View>
                   {/* <Text style={{ padding: 20, textAlign: 'center', fontSize: 24 }}>{this.state.totalCouponsRedeemed}</Text> */}
                 </Card>
@@ -458,7 +458,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2  }}>{strings('login.Value_of_Coupons_Scanned')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCashCouponsScanned}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCashCouponsScanned}</Text>
                   </View>
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2,color:'green' }}>{strings('login.No_of_Coupons_Credited')}</Text>
@@ -468,7 +468,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2,color:'green'  }}>{strings('login.Value_of_Coupons_Credited')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCashCouponsCredited}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCashCouponsCredited}</Text>
                   </View>
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2,color:'orange' }}>{strings('login.No_of_Coupons_Pending')}</Text>
@@ -478,7 +478,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2 ,color:'orange' }}>{strings('login.Value_of_Coupons_Pending')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCashCouponsPending}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCashCouponsPending}</Text>
                   </View>
                   {/* <Text style={{ padding: 20, textAlign: 'center', fontSize: 24 }}>{this.state.totalCouponsRedeemed}</Text> */}
                 </Card>
@@ -498,7 +498,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#eafaf1',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2  }}>{strings('login.Value_of_Coupons_Scanned')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfFOCCouponsScanned}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfFOCCouponsScanned}</Text>
                   </View>
                   {/* <Text style={{ padding: 20, textAlign: 'center', fontSize: 24 }}>{this.state.totalCouponsRedeemed}</Text> */}
                 </Card>

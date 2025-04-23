@@ -9,8 +9,10 @@ import RemoveAccount from '../components/Profile/RemoveAccount';
 import ScanScreen from '../components/Scan/ScanScreen';
 import HistoryScreen from '../components/History/HistoryScreen';
 import ProfileScreen from '../components/Profile/ProfileScreen';
+import WalletScreen from '../components/Wallet/WalletScreen';
+import BankDetailScreen from '../components/BankDetail/BankDetailScreen';
 import ReportScreen from '../components/Report/ReportScreen';
-import  ReportHistory  from '../components/Report/ReportHistory';
+import ReportHistory  from '../components/Report/ReportHistory';
 import CouponSchemeDetails from '../components/History/CouponSchemeDetails';
 import LanguageSelection from './LanguageSelection';
 import CashBatchesScreen from '../components/CashBatchesScreen';
@@ -41,6 +43,8 @@ const MainNavigator = createStackNavigator({
   HistoryScreen: { screen: HistoryScreen, navigationOptions: { header: null } },
   ReportScreen: { screen: ReportScreen, navigationOptions: { header: null } },
   ProfileScreen: { screen: ProfileScreen, navigationOptions: { header: null } },
+  WalletScreen: { screen: WalletScreen, navigationOptions: { header: null } },
+  BankDetailScreen: { screen: BankDetailScreen, navigationOptions: { header: null } },
   RemoveAccount: { screen: RemoveAccount, navigationOptions: { header: null } },
   ReportHistory: { screen: ReportHistory, navigationOptions: { header: null } },
   CouponSchemeDetails: { screen: CouponSchemeDetails, navigationOptions: { header: null } },

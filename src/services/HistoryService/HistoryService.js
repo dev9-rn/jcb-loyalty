@@ -16,7 +16,12 @@ class HistoryService {
 
 	async getRedeemHistory(pFormData) {
 		var lUrl = URL + 'getRedeemHistory';
-		await fetch(lUrl, {
+
+		// console.log("pFormData" + pFormData	);
+		console.log("ACCESSTOKEN" + ACCESSTOKEN);
+		console.log("APIKEY" + APIKEY);
+		console.log("lUrl" + lUrl);
+		await fetch(lUrl, { 
 			method: 'POST',
 			headers: {
 				'Accept': 'application\/json',
@@ -28,7 +33,7 @@ class HistoryService {
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
-				console.log(responseJson);
+				console.log("responseJson" + responseJson.status);
 
 				console.log(JSON.stringify(responseJson));
 				this.setRespData(responseJson);

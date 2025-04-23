@@ -21,7 +21,7 @@ class Tab1 extends React.Component {
 		super(props);
 		this.redeemHistoryCash = this.props.redeemCash;
 		this.state = {
-			data: this.props.redeemCash,
+			// data: this.props.redeemCash,
 			// data: redeemHistoryCash,
 			deleteItem: false,
 			loading: false,
@@ -75,6 +75,8 @@ class Tab1 extends React.Component {
             }
         })
     };
+
+	
     handleDatePicked1 = date => {
         console.log(date);
         console.log("=-=-=-=-=-=-=-=-=-=-=-=----=-======-=-=-=-=-=-=-=-==-=-=-=-=-=");
@@ -116,15 +118,23 @@ class Tab1 extends React.Component {
 	callApi = () => {
 		this.setState({ loading: true })
 		const formData = new FormData();
-		console.log(ACCESSTOKEN);
+		// console.log(ACCESSTOKEN);
+		// console.log("working........................");
 
 		formData.append('distributorId', this.state.distributorId);
 		formData.append('fromDate', this.state.frmDate);
 		formData.append('toDate', this.state.toDate);
 		formData.append('offset', this.state.offset);
-		formData.append('redeemType', 'Cash');
+		formData.append('redeemType', '3');
+		formData.append('userType',0);
 
+
+		console.log(formData);
+		console.log("APIKEY" + APIKEY)
+		console.log("ACCESSTOKEN" + ACCESSTOKEN)
+		
 		var lUrl = URL + 'getRedeemHistory';
+		console.log("lUrl" + lUrl)
 		fetch(lUrl, {
 			method: 'POST',
 			headers: {
@@ -137,7 +147,7 @@ class Tab1 extends React.Component {
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
-				console.log(responseJson);
+				// console.log("responseJson" + responseJson);
 
 				this.setState({ offset: responseJson.offset })
 				this.dataVerify(responseJson)
@@ -160,6 +170,7 @@ class Tab1 extends React.Component {
 		}
 		else if (lResponseData.status == 200) {
 			this.setState({ noMoreDataError: "" })
+			console.log("Working" + lResponseData);
 			if (lResponseData.redeemHistory.length == 0) {
 				this.setState({ redeemHistory: lResponseData.redeemHistory, redeemHistoryScheme: [], redeemHistoryCash: [] });
 			} else if (lResponseData.redeemHistory.length > 0) {
@@ -280,7 +291,10 @@ class Tab1 extends React.Component {
 		}
 	}
 
+	
+
 	render() {
+		console.log("this.state.redeemHistoryCashArr" + this.state.redeemHistory);
 		// console.log("render datetime" ,new Date(moment(`${this.state.frmDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString()))
 		return (
 			<View style={styles.container}>
