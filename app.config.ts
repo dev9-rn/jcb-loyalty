@@ -70,7 +70,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "expo-camera",
       {
-        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera",
+        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera to scan coupon QR codes",
         recordAudioAndroid: false
       }
     ],
