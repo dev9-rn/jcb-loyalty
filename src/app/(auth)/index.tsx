@@ -111,14 +111,14 @@ const SignInScreen = ({ }: Props) => {
                         <Controller
                             control={control}
                             rules={{
-                                required: t("login.phoneRequired"),
+                                required: t("login.errors.phoneRequired"),
                                 maxLength: {
                                     value: 10,
-                                    message: t("login.phoneInvalid")
+                                    message: t("login.errors.phoneInvalid")
                                 },
                                 minLength: {
                                     value: 10,
-                                    message: t("login.phoneInvalid")
+                                    message: t("login.errors.phoneInvalid")
                                 }
                             }}
                             render={({ field: { onBlur, onChange, value } }) => (

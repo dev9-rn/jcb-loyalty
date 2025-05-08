@@ -1,6 +1,8 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
+import { Button } from '@/components/ui/button'
+import { ArrowLeftIcon } from '@/libs/icons/ArrowLeftIcon'
 
 type Props = {}
 
@@ -17,6 +19,11 @@ const AuthLayout = ({ }: Props) => {
                 options={{
                     headerTitle: "Sign Up",
                     headerTitleAlign: 'center',
+                    headerLeft: () => (
+                        <Button variant={"ghost"} size={"icon"} onPress={() => router.back()}>
+                            <ArrowLeftIcon color={"#222"} />
+                        </Button>
+                    ),
                 }}
             />
 

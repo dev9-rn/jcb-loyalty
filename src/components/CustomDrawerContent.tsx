@@ -10,20 +10,23 @@ import { LogOutIcon } from '@/libs/icons/LogoutIcon';
 import useAuth from '@/hooks/useAuth'
 import MultiLangualDropdown from './MultiLangualDropdown'
 import { useTranslation } from 'react-i18next'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
     const { userDetails } = useUser();
+    const insets = useSafeAreaInsets();
     const { logout } = useAuth()
     const { t } = useTranslation();
 
     return (
         <View className='flex-1'>
-            <Button size={"icon"} variant={"ghost"} onPress={() => props.navigation.closeDrawer()} className='mx-4 mt-4'>
-                <MenuIcon className='text-primary' />
-            </Button>
+
 
             <DrawerContentScrollView {...props}>
+                <Button size={"icon"} variant={"ghost"} onPress={() => props.navigation.closeDrawer()} className='mb-4'>
+                    <MenuIcon className='text-primary' />
+                </Button>
                 <View className='items-center mb-4 bg-primary/20 rounded-md p-4 pt-0'>
                     <Image source={require("@/assets/images/app-logo.png")} className='size-40' resizeMode='contain' />
 

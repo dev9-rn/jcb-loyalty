@@ -42,7 +42,7 @@ const SignUpScreen = ({ }: Props) => {
 
     const toast = useToast();
 
-    const { control, handleSubmit, reset, setValue, getValues, formState: { errors, isDirty } } = useForm<z.infer<typeof signUpForm>>({
+    const { control, handleSubmit, reset, setValue, getValues, formState: { errors, isDirty, } } = useForm<z.infer<typeof signUpForm>>({
         resolver: zodResolver(signUpForm),
         defaultValues: {
             userType: userType,
@@ -186,7 +186,7 @@ const SignUpScreen = ({ }: Props) => {
 
         const registerFormData = new FormData();
 
-        registerFormData.append(userType !== "distributor" ? "dealerName" : "name", formData.userName);
+        registerFormData.append(userType !== t("login.distributor") ? "dealerName" : "name", formData.userName);
         registerFormData.append('mobileNo', formData.userPhoneNumber);
         registerFormData.append('pinCode', formData.userPincode);
         registerFormData.append('countryId', formData.userCountry.id);
@@ -203,7 +203,7 @@ const SignUpScreen = ({ }: Props) => {
             registerFormData.append('brandId', formData.distributorBrand?.id);
         };
 
-        if (userType === "retailer") {
+        if (userType === t("login.retailer")) {
             registerFormData.append('shopName', formData.retailerShopName);
             registerFormData.append('distributorCode', formData.retailerCode);
             registerFormData.append('address', formData.retailerAddress);
@@ -235,8 +235,6 @@ const SignUpScreen = ({ }: Props) => {
             };
         }
     };
-
-    console.log(errors, "ERRORS_FORM");
 
     return (
         <>

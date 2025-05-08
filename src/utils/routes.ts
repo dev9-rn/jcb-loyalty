@@ -41,5 +41,6 @@ export const GET_RETAILER_COUPON_HISTORY = "/api/getScannedHistory";
 export const SCAN_RETAILER_COUPON = "/api/scanCoupon";
 export const VERIFY_VALID_RETAILER = "/api/verifyDealer";
 
-// Commong
+// Common
 export const DELETE_USER_ACCOUNT = "/api/removeAccount";
+export const GET_USER_NOTIFICATIONS = "/api/getNotifications";

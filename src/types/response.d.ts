@@ -270,4 +270,12 @@ interface IDealerListDetail {
     updated: string | null;
     state: string;
     city: string;
+};
+
+interface INotificationHistory {
+    id: string;
+    title: string;
+    notification: string;
+    data_id: string | null;
+    created_date: string; // You can change this to `Date` if you're parsing the string
 }
