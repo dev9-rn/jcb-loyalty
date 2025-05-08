@@ -98,5 +98,5 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       projectId: "e3663a7a-dde4-41c5-bd82-06781e2491cd"
     }
   },
-  owner: "test-scube"
+  owner: "test-cube"
 });
