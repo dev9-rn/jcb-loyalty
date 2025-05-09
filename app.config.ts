@@ -95,8 +95,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       origin: false
     },
     eas: {
-      projectId: "e3663a7a-dde4-41c5-bd82-06781e2491cd"
+      projectId: "5390f040-20ce-47a1-bdd8-0a60d5da2a6b"
     }
   },
-  owner: "test-cube"
+  owner: "kaustubh-scube"
 });
