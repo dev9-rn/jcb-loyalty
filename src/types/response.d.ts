@@ -138,6 +138,12 @@ interface IRedeemedCoupon extends IValidCoupon {
             value: string;
         } | {};
     }[],
+    redeemedMethods: {
+        redeem_type: string;
+        details: {
+            value: string;
+        } | {};
+    }[],
     couponData: ICouponDetails;
 };
 

@@ -35,6 +35,10 @@ const CitiesDropdown = ({ options, selected, onSelect, placeholder }: Props) => 
         );
     }, [search, options]);
 
+    const selectedOption = useMemo(() => {
+        return options.find(option => option.id === selected?.value);
+    }, [selected, options]);
+
     const handleSelect = (option: Option) => {
         onSelect({
             id: option?.value,
@@ -51,7 +55,7 @@ const CitiesDropdown = ({ options, selected, onSelect, placeholder }: Props) => 
                 onPress={() => setVisible(true)}
             >
                 <Text style={styles.triggerText}>
-                    {selected ? selected.label : placeholder || 'Select an option'}
+                    {selectedOption ? selectedOption.name : placeholder || 'Select an option'}
                 </Text>
             </TouchableOpacity>
 

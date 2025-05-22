@@ -7,7 +7,7 @@ import { USER_LOGIN, USER_LOGOUT, VERIFY_OTP } from '@/utils/routes'
 import { storage, storageService, tokenStorage, tokenStorageService } from '@/utils/storageService'
 import { STORAGE_KEYS } from '@/libs/constants'
 import useUser from '@/hooks/useUser'
-import { useToast } from 'react-native-toast-notifications'
+import { Toast, useToast } from 'react-native-toast-notifications'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import axios from 'axios'
 import useNotification from '@/hooks/useNotification'
@@ -96,6 +96,11 @@ const AuthProvider = ({ children }: Props) => {
                 return response
             };
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                Toast.show(error.response?.data.message, {
+                    data: error.response
+                });
+            }
             return error
         }
     };

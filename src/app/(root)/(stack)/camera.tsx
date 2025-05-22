@@ -112,13 +112,13 @@ const CameraScreen = ({ }: Props) => {
         if (userDetails?.userType === 1) {
             return {
                 endpoint: CHECK_COUPON,
-                user_id: "mechanicId"
+                user_id: "distributorId"
             };
         };
 
         return {
             endpoint: CHECK_COUPON,
-            user_id: "dealerId"
+            user_id: "distributorId"
         };
     }
 

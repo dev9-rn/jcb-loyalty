@@ -76,7 +76,7 @@ const MultiLangualDropdown = ({ }: Props) => {
     const previousLanguage = getPreviousSelectedLanguage();
 
     return (
-        <View className='flex-row items-center gap-8'>
+        <View className='flex-row items-center gap-4'>
             <Text className='text-lg font-medium'>Language:</Text>
             <Select
                 defaultValue={{

@@ -8,7 +8,7 @@ import { Text } from '@/components/ui/text';
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import useAuth from '@/hooks/useAuth';
 import axios, { AxiosResponse } from 'axios';
-import { RETAILER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER, VERIFY_VALID_RETAILER } from '@/utils/routes';
+import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER, VERIFY_VALID_RETAILER } from '@/utils/routes';
 import RetailerApprovalDialog from '@/components/RetailerApprovalDialog';
 import useNotification from '@/hooks/useNotification';
 import { useTranslation } from 'react-i18next';
@@ -81,11 +81,11 @@ const OtpVerificationScreen = ({ }: Props) => {
 
     const getLoginEndpoint = () => {
         if (userType === t("login.mechanic")) {
-            return VERIFY_MECHANIC
+            return MECHANIC_LOGIN
         };
 
         if (userType === t("login.distributor")) {
-            return VERIFY_OTP
+            return USER_LOGIN
         };
 
         return RETAILER_LOGIN

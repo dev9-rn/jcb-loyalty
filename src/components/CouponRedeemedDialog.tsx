@@ -31,7 +31,16 @@ const CouponRedeemedDialog = ({ redeemedData, isCouponRedeemed, setIsCouponRedee
                 <DialogHeader className='items-center'>
                     <View className='items-center gap-2'>
                         <DialogTitle className='!text-primary'>
-                            {redeemedData?.redeemMethods[0].redeem_type === "1" ? "FOC Coupon" : "Cash Coupon"}
+                            {redeemedData?.redeemMethods && (
+                                <>
+                                    {redeemedData?.redeemMethods[0].redeem_type === "1" ? "FOC Coupon" : "Cash Coupon"}
+                                </>
+                            )}
+                            {redeemedData?.redeemedMethods && (
+                                <>
+                                    {redeemedData?.redeemedMethods[0].redeem_type === "1" ? "FOC Coupon" : "Cash Coupon"}
+                                </>
+                            )}
                         </DialogTitle>
                         <CircleCheckIcon className='text-green-500' height={35} width={35} />
                     </View>

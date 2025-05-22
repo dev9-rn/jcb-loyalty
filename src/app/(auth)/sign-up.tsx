@@ -35,14 +35,12 @@ const SignUpScreen = ({ }: Props) => {
 
     const { userDetails } = useUser();
     const { t } = useTranslation();
-
     const { userType } = useLocalSearchParams<{ userType: string }>();
 
     const signUpForm = createSchema(t)
-
     const toast = useToast();
 
-    const { control, handleSubmit, reset, setValue, getValues, formState: { errors, isDirty, } } = useForm<z.infer<typeof signUpForm>>({
+    const { control, handleSubmit, reset, setValue, getValues, watch, formState: { errors, isDirty, } } = useForm<z.infer<typeof signUpForm>>({
         resolver: zodResolver(signUpForm),
         defaultValues: {
             userType: userType,
@@ -75,22 +73,25 @@ const SignUpScreen = ({ }: Props) => {
         }
     });
 
+    const watchedCountry = watch('userCountry');
+    const watchedState = watch('userState');
+
     useEffect(() => {
         fetchCountryList();
         fetchBrands();
     }, []);
 
     useEffect(() => {
-        if (!getValues().userCountry.id && !userDetails?.country_id) return;
+        if (!watchedCountry.id) return;
 
         fetchStateList();
-    }, [getValues().userCountry.id]);
+    }, [watchedCountry.id]);
 
     useEffect(() => {
-        if (!getValues().userState.id && !userDetails?.state_id) return;
+        if (!watchedState.id) return;
 
         fetchCitiesList();
-    }, [getValues().userState.id]);
+    }, [watchedState.id]);
 
     // Get the list of the country for dropdown
     const fetchCountryList = async () => {
@@ -116,7 +117,7 @@ const SignUpScreen = ({ }: Props) => {
     const fetchStateList = async () => {
 
         const stateListFormData = new FormData();
-        stateListFormData.append("countryId", getValues().userCountry.id || userDetails?.country_id)
+        stateListFormData.append("countryId", watchedCountry.id)
 
         try {
             const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
@@ -135,7 +136,7 @@ const SignUpScreen = ({ }: Props) => {
     const fetchCitiesList = async () => {
 
         const citiesFormData = new FormData();
-        citiesFormData.append("stateId", getValues().userState.id || userDetails?.state_id)
+        citiesFormData.append("stateId", watchedState.id)
 
         try {
             const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);

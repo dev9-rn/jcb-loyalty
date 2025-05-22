@@ -53,7 +53,7 @@ const ProfileScreen = ({ }: Props) => {
         // fetchBrands();
     }, []);
 
-    const { control, handleSubmit, reset, getValues, resetField, formState: { errors, isDirty, disabled, dirtyFields } } = useForm<z.infer<typeof signUpFormprofileUpdateForm>>({
+    const { control, handleSubmit, reset, getValues, resetField, watch, formState: { errors, isDirty, disabled, dirtyFields } } = useForm<z.infer<typeof signUpFormprofileUpdateForm>>({
         mode: "onChange",
         resolver: zodResolver(signUpFormprofileUpdateForm),
         disabled: !isFormDisabled,
@@ -88,17 +88,20 @@ const ProfileScreen = ({ }: Props) => {
         }
     });
 
+    const watchedCountry = watch('userCountry');
+    const watchedState = watch('userState');
+
     useEffect(() => {
-        if (!getValues().userCountry.id && !userDetails?.country_id) return;
+        if (!watchedCountry.id && !userDetails?.country_id) return;
 
         fetchStateList();
-    }, [getValues().userCountry.id]);
+    }, [watchedCountry.id, userDetails?.country_id]);
 
     useEffect(() => {
-        if (!getValues().userState.id && !userDetails?.state_id) return;
+        if (!watchedState.id && !userDetails?.state_id) return;
 
         fetchCitiesList();
-    }, [getValues().userState.id]);
+    }, [watchedState.id]);
 
     useEffect(() => {
         if (!profileDetails || !brands) return;
@@ -108,10 +111,11 @@ const ProfileScreen = ({ }: Props) => {
             (country) => country.id === profileDetails.country_id || userDetails?.country_id
         );
 
+        
         const matchedState = stateList.find(
             (state) => state.id === profileDetails.state_id || userDetails?.state_id
         );
-
+        
         const matchedCity = citiesList.find(
             (city) => city.id === profileDetails.city_id || userDetails?.city_id
         );
@@ -160,7 +164,7 @@ const ProfileScreen = ({ }: Props) => {
     const fetchStateList = async () => {
 
         const stateListFormData = new FormData();
-        stateListFormData.append("countryId", getValues().userCountry.id || userDetails?.country_id)
+        stateListFormData.append("countryId", watchedCountry.id || userDetails?.country_id)
 
         try {
             const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
@@ -181,7 +185,7 @@ const ProfileScreen = ({ }: Props) => {
     const fetchCitiesList = async () => {
 
         const citiesFormData = new FormData();
-        citiesFormData.append("stateId", getValues().userState.id || userDetails?.state_id)
+        citiesFormData.append("stateId", watchedState.id || userDetails?.state_id)
 
         try {
             const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
