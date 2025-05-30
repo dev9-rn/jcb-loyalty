@@ -99,10 +99,8 @@ const HomeScreen = ({ }: Props) => {
 							<CardDescription>{t('dashboard.couponsScannedDesc')}</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<Text className="text-2xl font-semibold text-primary">
-								{dashboardData?.totalCouponsRedeemed ||
-									dashboardData?.totalCouponsRedeemedCount ||
-									dashboardData?.totalCouponsScanned}
+							<Text className="text-2xl font-semibold">
+								{dashboardData?.totalCouponsRedeemed.toString() || dashboardData?.totalCouponsRedeemedCount.toString() || dashboardData?.totalCouponsScanned.toString()}
 							</Text>
 						</CardContent>
 					</Card>
@@ -123,15 +121,15 @@ const HomeScreen = ({ }: Props) => {
 						</CardHeader>
 						<CardContent>
 							<Text className="text-2xl font-semibold text-primary">
-								{dashboardData?.totalAmountRedeemed ||
-									dashboardData?.totalCouponsRedeemedPoint ||
-									dashboardData?.totalAmountCouponsScanned}
+								{dashboardData?.totalAmountRedeemed.toString() ||
+									dashboardData?.totalCouponsRedeemedPoint.toString() ||
+									dashboardData?.totalAmountCouponsScanned.toString()}
 							</Text>
 						</CardContent>
 					</Card>
 
-					{/* Uncomment and translate if needed
-					{userDetails?.userType === 1 && (
+					{/* Uncomment and translate if needed */}
+					{dashboardData?.totalCouponsRedeemedCash || dashboardData?.totalBalancedPoint && (
 						<Card className="w-[48%]">
 							<CardHeader className="gap-2">
 								<CardTitle>{t('dashboard.couponScannedForCash')}</CardTitle>
@@ -145,17 +143,19 @@ const HomeScreen = ({ }: Props) => {
 						</Card>
 					)}
 
-					<Card className="w-[48%]">
-						<CardHeader className="gap-2">
-							<CardTitle>{t('dashboard.couponScannedForScheme')}</CardTitle>
-							<CardDescription>{t('dashboard.couponScannedForSchemeDesc')}</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<Text className="text-2xl font-semibold text-primary">
-								{dashboardData?.totalCouponsRedeemedFOC}
-							</Text>
-						</CardContent>
-					</Card> */}
+					{(dashboardData?.totalCouponsRedeemedFOC || 0) > 0 && (
+						<Card className="w-[48%]">
+							<CardHeader className="gap-2">
+								<CardTitle>{t('dashboard.couponScannedForFoc')}</CardTitle>
+								<CardDescription>{t('dashboard.couponScannedForFocDesc')}</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<Text className="text-2xl font-semibold text-primary">
+									{dashboardData?.totalCouponsRedeemedFOC}
+								</Text>
+							</CardContent>
+						</Card>
+					)}
 
 				</View>
 

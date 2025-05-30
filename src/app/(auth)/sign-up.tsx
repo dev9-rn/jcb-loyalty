@@ -224,19 +224,19 @@ const SignUpScreen = ({ }: Props) => {
                 });
             };
 
-            toast.show(response.data.message, {
-                data: response
-            });
-            router.back();
-
-            // router.navigate({
-            //     pathname: "/(auth)/otp-verify",
-            //     params: {
-            //         userPhone: formData.userPhoneNumber,
-            //         userType,
-            //         methodType: "registration",
-            //     }
+            // toast.show(response.data.message, {
+            //     data: response
             // });
+            // router.back();
+
+            router.navigate({
+                pathname: "/(auth)/otp-verify",
+                params: {
+                    userPhone: formData.userPhoneNumber,
+                    userType,
+                    methodType: "registration",
+                }
+            });
 
         } catch (error) {
             if (axios.isAxiosError(error)) {

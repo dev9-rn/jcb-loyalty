@@ -45,7 +45,7 @@ const OtpVerificationScreen = ({ }: Props) => {
             return VERIFY_OTP
         };
 
-        return methodType === t("login.retailer") ? VERIFY_VALID_RETAILER : VERIFY_RETAILER;
+        return methodType === "registration" ? VERIFY_VALID_RETAILER : VERIFY_RETAILER;
     };
 
     const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (formData) => {

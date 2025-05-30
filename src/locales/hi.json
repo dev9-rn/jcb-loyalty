@@ -92,20 +92,20 @@
     },
     "dashboard": {
         "couponsScanned": "कूपन स्कैन किए गए",
-        "couponsScannedDesc": "कुल कूपनों की संख्या जो रिडीम किए गए",
-        "redeemed": "रिडीम",
-        "scanned": "स्कैन",
+        "couponsScannedDesc": "कुल रिडीम किए गए कूपनों की संख्या",
+        "redeemed": "रिडीम किए गए",
+        "scanned": "स्कैन किए गए",
         "points": "अंक",
         "amount": "राशि",
         "redeemedPoints": "रिडीम किए गए अंक",
         "scannedAmount": "स्कैन की गई राशि",
         "totalTillDate": "अब तक कुल {{type}}",
         "scanButton": "स्कैन करें",
-        "couponScannedForCash": "नकद के लिए कूपन स्कैन किए गए",
-        "couponScannedForCashDesc": "नकद के लिए स्कैन किए गए कूपनों की कुल संख्या",
-        "couponScannedForScheme": "योजना के लिए कूपन स्कैन किए गए",
-        "couponScannedForSchemeDesc": "योजना के लिए स्कैन किए गए कूपनों की कुल संख्या",
-        "totalBalancePoints": "कुल बैलेंस अंक"
+        "couponScannedForCash": "कैश के लिए स्कैन किए गए कूपन",
+        "couponScannedForCashDesc": "कैश के लिए स्कैन किए गए कुल कूपन",
+        "couponScannedForFoc": "एफओसी के लिए स्कैन किए गए कूपन",
+        "couponScannedForFocDesc": "एफओसी के लिए स्कैन किए गए कुल कूपन",
+        "totalBalancePoints": "कुल शेष अंक"
     },
     "coupon-history": {
         "serial_no": "क्रम संख्या:",

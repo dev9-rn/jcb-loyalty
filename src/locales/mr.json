@@ -91,21 +91,21 @@
         "addressInformationSubtitle": "आयडी प्रमाणे तपशील भरा."
     },
     "dashboard": {
-        "couponsScanned": "स्कॅन केलेले कूपन",
-        "couponsScannedDesc": "एकूण कूपन ज्यांना रिडीम केले गेले आहे",
-        "redeemed": "रिडीम",
-        "scanned": "स्कॅन",
-        "points": "अंक",
+        "couponsScanned": "कूपन्स स्कॅन केले",
+        "couponsScannedDesc": "एकूण रिडीम केलेल्या कूपन्सची संख्या",
+        "redeemed": "रिडीम केले",
+        "scanned": "स्कॅन केले",
+        "points": "गुण",
         "amount": "रक्कम",
-        "redeemedPoints": "रिडीम केलेले अंक",
+        "redeemedPoints": "रिडीम केलेले गुण",
         "scannedAmount": "स्कॅन केलेली रक्कम",
-        "totalTillDate": "आत्तापर्यंत एकूण {{type}}",
+        "totalTillDate": "आजपर्यंतचे एकूण {{type}}",
         "scanButton": "स्कॅन करा",
-        "couponScannedForCash": "रोख साठी स्कॅन केलेले कूपन",
-        "couponScannedForCashDesc": "रोख साठी स्कॅन केलेले कूपनचे एकूण संख्या",
-        "couponScannedForScheme": "योजनेसाठी स्कॅन केलेले कूपन",
-        "couponScannedForSchemeDesc": "योजनेसाठी स्कॅन केलेले कूपनचे एकूण संख्या",
-        "totalBalancePoints": "एकूण शिल्लक अंक"
+        "couponScannedForCash": "रोखसाठी स्कॅन केलेले कूपन्स",
+        "couponScannedForCashDesc": "रोखसाठी एकूण स्कॅन केलेली कूपन्स",
+        "couponScannedForFoc": "FOC साठी स्कॅन केलेले कूपन्स",
+        "couponScannedForFocDesc": "FOC साठी एकूण स्कॅन केलेले कूपन्स",
+        "totalBalancePoints": "एकूण शिल्लक गुण"
     },
     "coupon-history": {
         "serial_no": "क्रमांक:",

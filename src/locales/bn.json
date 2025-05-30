@@ -91,21 +91,21 @@
         "addressInformationSubtitle": "পরিচয়পত্র অনুযায়ী বিশদ লিখুন"
     },
     "dashboard": {
-        "couponsScanned": "স্ক্যান করা কুপন",
-        "couponsScannedDesc": "মোট স্ক্যান করা এবং রিডিম হওয়া কুপনের সংখ্যা",
-        "redeemed": "রিডিমড",
-        "scanned": "স্ক্যানড",
-        "points": "পয়েন্টস",
+        "couponsScanned": "কুপন স্ক্যান করা হয়েছে",
+        "couponsScannedDesc": "মোট রিডিম করা কুপনের সংখ্যা",
+        "redeemed": "রিডিম হয়েছে",
+        "scanned": "স্ক্যান হয়েছে",
+        "points": "পয়েন্ট",
         "amount": "পরিমাণ",
-        "redeemedPoints": "রিডিমড পয়েন্টস",
+        "redeemedPoints": "রিডিমকৃত পয়েন্ট",
         "scannedAmount": "স্ক্যান করা পরিমাণ",
-        "totalTillDate": "এখন পর্যন্ত মোট {{type}}",
+        "totalTillDate": "এ পর্যন্ত মোট {{type}}",
         "scanButton": "স্ক্যান করুন",
         "couponScannedForCash": "নগদের জন্য স্ক্যান করা কুপন",
-        "couponScannedForCashDesc": "নগদের জন্য স্ক্যান করা কুপনের মোট সংখ্যা",
-        "couponScannedForScheme": "স্কিমের জন্য স্ক্যান করা কুপন",
-        "couponScannedForSchemeDesc": "স্কিমের জন্য স্ক্যান করা কুপনের মোট সংখ্যা",
-        "totalBalancePoints": "মোট ব্যালেন্স পয়েন্টস"
+        "couponScannedForCashDesc": "নগদের জন্য মোট স্ক্যান করা কুপন",
+        "couponScannedForFoc": "এফওসি-র জন্য স্ক্যান করা কুপন",
+        "couponScannedForFocDesc": "এফওসি-র জন্য মোট স্ক্যান করা কুপন",
+        "totalBalancePoints": "মোট ব্যালেন্স পয়েন্ট"
     },
     "coupon-history": {
         "serial_no": "ক্রমিক নম্বর:",

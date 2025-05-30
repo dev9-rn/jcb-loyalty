@@ -91,20 +91,21 @@
         "addressInformationSubtitle": "ਆਈਡੀ ਦੇ ਅਨੁਸਾਰ ਵੇਰਵੇ ਭਰੋ।"
     },
     "dashboard": {
-        "couponsScanned": "ਸਕੈਨ ਕੀਤੇ ਗਏ ਕੂਪਨ",
-        "couponsScannedDesc": "ਕੂਪਨ ਜੋ ਰੀਡੀਮ ਕੀਤੇ ਗਏ ਹਨ",
-        "redeemed": "ਰੀਡੀਮ ਕੀਤਾ",
-        "scanned": "ਸਕੈਨ ਕੀਤਾ",
-        "points": "ਪਾਇੰਟ",
-        "redeemedPoints": "ਰੀਡੀਮ ਕੀਤੇ ਗਏ ਪਾਇੰਟ",
+        "couponsScanned": "ਕੂਪਨ ਸਕੈਨ ਕੀਤੇ ਗਏ",
+        "couponsScannedDesc": "ਕੁੱਲ ਰੀਡੀਮ ਕੀਤੇ ਗਏ ਕੂਪਨਾਂ ਦੀ ਗਿਣਤੀ",
+        "redeemed": "ਰੀਡੀਮ ਹੋਏ",
+        "scanned": "ਸਕੈਨ ਹੋਏ",
+        "points": "ਅੰਕ",
+        "amount": "ਰਕਮ",
+        "redeemedPoints": "ਰੀਡੀਮ ਕੀਤੇ ਅੰਕ",
         "scannedAmount": "ਸਕੈਨ ਕੀਤੀ ਰਕਮ",
-        "totalTillDate": "ਅਜੇ ਤੱਕ ਕੁੱਲ {{type}}",
+        "totalTillDate": "ਅੱਜ ਤੱਕ ਕੁੱਲ {{type}}",
         "scanButton": "ਸਕੈਨ ਕਰੋ",
-        "couponScannedForCash": "ਕੈਸ਼ ਲਈ ਸਕੈਨ ਕੀਤਾ ਕੂਪਨ",
-        "couponScannedForCashDesc": "ਕੈਸ਼ ਲਈ ਸਕੈਨ ਕੀਤੇ ਗਏ ਕੂਪਨ ਦੀ ਕੁੱਲ ਗਿਣਤੀ",
-        "couponScannedForScheme": "ਯੋਜਨਾ ਲਈ ਸਕੈਨ ਕੀਤਾ ਕੂਪਨ",
-        "couponScannedForSchemeDesc": "ਯੋਜਨਾ ਲਈ ਸਕੈਨ ਕੀਤੇ ਗਏ ਕੂਪਨ ਦੀ ਕੁੱਲ ਗਿਣਤੀ",
-        "totalBalancePoints": "ਕੁੱਲ ਬੈਲੈਂਸ ਪਾਇੰਟ"
+        "couponScannedForCash": "ਨਕਦ ਲਈ ਸਕੈਨ ਕੀਤੇ ਕੂਪਨ",
+        "couponScannedForCashDesc": "ਨਕਦ ਲਈ ਕੁੱਲ ਸਕੈਨ ਕੀਤੇ ਕੂਪਨ",
+        "couponScannedForFoc": "FOC ਲਈ ਸਕੈਨ ਕੀਤੇ ਕੂਪਨ",
+        "couponScannedForFocDesc": "FOC ਲਈ ਕੁੱਲ ਸਕੈਨ ਕੀਤੇ ਕੂਪਨ",
+        "totalBalancePoints": "ਕੁੱਲ ਬਕਾਇਆ ਅੰਕ"
     },
     "coupon-history": {
         "serial_no": "ਸਿਰੀਅਲ ਨੰਬਰ:",

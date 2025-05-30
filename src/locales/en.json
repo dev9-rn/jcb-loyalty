@@ -103,8 +103,8 @@
         "scanButton": "Scan",
         "couponScannedForCash": "Coupons Scanned for Cash",
         "couponScannedForCashDesc": "Total coupons scanned for cash",
-        "couponScannedForScheme": "Coupons Scanned for Scheme",
-        "couponScannedForSchemeDesc": "Total coupons scanned for scheme",
+        "couponScannedForFoc": "Coupons Scanned for FOC",
+        "couponScannedForFocDesc": "Total coupons scanned for FOC",
         "totalBalancePoints": "Total Balance Points"
     },
     "coupon-history": {

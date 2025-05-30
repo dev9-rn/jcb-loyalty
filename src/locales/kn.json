@@ -91,21 +91,21 @@
         "addressInformationSubtitle": "ಐಡಿ ಪ್ರೂಫ್‌ನ ಪ್ರಕಾರ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ."
     },
     "dashboard": {
-        "couponsScanned": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
-        "couponsScannedDesc": "ಮತ್ತೊಮ್ಮೆ ಬಳಸಿದ ಕೂಪನ್‌ಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ",
+        "couponsScanned": "ಕೂಪನ್‌ಗಳನ್ನು ಸ್ಕಾನ್ ಮಾಡಲಾಗಿದೆ",
+        "couponsScannedDesc": "ಒಟ್ಟು ರಿಡೀಮ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳ ಸಂಖ್ಯೆ",
         "redeemed": "ರಿಡೀಮ್ ಮಾಡಲಾಗಿದೆ",
-        "scanned": "ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗಿದೆ",
+        "scanned": "ಸ್ಕಾನ್ ಮಾಡಲಾಗಿದೆ",
         "points": "ಅಂಕಗಳು",
         "amount": "ಮೊತ್ತ",
         "redeemedPoints": "ರಿಡೀಮ್ ಮಾಡಿದ ಅಂಕಗಳು",
-        "scannedAmount": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಮೊತ್ತ",
-        "totalTillDate": "ಇಂದಿನವರೆಗೆ ಒಟ್ಟು {{type}}",
-        "scanButton": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
-        "couponScannedForCash": "ನಗದುಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
-        "couponScannedForCashDesc": "ನಗದುಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ",
-        "couponScannedForScheme": "ಯೋಜನೆಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
-        "couponScannedForSchemeDesc": "ಯೋಜನೆಗಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ",
-        "totalBalancePoints": "ಒಟ್ಟು ಬಲಾನ್ಸ್ ಅಂಕಗಳು"
+        "scannedAmount": "ಸ್ಕಾನ್ ಮಾಡಿದ ಮೊತ್ತ",
+        "totalTillDate": "ಇಂದುದಿನದ ವರೆಗೆ ಒಟ್ಟು {{type}}",
+        "scanButton": "ಸ್ಕಾನ್ ಮಾಡಿ",
+        "couponScannedForCash": "ಹಣಕ್ಕಾಗಿ ಕೂಪನ್‌ಗಳು ಸ್ಕಾನ್ ಮಾಡಲಾಗಿದೆ",
+        "couponScannedForCashDesc": "ಹಣಕ್ಕಾಗಿ ಒಟ್ಟು ಸ್ಕಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
+        "couponScannedForFoc": "FOC ಗಾಗಿ ಕೂಪನ್‌ಗಳು ಸ್ಕಾನ್ ಮಾಡಲಾಗಿದೆ",
+        "couponScannedForFocDesc": "FOC ಗಾಗಿ ಒಟ್ಟು ಸ್ಕಾನ್ ಮಾಡಿದ ಕೂಪನ್‌ಗಳು",
+        "totalBalancePoints": "ಒಟ್ಟು ಉಳಿದಿರುವ ಅಂಕಗಳು"
     },
     "coupon-history": {
         "serial_no": "ಕ್ರಮ ಸಂಖ್ಯೆ:",
