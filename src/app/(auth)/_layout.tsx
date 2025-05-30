@@ -20,11 +20,6 @@ const AuthLayout = ({ }: Props) => {
                     headerTitle: "Sign Up",
                     headerTitleAlign: 'center',
                     headerTintColor: "#FFF",
-                    headerLeft: () => (
-                        <TouchableOpacity onPress={() => router.back()}>
-                            <ArrowLeftIcon color={"#FFF"} />
-                        </TouchableOpacity>
-                    ),
                 }}
             />
 

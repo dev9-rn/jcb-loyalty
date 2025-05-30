@@ -180,7 +180,7 @@ const SignInScreen = ({ }: Props) => {
                         <Separator className='flex-1' />
                     </View>
 
-                    <Button onPress={() => toggleSignInType()} className={`${colorScheme !== "light" ? "bg-[#144799]" : "bg-[#f0a028]"}`}>
+                    <Button onPress={() => toggleSignInType()} className={`${colorScheme !== "light" ? "bg-[#0059FF]" : "bg-[#ffa31a]"}`}>
                         <Text>
                             {t("login.switchTo")}{" "}
                             <Text>{USER_TYPES[(USER_TYPES.indexOf(selectedSignInType) + 1) % USER_TYPES.length]}</Text>
@@ -188,7 +188,15 @@ const SignInScreen = ({ }: Props) => {
                     </Button>
                 </View>
             </KeyboardAwareScrollView>
-        </SafeAreaView>
+
+            <View className='self-center'>
+                <Image
+                    source={require("@/assets/images/partner-brand.png")}
+                    className='size-52'
+                    resizeMode='contain'
+                />
+            </View>
+        </SafeAreaView >
     )
 }
 

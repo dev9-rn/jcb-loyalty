@@ -30,8 +30,6 @@ const SignUpScreen = ({ }: Props) => {
     const [stateList, setStateList] = useState<ILocationData[]>([]);
     const [citiesList, setCitiesList] = useState<ILocationData[]>([]);
     const [brands, setBrands] = useState<IBrandsDetails[]>([]);
-    const [searchedCountry, setSearchedCountry] = useState<string>("");
-    const [selected, setSelected] = useState(null);
 
     const { userDetails } = useUser();
     const { t } = useTranslation();
