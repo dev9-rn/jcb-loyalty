@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { router, Stack } from 'expo-router'
 import useUser from '@/hooks/useUser'
@@ -16,7 +16,7 @@ const StackLayout = ({ }: Props) => {
             screenOptions={{
                 headerTitleAlign: 'center',
                 headerStyle: {
-                    backgroundColor: userDetails?.userType === 0 ? "#144799" : '#f0a028',
+                    backgroundColor: userDetails?.userType === 0 ? "#0059FF" : '#ffa31a',
                 },
                 headerTintColor: "#FFF",
             }}
@@ -26,9 +26,9 @@ const StackLayout = ({ }: Props) => {
                 options={{
                     title: "Notification",
                     headerLeft: () => (
-                        <Button variant={"ghost"} size={"icon"} onPress={() => router.back()}>
+                        <TouchableOpacity onPress={() => router.back()}>
                             <ArrowLeftIcon color={"#FFF"} />
-                        </Button>
+                        </TouchableOpacity>
                     ),
                 }}
             />

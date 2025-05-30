@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { router, Stack } from 'expo-router'
 import { Button } from '@/components/ui/button'
@@ -19,10 +19,11 @@ const AuthLayout = ({ }: Props) => {
                 options={{
                     headerTitle: "Sign Up",
                     headerTitleAlign: 'center',
+                    headerTintColor: "#FFF",
                     headerLeft: () => (
-                        <Button variant={"ghost"} size={"icon"} onPress={() => router.back()}>
-                            <ArrowLeftIcon color={"#222"} />
-                        </Button>
+                        <TouchableOpacity onPress={() => router.back()}>
+                            <ArrowLeftIcon color={"#FFF"} />
+                        </TouchableOpacity>
                     ),
                 }}
             />

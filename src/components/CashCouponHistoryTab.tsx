@@ -8,6 +8,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { GET_MECHANIC_PASSBOOK, GET_REDEEM_HISTORY, GET_RETAILER_COUPON_HISTORY } from '@/utils/routes';
 import formatDateTime from '@/utils/formatDateTime';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 
 type Props = {}
 
@@ -96,7 +97,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
 
     const fetchCouponHistories = async ({ offset = undefined }: { offset: number | undefined }) => {
 
-        if ((couponHistoryData && couponHistoryData?.status != 200) || offset != 0) return;
+        // if ((couponHistoryData && couponHistoryData?.status != 200) || offset != 0) return;
 
         const redeemHistoryFormData = new FormData();
         redeemHistoryFormData.append(getCouponHistoryEndpoint().user_id, userDetails?.id);
@@ -117,6 +118,10 @@ const CashCouponHistoryTab = ({ }: Props) => {
             setCouponHistoryData(response.data);
             setLoading(false)
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setCouponHistoryData(error.response?.data)
+                // console.log(error.response, "AXIOS ERROR");
+            }
             setLoading(false);
         }
     };
@@ -152,6 +157,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
                     {showToDate && (
                         <DateTimePicker
                             testID="dateTimePicker"
+                            accentColor='#144799'
                             value={selectedFromDate}
                             mode={"date"}
                             is24Hour={true}

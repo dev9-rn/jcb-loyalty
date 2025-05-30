@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -14,6 +14,8 @@ import { NotificationProvider } from "@/providers/NotificationProvider";
 
 import "./globals.css"
 import '../libs/i18n';
+import { useEffect, useState } from "react";
+import CustomSplashScreen from "@/components/CustomSplashScreen";
 
 if (__DEV__) {
   require("../../ReactotronConfig");

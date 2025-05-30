@@ -5,6 +5,7 @@ import { GET_USER_NOTIFICATIONS } from '@/utils/routes'
 import useUser from '@/hooks/useUser'
 import { FlatList } from 'react-native-gesture-handler'
 import formatDateTime from '@/utils/formatDateTime'
+import { useToast } from 'react-native-toast-notifications'
 
 type Props = {}
 
@@ -13,6 +14,7 @@ const NotificationScreen = ({ }: Props) => {
     const [notificationHistory, setNotificationHistory] = React.useState<INotificationHistory[]>([]);
 
     const { userDetails } = useUser();
+    const toast = useToast();
 
     useEffect(() => {
         fetchUserNotificaitonHistory();
@@ -21,16 +23,18 @@ const NotificationScreen = ({ }: Props) => {
     const fetchUserNotificaitonHistory = async () => {
         const notificationFormData = new FormData();
         notificationFormData.append("distributorId", userDetails?.id);
+        notificationFormData.append("userType", userDetails?.userType);
 
         try {
             const response = await axiosInstance.post(GET_USER_NOTIFICATIONS, notificationFormData);
 
             if (response.data.status !== 200) {
-                console.log(response.data.message);
+                toast.show(response.data.message, {
+                    data: response
+                });
             };
 
             setNotificationHistory(response.data.notifications);
-            console.log(response.data);
         } catch (error) {
 
         };

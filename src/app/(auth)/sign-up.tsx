@@ -2,7 +2,7 @@ import { View } from 'react-native'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import useUser from '@/hooks/useUser'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -39,6 +39,7 @@ const SignUpScreen = ({ }: Props) => {
 
     const signUpForm = createSchema(t)
     const toast = useToast();
+    const navigation = useNavigation();
 
     const { control, handleSubmit, reset, setValue, getValues, watch, formState: { errors, isDirty, } } = useForm<z.infer<typeof signUpForm>>({
         resolver: zodResolver(signUpForm),
@@ -79,6 +80,12 @@ const SignUpScreen = ({ }: Props) => {
     useEffect(() => {
         fetchCountryList();
         fetchBrands();
+
+        navigation.setOptions({
+            headerStyle: {
+                backgroundColor: userType === "distributor" ? "#0059FF" : '#ffa31a',
+            },
+        })
     }, []);
 
     useEffect(() => {
@@ -219,14 +226,19 @@ const SignUpScreen = ({ }: Props) => {
                 });
             };
 
-            router.navigate({
-                pathname: "/(auth)/otp-verify",
-                params: {
-                    userPhone: formData.userPhoneNumber,
-                    userType,
-                    methodType: "registration",
-                }
+            toast.show(response.data.message, {
+                data: response
             });
+            router.back();
+
+            // router.navigate({
+            //     pathname: "/(auth)/otp-verify",
+            //     params: {
+            //         userPhone: formData.userPhoneNumber,
+            //         userType,
+            //         methodType: "registration",
+            //     }
+            // });
 
         } catch (error) {
             if (axios.isAxiosError(error)) {

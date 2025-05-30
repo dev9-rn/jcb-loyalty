@@ -22,7 +22,6 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     return (
         <View className='flex-1'>
 
-
             <DrawerContentScrollView {...props}>
                 <Button size={"icon"} variant={"ghost"} onPress={() => props.navigation.closeDrawer()} className='mb-4'>
                     <MenuIcon className='text-primary' />

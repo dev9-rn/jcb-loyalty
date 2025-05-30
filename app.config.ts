@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
-      backgroundColor: "#ffffff"
+      backgroundColor: "#ffffff",
     },
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
     package: "com.daewoo.seqrloyalty",
