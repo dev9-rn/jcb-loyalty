@@ -1,4 +1,4 @@
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -14,8 +14,6 @@ import { NotificationProvider } from "@/providers/NotificationProvider";
 
 import "./globals.css"
 import '../libs/i18n';
-import { useEffect, useState } from "react";
-import CustomSplashScreen from "@/components/CustomSplashScreen";
 
 if (__DEV__) {
   require("../../ReactotronConfig");
@@ -31,39 +29,37 @@ Notifications.setNotificationHandler({
 
 export default function RootLayout() {
   return (
-    <>
-      <NotificationProvider>
-        <KeyboardProvider>
-          <SafeAreaProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <BottomSheetModalProvider>
-                <ToastProvider
-                  offsetBottom={40}
-                  swipeEnabled={true}
-                  renderToast={(props) => <ToastNotification toastData={props} />}
-                >
-                  <UserProvider>
-                    <AuthProvider>
-                      <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen
-                          name="(auth)"
-                          options={{ headerShown: false }}
-                        />
+    <NotificationProvider>
+      <KeyboardProvider>
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <ToastProvider
+                offsetBottom={40}
+                swipeEnabled={true}
+                renderToast={(props) => <ToastNotification toastData={props} />}
+              >
+                <UserProvider>
+                  <AuthProvider>
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen
+                        name="(auth)"
+                        options={{ headerShown: false }}
+                      />
 
-                        <Stack.Screen
-                          name="(root)"
-                          options={{ headerShown: false }}
-                        />
-                      </Stack>
-                    </AuthProvider>
-                  </UserProvider>
-                </ToastProvider>
-                <PortalHost />
-              </BottomSheetModalProvider>
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
-        </KeyboardProvider>
-      </NotificationProvider>
-    </>
+                      <Stack.Screen
+                        name="(root)"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack>
+                  </AuthProvider>
+                </UserProvider>
+              </ToastProvider>
+              <PortalHost />
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </KeyboardProvider>
+    </NotificationProvider>
   );
 }

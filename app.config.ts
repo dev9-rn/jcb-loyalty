@@ -1,8 +1,5 @@
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const IS_DEV = process.env.APP_VARIANT === 'development';
-const IS_PREVIEW = process.env.APP_VARIANT === 'preview';
-
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Daewoo Lubricants",
@@ -79,6 +76,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         photosPermission:
           "The app accesses your photos to let you share them with your friends."
+      }
+    ],
+    [
+      "expo-notifications",
+      {
+        icon: "./src/assets/images/notification_icon.png",
+        // color: "#ffffff",
+        defaultChannel: "default",
+        enableBackgroundRemoteNotifications: false
       }
     ],
     [

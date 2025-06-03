@@ -79,7 +79,7 @@ const CouponHistoryScreen = ({ }: Props) => {
                 </View>
             </View> */}
 
-            <View key="1">
+            <View key="1" className='flex-1'>
                 <CashCouponHistoryTab />
             </View>
 

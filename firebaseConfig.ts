@@ -1,5 +1,4 @@
 import { initializeApp } from "@react-native-firebase/app";
-import { getMessaging } from "@react-native-firebase/messaging";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAY7zlF0XxYcxJodwFlg-HYpKBrO6_B-s0",
@@ -12,5 +11,3 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
-
-export const messaging = getMessaging(firebaseApp);

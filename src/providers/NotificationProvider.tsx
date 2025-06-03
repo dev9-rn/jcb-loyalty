@@ -1,7 +1,7 @@
 import NotificationContext from "@/context/NotificationContext";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
-import { Subscription } from "expo-camera";
+import { EventSubscription as Subscription } from "expo-modules-core";
 import { registerForPushNotificationsAsync } from "@/utils/registerForPushNotificationAsync";
 
 interface NotificationProviderProps {
@@ -12,7 +12,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     children,
 }) => {
     const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
-    const [notification, setNotification] = useState<Notifications.Notification | null>(null);
+    const [notification, setNotification] =
+        useState<Notifications.Notification | null>(null);
     const [error, setError] = useState<Error | null>(null);
 
     const notificationListener = useRef<Subscription>();
@@ -26,18 +27,18 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
         notificationListener.current =
             Notifications.addNotificationReceivedListener((notification) => {
-                console.log("🔔 Notification Received: ", notification);
+                // console.log("🔔 Notification Received when app is running: ", notification);
                 setNotification(notification);
             });
 
         responseListener.current =
             Notifications.addNotificationResponseReceivedListener((response) => {
-                console.log(
-                    "🔔 Notification Response: ",
-                    JSON.stringify(response, null, 2),
-                    JSON.stringify(response.notification.request.content.data, null, 2)
-                );
                 // Handle the notification response here
+                // console.log(
+                //     "🔔 Notification Response: ",
+                //     JSON.stringify(response, null, 2),
+                //     JSON.stringify(response.notification.request.content.data, null, 2)
+                // );
             });
 
         return () => {

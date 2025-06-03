@@ -192,7 +192,7 @@ const SignInScreen = ({ }: Props) => {
             <View className='self-center'>
                 <Image
                     source={require("@/assets/images/partner-brand.png")}
-                    className='size-52'
+                    className='h-36 w-52'
                     resizeMode='contain'
                 />
             </View>

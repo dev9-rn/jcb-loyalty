@@ -21,6 +21,7 @@ import { QrCodeIcon } from '@/libs/icons/QrCodeIcon'
 import { router, useFocusEffect } from 'expo-router'
 import { StatusBar } from 'react-native'
 import { useToast } from 'react-native-toast-notifications'
+import useNotification from '@/hooks/useNotification'
 
 type Props = {}
 
@@ -29,7 +30,8 @@ const HomeScreen = ({ }: Props) => {
 	const [dashboardData, setDashboardData] = useState<IDashboardData | undefined>(undefined)
 
 	const { userDetails } = useUser()
-	const { t } = useTranslation()
+	const { t } = useTranslation();
+	const { expoPushToken, } = useNotification()
 
 	const toast = useToast()
 
@@ -163,6 +165,20 @@ const HomeScreen = ({ }: Props) => {
 					<QrCodeIcon className="text-white" />
 					<Text>{t('dashboard.scanButton')}</Text>
 				</Button>
+
+				{/* <Text selectable>
+					FCM Token:{" "}
+					<Text selectable>
+						{expoPushToken}
+					</Text>
+				</Text>
+
+				<Text selectable>
+					Access Token:{" "}
+					<Text selectable>
+						{userDetails?.accesstoken}
+					</Text>
+				</Text> */}
 			</View>
 		</View>
 	)

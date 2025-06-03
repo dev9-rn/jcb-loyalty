@@ -95,7 +95,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
         }
     }
 
-    const fetchCouponHistories = async ({ offset = undefined }: { offset: number | undefined }) => {
+    const fetchCouponHistories = async ({ offset }: { offset?: number | undefined }) => {
 
         // if ((couponHistoryData && couponHistoryData?.status != 200) || offset != 0) return;
 
@@ -119,15 +119,27 @@ const CashCouponHistoryTab = ({ }: Props) => {
             setLoading(false)
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                setCouponHistoryData(error.response?.data)
+                if (couponHistoryData?.offset === undefined || couponHistoryData?.offset == 0) {
+                    setCouponHistoryData(error.response?.data)
+                };
+
+                console.log(couponHistoryData?.offset, "OFFSET");
                 // console.log(error.response, "AXIOS ERROR");
-            }
+            };
             setLoading(false);
         }
     };
 
+    const getHistoryList = () => {
+        return couponHistoryData?.redeemHistory?.length
+            ? couponHistoryData.redeemHistory
+            : couponHistoryData?.scannedHistory?.length
+                ? couponHistoryData.scannedHistory
+                : [];
+    };
+
     return (
-        <View>
+        <View className='flex-1'>
             <View className='flex-row items-center justify-around py-4 border-b border-muted'>
                 <View className='items-center'>
                     <TouchableOpacity className='flex-row items-center gap-2 p-2' onPress={() => setShowFromDate(true)}>
@@ -173,17 +185,29 @@ const CashCouponHistoryTab = ({ }: Props) => {
                 renderItem={renderCouponItem}
                 // renderItem={userDetails?.userType === 0 ? renderCouponItem : renderMechanicPassbook}
                 ItemSeparatorComponent={() => <Separator />}
-                ListFooterComponent={loading ? <ActivityIndicator size="large" color="blue" /> : null}
-                ListEmptyComponent={() => (
-                    <View className='items-center'>
-                        <Text className='font-medium text-lg text-center'>
-                            {t("coupon-history.no_data_found")}
-                        </Text>
-                    </View>
-                )}
+                ListFooterComponent={() => {
+                    return (
+                        <>
+                            {loading
+                                ? <ActivityIndicator size="large" color="blue" />
+                                : null
+                            }
+                        </>
+                    )
+                }}
+                ListEmptyComponent={() => {
+                    return (
+                        <View className='items-center'>
+                            <Text className='font-medium text-lg text-center'>
+                                {t("coupon-history.no_data_found")}
+                            </Text>
+                        </View>
+                    )
+                }}
                 onEndReached={() => {
-                    if (couponHistoryData?.status === 200) {
-                        fetchCouponHistories({ offset: couponHistoryData?.offset })
+                    const historyList = getHistoryList();
+                    if (historyList.length != couponHistoryData?.offset) {
+                        fetchCouponHistories({ offset: 20 })
                     }
                 }}
                 onEndReachedThreshold={0.5}

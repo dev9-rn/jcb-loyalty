@@ -34,9 +34,9 @@ export async function registerForPushNotificationsAsync() {
         }
         try {
             const pushTokenString = (
-                await Notifications.getExpoPushTokenAsync()
+                await Notifications.getDevicePushTokenAsync()
             ).data;
-            console.log(pushTokenString, Platform.OS);
+            // console.log(pushTokenString, Platform.OS);
             return pushTokenString;
         } catch (e: unknown) {
             throw new Error(`${e}`);
