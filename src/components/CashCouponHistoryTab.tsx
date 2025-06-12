@@ -115,16 +115,23 @@ const CashCouponHistoryTab = ({ }: Props) => {
                 setLoading(false);
             };
 
+            // if (!couponHistoryData) {
+            // } else {
+            //     setCouponHistoryData((prev) => {
+            //         return { ...prev, ...response.data }
+            //     })
+            // }
             setCouponHistoryData(response.data);
+
             setLoading(false)
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (couponHistoryData?.offset === undefined || couponHistoryData?.offset == 0) {
                     setCouponHistoryData(error.response?.data)
+                    return;
                 };
-
-                console.log(couponHistoryData?.offset, "OFFSET");
-                // console.log(error.response, "AXIOS ERROR");
+                
+                setCouponHistoryData(error.response?.data)
             };
             setLoading(false);
         }
@@ -205,10 +212,9 @@ const CashCouponHistoryTab = ({ }: Props) => {
                     )
                 }}
                 onEndReached={() => {
-                    const historyList = getHistoryList();
-                    if (historyList.length != couponHistoryData?.offset) {
-                        fetchCouponHistories({ offset: 20 })
-                    }
+                    // const historyList = getHistoryList();
+                    // if (historyList.length === couponHistoryData?.offset && !couponHistoryData) return;
+                    // fetchCouponHistories({ offset: (couponHistoryData?.offset || 20) + 10 })
                 }}
                 onEndReachedThreshold={0.5}
             />

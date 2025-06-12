@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Drawer } from 'expo-router/drawer';
 import { Button } from '@/components/ui/button';
@@ -16,13 +16,43 @@ import { FileClockIcon } from '@/libs/icons/FileClockIcon';
 import { TruckIcon } from '@/libs/icons/TruckIcon';
 import useUser from '@/hooks/useUser';
 import { useTranslation } from 'react-i18next';
+import axiosInstance from '@/utils/axiosInstance';
+import { GET_USER_NOTIFICATIONS_COUNT } from '@/utils/routes';
+import axios from 'axios';
+import { useToast } from 'react-native-toast-notifications';
+import { Text } from '@/components/ui/text';
+import { View } from 'react-native';
 
 type Props = {}
 
 const DrawerLayout = ({ }: Props) => {
 
+    const [notificationCount, setNotificationCount] = useState<number>(0);
+
     const { userDetails } = useUser();
     const { t } = useTranslation();
+
+    const toast = useToast();
+
+    useEffect(() => {
+        if (userDetails?.userType === 2) return;
+        fetchNotificationCount();
+    }, [])
+
+    const fetchNotificationCount = async () => {
+        const notificationCountFormData = new FormData();
+
+        notificationCountFormData.append("distributorId", userDetails?.id);
+
+        try {
+            const response = await axiosInstance.post(GET_USER_NOTIFICATIONS_COUNT, notificationCountFormData);
+            setNotificationCount(response.data.notificationsCount)
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message)
+            }
+        }
+    }
 
     return (
         <Drawer
@@ -63,9 +93,22 @@ const DrawerLayout = ({ }: Props) => {
                     drawerLabel: t('layout.headerTitle.dashboard'),
                     title: t('layout.headerTitle.dashboard'),
                     headerRight: ({ tintColor }) => (
-                        <Button variant={"ghost"} size={"icon"} onPress={() => router.navigate("/(root)/(stack)/notification")}>
-                            <BellIcon color={tintColor} />
-                        </Button>
+                        <>
+                            {userDetails?.userType != 2 ? (
+                                <Button variant={"ghost"} size={"icon"} onPress={() => router.navigate("/(root)/(stack)/notification")}>
+                                    {notificationCount > 0 && (
+                                        <View className='absolute bg-white rounded-lg size-5 items-center justify-center top-0 right-0'>
+                                            <Text className='!text-sm text-black font-semibold'>
+                                                {notificationCount}
+                                            </Text>
+                                        </View>
+                                    )}
+                                    <BellIcon color={tintColor} />
+                                </Button>
+                            ) : (
+                                <></>
+                            )}
+                        </>
                     ),
                     drawerIcon: ({ focused, color }) => (
                         <HouseIcon color={focused ? "#FFF" : color} />

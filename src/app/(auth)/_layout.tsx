@@ -1,8 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { router, Stack } from 'expo-router'
-import { Button } from '@/components/ui/button'
-import { ArrowLeftIcon } from '@/libs/icons/ArrowLeftIcon'
+import { Stack } from 'expo-router'
 
 type Props = {}
 
@@ -17,6 +14,7 @@ const AuthLayout = ({ }: Props) => {
             <Stack.Screen
                 name='sign-up'
                 options={{
+                    headerBackButtonDisplayMode: "minimal",
                     headerTitle: "Sign Up",
                     headerTitleAlign: 'center',
                     headerTintColor: "#FFF",

@@ -21,7 +21,6 @@ import { QrCodeIcon } from '@/libs/icons/QrCodeIcon'
 import { router, useFocusEffect } from 'expo-router'
 import { StatusBar } from 'react-native'
 import { useToast } from 'react-native-toast-notifications'
-import useNotification from '@/hooks/useNotification'
 
 type Props = {}
 
@@ -31,7 +30,6 @@ const HomeScreen = ({ }: Props) => {
 
 	const { userDetails } = useUser()
 	const { t } = useTranslation();
-	const { expoPushToken, } = useNotification()
 
 	const toast = useToast()
 
@@ -39,7 +37,7 @@ const HomeScreen = ({ }: Props) => {
 		useCallback(() => {
 			fetchDashboardData()
 		}, [])
-	)
+	);
 
 	const getDashboardEndpoints = () => {
 		if (userDetails?.userType === 0) {
@@ -85,7 +83,7 @@ const HomeScreen = ({ }: Props) => {
 
 			setDashboardData(response.data)
 		} catch (error) { }
-	}
+	};
 
 	const isDistributor = userDetails?.userType === 0
 	const isMechanic = userDetails?.userType === 1
@@ -102,7 +100,7 @@ const HomeScreen = ({ }: Props) => {
 						</CardHeader>
 						<CardContent>
 							<Text className="text-2xl font-semibold">
-								{dashboardData?.totalCouponsRedeemed.toString() || dashboardData?.totalCouponsRedeemedCount.toString() || dashboardData?.totalCouponsScanned.toString()}
+								{dashboardData?.totalCouponsRedeemed?.toString() || dashboardData?.totalCouponsRedeemedCount?.toString() || dashboardData?.totalCouponsScanned?.toString()}
 							</Text>
 						</CardContent>
 					</Card>
@@ -123,9 +121,9 @@ const HomeScreen = ({ }: Props) => {
 						</CardHeader>
 						<CardContent>
 							<Text className="text-2xl font-semibold text-primary">
-								{dashboardData?.totalAmountRedeemed.toString() ||
-									dashboardData?.totalCouponsRedeemedPoint.toString() ||
-									dashboardData?.totalAmountCouponsScanned.toString()}
+								{dashboardData?.totalAmountRedeemed?.toString() ||
+									dashboardData?.totalCouponsRedeemedPoint?.toString() ||
+									dashboardData?.totalAmountCouponsScanned?.toString()}
 							</Text>
 						</CardContent>
 					</Card>
@@ -165,20 +163,6 @@ const HomeScreen = ({ }: Props) => {
 					<QrCodeIcon className="text-white" />
 					<Text>{t('dashboard.scanButton')}</Text>
 				</Button>
-
-				{/* <Text selectable>
-					FCM Token:{" "}
-					<Text selectable>
-						{expoPushToken}
-					</Text>
-				</Text>
-
-				<Text selectable>
-					Access Token:{" "}
-					<Text selectable>
-						{userDetails?.accesstoken}
-					</Text>
-				</Text> */}
 			</View>
 		</View>
 	)

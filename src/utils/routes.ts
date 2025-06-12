@@ -44,3 +44,4 @@ export const VERIFY_VALID_RETAILER = "/api/verifyDealer";
 // Common
 export const DELETE_USER_ACCOUNT = "/api/removeAccount";
 export const GET_USER_NOTIFICATIONS = "/api/getNotifications";
+export const GET_USER_NOTIFICATIONS_COUNT = "/api/getNotificationsCount";

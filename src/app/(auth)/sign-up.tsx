@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useUser from '@/hooks/useUser'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
@@ -18,7 +18,6 @@ import { GET_BRANDS_BY_IDS, GET_CITIES_LIST, GET_COUNTRY_LIST, GET_STATE_LIST, R
 import { useToast } from 'react-native-toast-notifications'
 import axios from 'axios'
 import SelectBrandDropdown from '@/components/SelectBrandDropdown'
-import RetailerApprovalDialog from '@/components/RetailerApprovalDialog'
 import { useTranslation } from 'react-i18next'
 import { createSchema } from '@/libs/schemas/signUpFormSchemas'
 
