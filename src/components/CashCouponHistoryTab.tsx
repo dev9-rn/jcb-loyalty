@@ -128,12 +128,13 @@ const CashCouponHistoryTab = ({ }: Props) => {
             if (axios.isAxiosError(error)) {
                 if (couponHistoryData?.offset === undefined || couponHistoryData?.offset == 0) {
                     setCouponHistoryData(error.response?.data)
+                    setLoading(false);
                     return;
                 };
                 
                 setCouponHistoryData(error.response?.data)
+                setLoading(false);
             };
-            setLoading(false);
         }
     };
 
