@@ -16,7 +16,7 @@ const StackLayout = ({ }: Props) => {
             screenOptions={{
                 headerTitleAlign: 'center',
                 headerStyle: {
-                    backgroundColor: userDetails?.userType === 0 ? "#0059FF" : '#ffa31a',
+                    backgroundColor: "#0064AF",
                 },
                 headerTintColor: "#FFF",
             }}

@@ -1,19 +1,18 @@
-import { View, Image, ScrollView, ActivityIndicator, StatusBar } from 'react-native'
+import { View, Image, ActivityIndicator, StatusBar, } from 'react-native'
 import React, { useState } from 'react'
 import useAuth from '@/hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/text';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 
 import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import axios, { AxiosResponse } from 'axios';
 import { router } from 'expo-router';
 import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN } from '@/utils/routes';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useTranslation } from 'react-i18next';
+import UserSelectionDropdown from '@/components/UserSelectionDropdown';
 
 type Props = {}
 
@@ -25,12 +24,21 @@ const SignInScreen = ({ }: Props) => {
 
     const { t } = useTranslation();
 
-    const USER_TYPES = [t("login.distributor"), t("login.retailer")];
+    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-    const [selectedSignInType, setSelectedSignInType] = useState(t("login.distributor"));
+    const USER_TYPES = [
+        {
+            value: t("login.distributor"),
+            label: capitalize(t("login.distributor")),
+        },
+        {
+            value: t("login.retailer"),
+            label: capitalize(t("login.retailer")),
+        },
+    ];
+
+    const [selectedSignInType, setSelectedSignInType] = useState<{ value: string, label: string }>(USER_TYPES[0]);
     const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
-
-    const { isDarkColorScheme, setColorScheme, colorScheme } = useColorScheme();
 
     const { login } = useAuth();
 
@@ -40,23 +48,12 @@ const SignInScreen = ({ }: Props) => {
         }
     });
 
-    const toggleSignInType = () => {
-        setSelectedSignInType((prevType) => {
-            const currentIndex = USER_TYPES.indexOf(prevType);
-            const nextIndex = (currentIndex + 1) % USER_TYPES.length; // Cycle to the next type
-            return USER_TYPES[nextIndex];
-        });
-
-        const newTheme = isDarkColorScheme ? 'light' : 'dark';
-        setColorScheme(newTheme);
-    };
-
     const getLoginEndpoint = () => {
-        if (selectedSignInType === t("login.mechanic")) {
+        if (selectedSignInType.value === t("login.mechanic")) {
             return MECHANIC_LOGIN
         };
 
-        if (selectedSignInType === t("login.distributor")) {
+        if (selectedSignInType.value === t("login.distributor")) {
             return USER_LOGIN
         };
 
@@ -69,7 +66,7 @@ const SignInScreen = ({ }: Props) => {
         loginFormData.append("mobileNo", formData.userPhone);
 
         setIsLoggingIn(true);
-        const loginResponse: AxiosResponse = await login(getLoginEndpoint(), loginFormData, selectedSignInType);
+        const loginResponse: AxiosResponse = await login(getLoginEndpoint(), loginFormData, selectedSignInType.value);
         setIsLoggingIn(false);
         if (axios.isAxiosError(loginResponse)) {
             setError("userPhone", {
@@ -98,13 +95,24 @@ const SignInScreen = ({ }: Props) => {
                     <View>
                         <Text className='text-3xl font-medium'>{t("login.signInAs")}{" "}
                             <Text className='text-3xl font-medium capitalize'>
-                                {selectedSignInType}
+                                {selectedSignInType.label}
                             </Text>
                         </Text>
                     </View>
                 </View>
 
                 <View className='mt-10 p-4'>
+
+                    <View className='my-4 gap-2'>
+                        <Text className='font-medium'>{t("login.loginType")}</Text>
+
+                        <UserSelectionDropdown
+                            defaultLoginType={USER_TYPES[0]}
+                            userLoginTypes={USER_TYPES}
+                            setSelectedSignInType={setSelectedSignInType}
+                        />
+                    </View>
+
                     <View className='gap-2'>
                         <Text className='font-medium'>{t("login.phoneNumber")}</Text>
 
@@ -147,11 +155,19 @@ const SignInScreen = ({ }: Props) => {
                             <View className='flex-row gap-2'>
                                 <ActivityIndicator color={"#FFF"} />
                                 <Text>
-                                    {t("login.loggingIn")}
+                                    {t("login.loggingIn")} as
+                                    <Text className='capitalize'>
+                                        {selectedSignInType.label}
+                                    </Text>
                                 </Text>
                             </View>
                         ) : (
-                            <Text>{t("login.login")}</Text>
+                            <Text>
+                                {t("login.signInAs")}{" "}
+                                <Text className='capitalize'>
+                                    {selectedSignInType.label}
+                                </Text>
+                            </Text>
                         )}
                     </Button>
 
@@ -166,7 +182,7 @@ const SignInScreen = ({ }: Props) => {
                             onPress={() => router.navigate({
                                 pathname: "/(auth)/sign-up",
                                 params: {
-                                    userType: selectedSignInType
+                                    userType: selectedSignInType.label
                                 }
                             })}
                         >
@@ -174,25 +190,14 @@ const SignInScreen = ({ }: Props) => {
                         </Button>
                     </View>
 
-                    <View className='flex-row items-center gap-4 my-6'>
-                        <Separator className='flex-1' />
-                        <Text className='text-sm text-gray-600'>{t("login.orSignInAs")}</Text>
-                        <Separator className='flex-1' />
-                    </View>
-
-                    <Button onPress={() => toggleSignInType()} className={`${colorScheme !== "light" ? "bg-[#0059FF]" : "bg-[#ffa31a]"}`}>
-                        <Text>
-                            {t("login.switchTo")}{" "}
-                            <Text>{USER_TYPES[(USER_TYPES.indexOf(selectedSignInType) + 1) % USER_TYPES.length]}</Text>
-                        </Text>
-                    </Button>
                 </View>
             </KeyboardAwareScrollView>
 
-            <View className='self-center'>
+            <View className='self-center mb-4'>
+                <Text className='text-center text-base font-medium'>Powered By</Text>
                 <Image
                     source={require("@/assets/images/partner-brand.png")}
-                    className='h-36 w-52'
+                    className='h-24 w-60'
                     resizeMode='contain'
                 />
             </View>

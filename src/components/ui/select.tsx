@@ -20,13 +20,15 @@ const SelectTrigger = React.forwardRef<SelectPrimitive.TriggerRef, SelectPrimiti
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex flex-row h-10 native:h-12 items-center text-sm justify-between rounded-md border border-input bg-background px-3 py-2 web:ring-offset-background text-muted-foreground web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 [&>span]:line-clamp-1',
+        'flex flex-row h-10 native:h-12 items-center text-sm justify-between rounded-md border border-input bg-background px-3 py-2 web:ring-offset-background text-muted-foreground web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 [&>span]:line-clamp-1 capitalize',
         props.disabled && 'web:cursor-not-allowed opacity-50',
         className
       )}
       {...props}
     >
-      <>{children}</>
+      <>
+        {children}
+      </>
       <ChevronDown size={16} aria-hidden={true} className='text-foreground opacity-50' />
     </SelectPrimitive.Trigger>
   )
@@ -82,7 +84,7 @@ const SelectContent = React.forwardRef<
             className={cn(
               'relative z-50 max-h-96 min-w-[8rem] rounded-md border border-border bg-popover shadow-md shadow-foreground/10 py-2 px-1 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
               position === 'popper' &&
-                'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
+              'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
               open
                 ? 'web:zoom-in-95 web:animate-in web:fade-in-0'
                 : 'web:zoom-out-95 web:animate-out web:fade-out-0',
@@ -96,7 +98,7 @@ const SelectContent = React.forwardRef<
               className={cn(
                 'p-1',
                 position === 'popper' &&
-                  'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'
+                'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'
               )}
             >
               {children}
@@ -140,7 +142,7 @@ const SelectItem = React.forwardRef<SelectPrimitive.ItemRef, SelectPrimitive.Ite
           <Check size={16} strokeWidth={3} className='text-popover-foreground' />
         </SelectPrimitive.ItemIndicator>
       </View>
-      <SelectPrimitive.ItemText className='text-sm native:text-lg text-popover-foreground native:text-base web:group-focus:text-accent-foreground' />
+      <SelectPrimitive.ItemText className='text-sm native:text-lg text-popover-foreground native:text-base web:group-focus:text-accent-foreground capitalize' />
     </SelectPrimitive.Item>
   )
 );

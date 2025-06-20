@@ -16,6 +16,7 @@
     },
     "login": {
         "signInAs": "Sign in as",
+        "loginType": "Select your login type",
         "phoneNumber": "Phone Number",
         "distributor": "distributor",
         "mechanic": "mechanic",

@@ -17,8 +17,10 @@ const CashCouponHistoryTab = ({ }: Props) => {
     const { userDetails } = useUser();
     const { t } = useTranslation();
 
-    const [couponHistoryData, setCouponHistoryData] = useState<ICouponHistory | undefined>(undefined);
+    const [couponHistoryData, setCouponHistoryData] = useState<IRedeemedCouponDetails[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [currentOffset, setCurrentOffset] = useState<number>(0);
+    const [hasMore, setHasMore] = useState<boolean>(true);
 
     // Mananging user's date selection
     const [selectedFromDate, setSelectedFromDate] = useState(new Date());
@@ -26,9 +28,27 @@ const CashCouponHistoryTab = ({ }: Props) => {
     const [showFromDate, setShowFromDate] = useState<boolean>(false)
     const [showToDate, setShowToDate] = useState<boolean>(false);
 
+    // useEffect to call only once on initial load
     useEffect(() => {
-        fetchCouponHistories({ offset: 0 });
-    }, [selectedFromDate, selctedToDate]);
+        if (couponHistoryData.length === 0) {
+            setCouponHistoryData([]);
+            setCurrentOffset(0);
+            setHasMore(true);
+            fetchCouponHistories({ pageOffset: 0 });
+        }
+    }, []);
+
+    useEffect(() => {
+        const resetAndFetch = async () => {
+            setCouponHistoryData([]);
+            setHasMore(true);
+            setCurrentOffset(0);
+            await fetchCouponHistories({ pageOffset: 10, force: true });
+        };
+
+        resetAndFetch();
+    }, [selectedFromDate.toDateString(), selctedToDate.toDateString()]);
+
 
     const renderCouponItem = useCallback(({ item, index }: { item: IRedeemedCouponDetails, index: number }) => {
         return (
@@ -95,15 +115,15 @@ const CashCouponHistoryTab = ({ }: Props) => {
         }
     }
 
-    const fetchCouponHistories = async ({ offset }: { offset?: number | undefined }) => {
+    const fetchCouponHistories = async ({ pageOffset = 0, force = false }: { pageOffset?: number; force?: boolean } = {}) => {
 
-        // if ((couponHistoryData && couponHistoryData?.status != 200) || offset != 0) return;
+        if (!force && (!hasMore || loading)) return;
 
         const redeemHistoryFormData = new FormData();
         redeemHistoryFormData.append(getCouponHistoryEndpoint().user_id, userDetails?.id);
         redeemHistoryFormData.append('fromDate', selectedFromDate.toDateString());
         redeemHistoryFormData.append('toDate', selctedToDate.toDateString());
-        redeemHistoryFormData.append('offset', offset ? offset.toString() : "0");
+        redeemHistoryFormData.append('offset', pageOffset?.toString());
         redeemHistoryFormData.append('redeemType', 'Cash');
         redeemHistoryFormData.append('userType', userDetails?.userType);
 
@@ -111,39 +131,48 @@ const CashCouponHistoryTab = ({ }: Props) => {
             setLoading(true)
             const response = await axiosInstance.post(getCouponHistoryEndpoint().endpoint, redeemHistoryFormData);
 
-            if (response.data.status != 200) {
+            if (response.data.status !== 200) {
                 setLoading(false);
-            };
+                return;
+            }
 
-            // if (!couponHistoryData) {
-            // } else {
-            //     setCouponHistoryData((prev) => {
-            //         return { ...prev, ...response.data }
-            //     })
-            // }
-            setCouponHistoryData(response.data);
+            const newData = (response.data.redeemHistory || response.data.scannedHistory) ?? [];
+            const nextOffset = response.data.offset;
+
+            // Append new data
+            setCouponHistoryData(prev => [...prev, ...newData]);
+
+            // If less than 5 records returned, assume it's the last page
+            if (newData.length < 5) {
+                setHasMore(false);
+            } else {
+                setCurrentOffset(nextOffset);
+            }
 
             setLoading(false)
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                if (couponHistoryData?.offset === undefined || couponHistoryData?.offset == 0) {
-                    setCouponHistoryData(error.response?.data)
-                    setLoading(false);
-                    return;
-                };
-                
-                setCouponHistoryData(error.response?.data)
-                setLoading(false);
-            };
-        }
-    };
+                // if (offset === undefined || offset == 0) {
+                //     setCouponHistoryData(error.response?.data)
+                //     setLoading(false);
+                //     return;
+                // };
 
-    const getHistoryList = () => {
-        return couponHistoryData?.redeemHistory?.length
-            ? couponHistoryData.redeemHistory
-            : couponHistoryData?.scannedHistory?.length
-                ? couponHistoryData.scannedHistory
-                : [];
+                if (error.response?.data.redeemHistory.length == 0 || error.response?.data.scannedHistory.length == 0) {
+                    setCouponHistoryData((prev) => {
+                        if (!prev) {
+                            return error.response?.data.redeemHistory || error.response?.data.scannedHistory
+                        } else {
+                            return [...prev]
+                        }
+                    })
+                    setHasMore(false)
+                    setLoading(false);
+                };
+            };
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -189,19 +218,13 @@ const CashCouponHistoryTab = ({ }: Props) => {
 
             <FlatList
                 contentContainerClassName='p-4'
-                data={couponHistoryData?.redeemHistory || couponHistoryData?.scannedHistory}
-                renderItem={renderCouponItem}
-                // renderItem={userDetails?.userType === 0 ? renderCouponItem : renderMechanicPassbook}
+                data={couponHistoryData}
                 ItemSeparatorComponent={() => <Separator />}
-                ListFooterComponent={() => {
-                    return (
-                        <>
-                            {loading
-                                ? <ActivityIndicator size="large" color="blue" />
-                                : null
-                            }
-                        </>
-                    )
+                renderItem={renderCouponItem}
+                onEndReached={() => {
+                    if (hasMore) {
+                        fetchCouponHistories({ pageOffset: currentOffset });
+                    }
                 }}
                 ListEmptyComponent={() => {
                     return (
@@ -210,14 +233,23 @@ const CashCouponHistoryTab = ({ }: Props) => {
                                 {t("coupon-history.no_data_found")}
                             </Text>
                         </View>
-                    )
-                }}
-                onEndReached={() => {
-                    // const historyList = getHistoryList();
-                    // if (historyList.length === couponHistoryData?.offset && !couponHistoryData) return;
-                    // fetchCouponHistories({ offset: (couponHistoryData?.offset || 20) + 10 })
+                    );
                 }}
                 onEndReachedThreshold={0.5}
+                ListFooterComponent={() => {
+                    return (
+                        <>
+                            {loading ? (
+                                <ActivityIndicator />
+                            ) : currentOffset > 0 && !loading && !hasMore ? (
+                                <View className='w-full my-4'>
+                                    <Text className='text-center'>No more redeem history!</Text>
+                                </View>
+                            ) : null}
+                        </>
+                    )
+                }}
+                keyExtractor={(item) => item.id}
             />
         </View>
     )

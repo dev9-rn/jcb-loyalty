@@ -80,7 +80,7 @@ const SignUpScreen = ({ }: Props) => {
 
         navigation.setOptions({
             headerStyle: {
-                backgroundColor: userType === "distributor" ? "#0059FF" : '#ffa31a',
+                backgroundColor: "#0064AF",
             },
         })
     }, []);
