@@ -30,25 +30,11 @@ const CashCouponHistoryTab = ({ }: Props) => {
 
     // useEffect to call only once on initial load
     useEffect(() => {
-        if (couponHistoryData.length === 0) {
-            setCouponHistoryData([]);
-            setCurrentOffset(0);
-            setHasMore(true);
-            fetchCouponHistories({ pageOffset: 0 });
-        }
-    }, []);
-
-    useEffect(() => {
-        const resetAndFetch = async () => {
-            setCouponHistoryData([]);
-            setHasMore(true);
-            setCurrentOffset(0);
-            await fetchCouponHistories({ pageOffset: 10, force: true });
-        };
-
-        resetAndFetch();
-    }, [selectedFromDate.toDateString(), selctedToDate.toDateString()]);
-
+        setCouponHistoryData([]);
+        setCurrentOffset(0);
+        setHasMore(true);
+        fetchCouponHistories({ pageOffset: 0 });
+    }, [selectedFromDate, selctedToDate]);
 
     const renderCouponItem = useCallback(({ item, index }: { item: IRedeemedCouponDetails, index: number }) => {
         return (
@@ -128,50 +114,26 @@ const CashCouponHistoryTab = ({ }: Props) => {
         redeemHistoryFormData.append('userType', userDetails?.userType);
 
         try {
-            setLoading(true)
             const response = await axiosInstance.post(getCouponHistoryEndpoint().endpoint, redeemHistoryFormData);
 
-            if (response.data.status !== 200) {
-                setLoading(false);
-                return;
-            }
+            setCouponHistoryData((prevData) => {
+                if (!prevData) {
+                    return response.data.redeemHistory || response.data.scannedHistory
+                } else {
+                    const newData = response.data.redeemHistory || response.data.scannedHistory || [];
+                    return [...prevData, ...newData];
+                };
+            });
 
-            const newData = (response.data.redeemHistory || response.data.scannedHistory) ?? [];
-            const nextOffset = response.data.offset;
+            setCurrentOffset(response.data.offset);
 
-            // Append new data
-            setCouponHistoryData(prev => [...prev, ...newData]);
-
-            // If less than 5 records returned, assume it's the last page
-            if (newData.length < 5) {
-                setHasMore(false);
-            } else {
-                setCurrentOffset(nextOffset);
-            }
-
-            setLoading(false)
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                // if (offset === undefined || offset == 0) {
-                //     setCouponHistoryData(error.response?.data)
-                //     setLoading(false);
-                //     return;
-                // };
-
                 if (error.response?.data.redeemHistory.length == 0 || error.response?.data.scannedHistory.length == 0) {
-                    setCouponHistoryData((prev) => {
-                        if (!prev) {
-                            return error.response?.data.redeemHistory || error.response?.data.scannedHistory
-                        } else {
-                            return [...prev]
-                        }
-                    })
-                    setHasMore(false)
-                    setLoading(false);
+                    // setLoading(false);
+                    setHasMore(false);
                 };
             };
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -221,9 +183,9 @@ const CashCouponHistoryTab = ({ }: Props) => {
                 data={couponHistoryData}
                 ItemSeparatorComponent={() => <Separator />}
                 renderItem={renderCouponItem}
-                onEndReached={() => {
-                    if (hasMore) {
-                        fetchCouponHistories({ pageOffset: currentOffset });
+                onEndReached={async () => {
+                    if (couponHistoryData.length !== 0) {
+                        await fetchCouponHistories({ pageOffset: currentOffset, force: true });
                     }
                 }}
                 ListEmptyComponent={() => {
