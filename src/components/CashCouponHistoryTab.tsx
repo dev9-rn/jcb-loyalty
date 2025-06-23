@@ -33,7 +33,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
         setCouponHistoryData([]);
         setCurrentOffset(0);
         setHasMore(true);
-        fetchCouponHistories({ pageOffset: 0 });
+        fetchCouponHistories({ pageOffset: 0, force: true });
     }, [selectedFromDate, selctedToDate]);
 
     const renderCouponItem = useCallback(({ item, index }: { item: IRedeemedCouponDetails, index: number }) => {
