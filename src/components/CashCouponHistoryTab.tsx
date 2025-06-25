@@ -110,7 +110,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
         redeemHistoryFormData.append('fromDate', selectedFromDate.toDateString());
         redeemHistoryFormData.append('toDate', selctedToDate.toDateString());
         redeemHistoryFormData.append('offset', pageOffset?.toString());
-        redeemHistoryFormData.append('redeemType', 'Cash');
+        // redeemHistoryFormData.append('redeemType', '1');
         redeemHistoryFormData.append('userType', userDetails?.userType);
 
         try {
