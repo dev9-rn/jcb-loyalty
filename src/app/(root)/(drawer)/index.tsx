@@ -129,19 +129,22 @@ const HomeScreen = ({ }: Props) => {
 					</Card>
 
 					{/* Uncomment and translate if needed */}
-					{dashboardData?.totalCouponsRedeemedCash || dashboardData?.totalBalancedPoint && (
-						<Card className="w-[48%]">
-							<CardHeader className="gap-2">
-								<CardTitle>{t('dashboard.couponScannedForCash')}</CardTitle>
-								<CardDescription>{t('dashboard.couponScannedForCashDesc')}</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<Text className="text-2xl font-semibold text-primary">
-									{dashboardData?.totalCouponsRedeemedCash || dashboardData?.totalBalancedPoint}
-								</Text>
-							</CardContent>
-						</Card>
-					)}
+					{(
+						(dashboardData?.totalCouponsRedeemedCash && dashboardData?.totalCouponsRedeemedCash !== 0) ||
+						(dashboardData?.totalBalancedPoint && parseInt(dashboardData?.totalBalancedPoint) !== 0)
+					) && (
+							<Card className="w-[48%]">
+								<CardHeader className="gap-2">
+									<CardTitle>{t('dashboard.couponScannedForCash')}</CardTitle>
+									<CardDescription>{t('dashboard.couponScannedForCashDesc')}</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<Text className="text-2xl font-semibold text-primary">
+										{dashboardData?.totalCouponsRedeemedCash || dashboardData?.totalBalancedPoint}
+									</Text>
+								</CardContent>
+							</Card>
+						)}
 
 					{(dashboardData?.totalCouponsRedeemedFOC || 0) > 0 && (
 						<Card className="w-[48%]">
