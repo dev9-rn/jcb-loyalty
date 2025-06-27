@@ -49,6 +49,7 @@ const FocCouponHistory = ({ }: Props) => {
                 toast.show(error.response?.data.message, {
                     data: error.response
                 });
+                setFocCouponHistoryData(error.response?.data)
             }
         }
     };
