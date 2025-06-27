@@ -71,7 +71,7 @@ const DrawerLayout = ({ }: Props) => {
                 },
                 drawerItemStyle: {
                     borderRadius: 8,
-                    display: ["cash-batch", "report", "report-history", "my-dealers"].includes(route.name) && (userDetails?.userType != 0) ? "none" : "flex"
+                    display: ["cash-batch", "report", "report-history", "my-dealers", "foc-coupon-history"].includes(route.name) && (userDetails?.userType != 0) ? "none" : "flex"
                 },
             })}
             drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -131,6 +131,17 @@ const DrawerLayout = ({ }: Props) => {
                 options={{
                     drawerLabel: t('layout.headerTitle.coupon_history'),
                     title: t('layout.headerTitle.coupon_history'),
+                    drawerIcon: ({ focused, color }) => (
+                        <HistoryIcon color={focused ? "#FFF" : color} />
+                    )
+                }}
+            />
+
+            <Drawer.Screen
+                name='foc-coupon-history'
+                options={{
+                    drawerLabel: t('layout.headerTitle.foc_coupon_history'),
+                    title: t('layout.headerTitle.foc_coupon_history'),
                     drawerIcon: ({ focused, color }) => (
                         <HistoryIcon color={focused ? "#FFF" : color} />
                     )

@@ -104,18 +104,15 @@ const ProfileScreen = ({ }: Props) => {
     }, [watchedState.id]);
 
     useEffect(() => {
-        if (!profileDetails || !brands) return;
+        if (!profileDetails || !brands || countryList.length === 0 || stateList.length === 0 || citiesList.length === 0) return;
 
         const currentUserBrand = brands.find((brand) => brand.id === profileDetails.brand_id);
         const matchedCountry = countryList.find(
             (country) => country.id === profileDetails.country_id || userDetails?.country_id
         );
-
-        
         const matchedState = stateList.find(
             (state) => state.id === profileDetails.state_id || userDetails?.state_id
         );
-        
         const matchedCity = citiesList.find(
             (city) => city.id === profileDetails.city_id || userDetails?.city_id
         );
@@ -138,7 +135,7 @@ const ProfileScreen = ({ }: Props) => {
             userState: matchedState || { id: "", name: "" },
             userCity: matchedCity || { id: "", name: "" }
         });
-    }, [profileDetails, brands]);
+    }, [profileDetails, brands, countryList, stateList, citiesList]);
 
     // Get the list of the COUNTRIES for dropdown
     const fetchCountryList = async () => {

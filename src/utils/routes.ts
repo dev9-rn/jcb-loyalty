@@ -45,3 +45,4 @@ export const VERIFY_VALID_RETAILER = "/api/verifyDealer";
 export const DELETE_USER_ACCOUNT = "/api/removeAccount";
 export const GET_USER_NOTIFICATIONS = "/api/getNotifications";
 export const GET_USER_NOTIFICATIONS_COUNT = "/api/getNotificationsCount";
+export const GET_FOC_COUPON_HISTORY = "/api/getFOCBatches";

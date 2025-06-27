@@ -284,4 +284,20 @@ interface INotificationHistory {
     notification: string;
     data_id: string | null;
     created_date: string; // You can change this to `Date` if you're parsing the string
+};
+
+interface IFOCCouponHistoryData {
+    ar_date: string;
+    ar_number: string;
+    batch_number: string;
+    product_code_name: string;
+    total_cartons_dispatched: string;
+    total_coupons: string;
+    total_packs_dispatched: string;
+}
+
+interface IFocCouponsHistoryResponse {
+    batchesData: IFOCCouponHistoryData[];
+    message: string;
+    status: number;
 }
