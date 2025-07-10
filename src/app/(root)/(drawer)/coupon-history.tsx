@@ -1,11 +1,11 @@
 import { TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import PagerView from 'react-native-pager-view';
 import { Text } from '@/components/ui/text';
 
 import CashCouponHistoryTab from '@/components/CashCouponHistoryTab';
-import formatDateTime from '@/utils/formatDateTime';
+import FocCouponHistoryTab from '@/components/FocCouponHistoryTab';
 
 type Props = {};
 
@@ -24,40 +24,7 @@ const CouponHistoryScreen = ({ }: Props) => {
 
     const [activePagerTab, setActivePagerTab] = useState<number>(0);
 
-    // Mananging user's date selection
-    const [selectedFromDate, setSelectedFromDate] = useState(new Date());
-    const [selctedToDate, setSelectedToDate] = useState(new Date());
-
     const pagerRef = useRef<PagerView>(null);
-
-    const renderMechanicPassbook = useCallback(({ item, index }: { item: IMechanicPassbook, index: number }) => {
-        return (
-            <View className='py-2' key={index}>
-                <View className='flex-row items-center justify-between'>
-                    <Text className='text-lg'>
-                        Name:{" "}
-                        <Text className='text-lg font-medium'>{item.full_name}</Text>
-                    </Text>
-                    <Text className='text-lg font-semibold'>
-                        Points {item.loyalty_points_wallet}
-                    </Text>
-                </View>
-                <Text className='text-lg'>
-                    Reference ID:{" "}
-                    <Text className='text-lg font-medium'>{item.reference_id}</Text>
-                </Text>
-                <Text className='text-lg'>
-                    Redeemed Date:{" "}
-                    <Text className='text-lg font-medium'>{formatDateTime(item.date)}</Text>
-                </Text>
-
-                <Text className='text-lg'>
-                    Type:{" "}
-                    <Text className='text-green-600 text-lg font-medium capitalize'>{item.type}</Text>
-                </Text>
-            </View>
-        )
-    }, [selectedFromDate, selctedToDate]);
 
     const handleTabSwitch = (index: number) => {
         setActivePagerTab(index);
@@ -67,7 +34,7 @@ const CouponHistoryScreen = ({ }: Props) => {
     return (
         <View className='flex-1 bg-white'>
 
-            {/* <View className='bg-white'>
+            <View className='bg-white'>
                 <View className='flex-row items-center justify-around pt-4'>
                     {TABS.map((tab, index) => (
                         <TouchableOpacity key={tab.id} className={`flex-1 py-2 ${activePagerTab == index ? "border-b-2 border-primary" : "border-0"} `} onPress={() => handleTabSwitch(index)}>
@@ -77,25 +44,21 @@ const CouponHistoryScreen = ({ }: Props) => {
                         </TouchableOpacity>
                     ))}
                 </View>
-            </View> */}
-
-            <View key="1" className='flex-1'>
-                <CashCouponHistoryTab />
             </View>
 
-            {/* <PagerView
+            <PagerView
                 ref={pagerRef}
                 initialPage={0}
-                style={{ flex: 1, }}
+                style={{ flex: 1 }}
                 onPageSelected={(e) => setActivePagerTab(e.nativeEvent.position)}
             >
-                <View key="1">
+                <View key="1" className='flex-1'>
                     <CashCouponHistoryTab />
                 </View>
-                <View className='items-center justify-center' key="2">
-                    <Text>Second page</Text>
+                <View className='flex-1' key="2">
+                    <FocCouponHistoryTab />
                 </View>
-            </PagerView> */}
+            </PagerView>
         </View >
     )
 }

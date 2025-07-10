@@ -1,18 +1,18 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { CalendarIcon } from "@/libs/icons/CalendarIcon"
+import { Separator } from './ui/separator';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import useUser from '@/hooks/useUser';
-import { Separator } from './ui/separator';
-import axiosInstance from '@/utils/axiosInstance';
-import { GET_MECHANIC_PASSBOOK, GET_REDEEM_HISTORY, GET_RETAILER_COUPON_HISTORY } from '@/utils/routes';
-import formatDateTime from '@/utils/formatDateTime';
 import { useTranslation } from 'react-i18next';
+import formatDateTime from '@/utils/formatDateTime';
+import { GET_MECHANIC_PASSBOOK, GET_REDEEM_HISTORY, GET_RETAILER_COUPON_HISTORY } from '@/utils/routes';
 import axios from 'axios';
+import { CalendarIcon } from "@/libs/icons/CalendarIcon"
+import axiosInstance from '@/utils/axiosInstance';
 
 type Props = {}
 
-const CashCouponHistoryTab = ({ }: Props) => {
+const FocCouponHistoryTab = (props: Props) => {
 
     const { userDetails } = useUser();
     const { t } = useTranslation();
@@ -110,7 +110,7 @@ const CashCouponHistoryTab = ({ }: Props) => {
         redeemHistoryFormData.append('fromDate', selectedFromDate.toDateString());
         redeemHistoryFormData.append('toDate', selctedToDate.toDateString());
         redeemHistoryFormData.append('offset', pageOffset?.toString());
-        redeemHistoryFormData.append('redeemType', '0');
+        redeemHistoryFormData.append('redeemType', '1');
         redeemHistoryFormData.append('userType', userDetails?.userType);
 
         try {
@@ -217,4 +217,4 @@ const CashCouponHistoryTab = ({ }: Props) => {
     )
 }
 
-export default CashCouponHistoryTab
+export default FocCouponHistoryTab

@@ -22,6 +22,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     // versionCode: 0,
+    edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff",
@@ -43,14 +44,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // "@react-native-firebase/auth",
     "@react-native-firebase/crashlytics",
     "expo-router",
+    "expo-audio",
+    "expo-font",
+    "expo-web-browser",
     [
-      "expo-splash-screen",
-      {
-        image: "./src/assets/images/splash-icon.png",
-        imageWidth: 200,
-        resizeMode: "contain",
-        backgroundColor: "#ffffff"
-      }
+    "expo-splash-screen",
+    {
+      image: "./src/assets/images/splash-icon.png",
+      imageWidth: 200,
+      resizeMode: "contain",
+      backgroundColor: "#ffffff"
+    }
     ],
     [
       "expo-dev-client",
@@ -92,7 +96,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "expo-localization"
     ],
-    "expo-audio"
   ],
   experiments: {
     typedRoutes: true

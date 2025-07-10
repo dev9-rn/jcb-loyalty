@@ -38,7 +38,7 @@ const SignUpScreen = ({ }: Props) => {
     const toast = useToast();
     const navigation = useNavigation();
 
-    const { control, handleSubmit, reset, setValue, getValues, watch, formState: { errors, isDirty, } } = useForm<z.infer<typeof signUpForm>>({
+    const { control, handleSubmit, watch, formState: { errors, isDirty, } } = useForm<z.infer<typeof signUpForm>>({
         resolver: zodResolver(signUpForm),
         defaultValues: {
             userType: userType,
