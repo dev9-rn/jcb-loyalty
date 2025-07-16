@@ -11,7 +11,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
-    buildNumber: "2",
+    buildNumber: "3",
     supportsTablet: false,
     googleServicesFile: "./GoogleService-Info.plist",
     infoPlist: {
@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: "com.daewoo.seqrloyalty"
   },
   android: {
-    versionCode: 2,
+    versionCode: 3,
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
