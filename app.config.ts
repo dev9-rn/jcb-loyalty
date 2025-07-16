@@ -4,14 +4,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Daewoo Lubricants",
   slug: "daewoo-seqr-loyalty",
-  version: "1.0.0",
+  version: "1.1.0",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: "myapp",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
-    // buildNumber: "",
+    buildNumber: "2",
     supportsTablet: false,
     googleServicesFile: "./GoogleService-Info.plist",
     infoPlist: {
@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: "com.daewoo.seqrloyalty"
   },
   android: {
-    // versionCode: 0,
+    versionCode: 2,
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
