@@ -46,7 +46,7 @@ const AuthProvider = ({ children }: Props) => {
         setUserAuthToken(localAuthToken);
         setColorScheme(localUserColorScheme as "light" | "dark" | "system");
         setIsAuthenticated(true);
-        router.replace("/(root)/(drawer)"); // ✅ Redirect to home tab
+        setTimeout(() => router.replace("/(root)/(drawer)"), 100)
     }
 
     // ✅ Login function (Redirect to OTP Verification)

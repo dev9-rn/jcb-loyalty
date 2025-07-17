@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { ScrollView, useWindowDimensions, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useUser from '@/hooks/useUser'
@@ -21,8 +21,13 @@ import { QrCodeIcon } from '@/libs/icons/QrCodeIcon'
 import { router, useFocusEffect } from 'expo-router'
 import { StatusBar } from 'react-native'
 import { useToast } from 'react-native-toast-notifications'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import AnimatedGradientBorder from '@/components/GradientBorder'
 
 type Props = {}
+
+const MIN_COLUMN_WIDTHS = [120, 120, 100, 120];
 
 const HomeScreen = ({ }: Props) => {
 
@@ -30,6 +35,7 @@ const HomeScreen = ({ }: Props) => {
 
 	const { userDetails } = useUser()
 	const { t } = useTranslation();
+	const { width } = useWindowDimensions();
 
 	const toast = useToast()
 
@@ -88,10 +94,17 @@ const HomeScreen = ({ }: Props) => {
 	const isDistributor = userDetails?.userType === 0
 	const isMechanic = userDetails?.userType === 1
 
+	const columnWidths = React.useMemo(() => {
+		return MIN_COLUMN_WIDTHS.map((minWidth) => {
+			const evenWidth = width / MIN_COLUMN_WIDTHS.length;
+			return evenWidth > minWidth ? evenWidth : minWidth;
+		});
+	}, [width]);
+
 	return (
 		<View className="p-4 flex-1 bg-white">
-			<StatusBar className="bg-primary" barStyle="light-content" />
-			<View className="gap-8">
+			<StatusBar className="bg-primary" barStyle="dark-content" />
+			<ScrollView className="flex-1" contentContainerClassName='gap-8'>
 				<View className="flex-row flex-wrap justify-between gap-2 xs:gap-3">
 					<Card className="w-[48%]">
 						<CardHeader className="gap-2">
@@ -147,26 +160,87 @@ const HomeScreen = ({ }: Props) => {
 						)}
 
 					{(dashboardData?.totalCouponsRedeemedFOC || 0) > 0 && (
-						<Card className="w-[48%]">
+						<Dialog>
+							{/* <AnimatedGradientBorder> */}
+							<DialogTrigger className='w-[70%]'>
+								<Card className="w-full">
+									<CardHeader className="gap-2">
+										<CardTitle>{t('dashboard.couponScannedForFoc')}</CardTitle>
+										<CardDescription>{t('dashboard.couponScannedForFocDesc')}</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<Text className="text-2xl font-semibold text-primary">
+											{dashboardData?.totalCouponsRedeemedFOC}
+										</Text>
+									</CardContent>
+								</Card>
+							</DialogTrigger>
+							{/* </AnimatedGradientBorder> */}
+
+							<DialogContent className=''>
+								<DialogHeader>
+									<DialogTitle>FOC Schemes</DialogTitle>
+								</DialogHeader>
+								<View className='h-1/2 w-full'>
+									<ScrollView className='flex-1'>
+										<Table aria-labelledby='scheme-table'>
+											<TableHeader>
+												<TableRow>
+													<TableHead className='px-0.5' style={{ width: columnWidths[0] }}>
+														<Text>Scheme</Text>
+													</TableHead>
+													<TableHead style={{ width: columnWidths[1] }}>
+														<Text>Total Count</Text>
+													</TableHead>
+												</TableRow>
+											</TableHeader>
+										</Table>
+										<TableBody>
+											{dashboardData?.schemeDetails.map((scheme, i) => (
+												<TableRow
+													key={i}
+												>
+													<TableCell style={{ width: columnWidths[0] }}>
+														<Text>{scheme.scheme_name}</Text>
+													</TableCell>
+													<TableCell style={{ width: columnWidths[1] }}>
+														<Text className='text-primary font-semibold'>{scheme.FOCSchemeRedeemedCount}</Text>
+													</TableCell>
+												</TableRow>
+											))}
+										</TableBody>
+									</ScrollView>
+								</View>
+								<DialogFooter className='mt-auto'>
+									<DialogClose asChild>
+										<Button>
+											<Text>OK</Text>
+										</Button>
+									</DialogClose>
+								</DialogFooter>
+							</DialogContent>
+						</Dialog>
+					)}
+
+					{/* {dashboardData?.schemeDetails.map((scheme, i) => (
+						<Card className="w-[48%]" key={i}>
 							<CardHeader className="gap-2">
-								<CardTitle>{t('dashboard.couponScannedForFoc')}</CardTitle>
-								<CardDescription>{t('dashboard.couponScannedForFocDesc')}</CardDescription>
+								<CardTitle>{scheme.scheme_name}</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<Text className="text-2xl font-semibold text-primary">
-									{dashboardData?.totalCouponsRedeemedFOC}
+									{scheme.FOCSchemeRedeemedCount}
 								</Text>
 							</CardContent>
 						</Card>
-					)}
-
+					))} */}
 				</View>
 
 				<Button className="flex-row gap-4" size="lg" onPress={() => router.navigate('/(root)/(stack)/camera')}>
 					<QrCodeIcon className="text-white" />
 					<Text>{t('dashboard.scanButton')}</Text>
 				</Button>
-			</View>
+			</ScrollView>
 		</View>
 	)
 }

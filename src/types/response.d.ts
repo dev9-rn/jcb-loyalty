@@ -81,6 +81,12 @@ interface IDashboardData {
     totalCouponsRedeemedCount: number;
     totalCouponsScanned: number;
     totalAmountCouponsScanned: number;
+    schemeDetails: {
+        scheme_name: string;
+        totalFocSchemeCoupons: number;
+        FOCSchemeRedeemedCount: number;
+        FOCPendingSchemesCount: number;
+    }[]
 };
 
 interface ICouponDetails {
