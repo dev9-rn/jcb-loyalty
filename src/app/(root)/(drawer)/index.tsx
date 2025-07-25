@@ -23,7 +23,7 @@ import { StatusBar } from 'react-native'
 import { useToast } from 'react-native-toast-notifications'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { CircleAlertIcon } from "@/libs/icons/CircleAlertIcon"
+import { InfoIcon } from "@/libs/icons/InfoCircleIcon"
 
 type Props = {}
 
@@ -164,7 +164,7 @@ const HomeScreen = ({ }: Props) => {
 							<DialogTrigger>
 								<Card className='border-primary relative'>
 									<View className='absolute m-2 right-0'>
-										<CircleAlertIcon />
+										<InfoIcon />
 									</View>
 									<CardHeader className="gap-2">
 										<CardTitle>{t('dashboard.couponScannedForFoc')}</CardTitle>
