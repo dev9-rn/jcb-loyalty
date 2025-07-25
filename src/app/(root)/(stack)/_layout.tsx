@@ -4,12 +4,14 @@ import { router, Stack } from 'expo-router'
 import useUser from '@/hooks/useUser'
 import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon } from '@/libs/icons/ArrowLeftIcon'
+import Header from '@/components/Header'
+import { useTranslation } from 'react-i18next'
 
 type Props = {}
 
 const StackLayout = ({ }: Props) => {
 
-    const { userDetails } = useUser();
+    const { t } = useTranslation();
 
     return (
         <Stack
@@ -36,9 +38,13 @@ const StackLayout = ({ }: Props) => {
             <Stack.Screen
                 name='camera'
                 options={{
-                    headerTitleStyle: {
-                        color: '#FFF'
-                    },
+                    // headerShown: false,
+                    title: t('layout.headerTitle.scan_coupons'),
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => router.back()}>
+                            <ArrowLeftIcon color={"#FFF"} />
+                        </TouchableOpacity>
+                    ),
                 }}
             />
 

@@ -23,7 +23,7 @@ import { StatusBar } from 'react-native'
 import { useToast } from 'react-native-toast-notifications'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import AnimatedGradientBorder from '@/components/GradientBorder'
+import { CircleAlertIcon } from "@/libs/icons/CircleAlertIcon"
 
 type Props = {}
 
@@ -160,10 +160,12 @@ const HomeScreen = ({ }: Props) => {
 						)}
 
 					{(dashboardData?.totalCouponsRedeemedFOC || 0) > 0 && (
-						<Dialog>
-							{/* <AnimatedGradientBorder> */}
-							<DialogTrigger className='w-[70%]'>
-								<Card className="w-full">
+						<Dialog className='w-[48%] shadow elevation-lg bg-white shadow-gray-400'>
+							<DialogTrigger>
+								<Card className='border-primary relative'>
+									<View className='absolute m-2 right-0'>
+										<CircleAlertIcon />
+									</View>
 									<CardHeader className="gap-2">
 										<CardTitle>{t('dashboard.couponScannedForFoc')}</CardTitle>
 										<CardDescription>{t('dashboard.couponScannedForFocDesc')}</CardDescription>
@@ -175,7 +177,6 @@ const HomeScreen = ({ }: Props) => {
 									</CardContent>
 								</Card>
 							</DialogTrigger>
-							{/* </AnimatedGradientBorder> */}
 
 							<DialogContent className=''>
 								<DialogHeader>
@@ -221,19 +222,6 @@ const HomeScreen = ({ }: Props) => {
 							</DialogContent>
 						</Dialog>
 					)}
-
-					{/* {dashboardData?.schemeDetails.map((scheme, i) => (
-						<Card className="w-[48%]" key={i}>
-							<CardHeader className="gap-2">
-								<CardTitle>{scheme.scheme_name}</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<Text className="text-2xl font-semibold text-primary">
-									{scheme.FOCSchemeRedeemedCount}
-								</Text>
-							</CardContent>
-						</Card>
-					))} */}
 				</View>
 
 				<Button className="flex-row gap-4" size="lg" onPress={() => router.navigate('/(root)/(stack)/camera')}>

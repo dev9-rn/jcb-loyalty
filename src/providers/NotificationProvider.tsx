@@ -1,7 +1,6 @@
 import NotificationContext from "@/context/NotificationContext";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import * as Notifications from "expo-notifications";
-import { EventSubscription as Subscription } from "expo-modules-core";
 import { registerForPushNotificationsAsync } from "@/utils/registerForPushNotificationAsync";
 
 interface NotificationProviderProps {
@@ -16,22 +15,19 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
         useState<Notifications.Notification | null>(null);
     const [error, setError] = useState<Error | null>(null);
 
-    const notificationListener = useRef<Subscription>();
-    const responseListener = useRef<Subscription>();
-
     useEffect(() => {
         registerForPushNotificationsAsync().then(
             (token) => setExpoPushToken(token),
             (error) => setError(error)
         );
 
-        notificationListener.current =
+        const notificationListener =
             Notifications.addNotificationReceivedListener((notification) => {
                 // console.log("🔔 Notification Received when app is running: ", notification);
                 setNotification(notification);
             });
 
-        responseListener.current =
+        const responseListener =
             Notifications.addNotificationResponseReceivedListener((response) => {
                 // Handle the notification response here
                 // console.log(
@@ -42,14 +38,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
             });
 
         return () => {
-            if (notificationListener.current) {
-                Notifications.removeNotificationSubscription(
-                    notificationListener.current
-                );
-            }
-            if (responseListener.current) {
-                Notifications.removeNotificationSubscription(responseListener.current);
-            }
+            notificationListener.remove();
+            responseListener.remove();
         };
     }, []);
 

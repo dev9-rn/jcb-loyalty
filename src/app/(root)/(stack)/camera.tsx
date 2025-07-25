@@ -20,6 +20,9 @@ import * as Haptics from 'expo-haptics';
 import { useAudioPlayer } from 'expo-audio';
 import CouponTypeRedeemDialog from '@/components/CouponTypeRedeemDialog';
 import { useTranslation } from 'react-i18next';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 type Props = {}
 
@@ -29,6 +32,17 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 // Define the mask size
 const MASK_WIDTH = SCREEN_WIDTH * 0.7;
 const MASK_HEIGHT = SCREEN_WIDTH * 0.7;
+
+const RADIO_VALUES = [
+    {
+        value: "0",
+        label: "CASH"
+    },
+    {
+        value: "1",
+        label: "FOC"
+    }
+]
 
 const CameraScreen = ({ }: Props) => {
 
@@ -40,6 +54,7 @@ const CameraScreen = ({ }: Props) => {
     const [coupondRedeemedData, setCouponRedeemedData] = useState<IRedeemedCoupon | undefined>(undefined);
     const [isCouponTypeMultiple, setIsCouponTypeMultiple] = useState<boolean>(false);
     const [qrData, setQrData] = useState<string>("");
+    const [selectedCouponType, setSelectedCouponType] = useState<string>("0")
 
     const { userDetails } = useUser();
     const { t } = useTranslation();
@@ -62,6 +77,7 @@ const CameraScreen = ({ }: Props) => {
             headerTintColor: 'white',
             headerRight: () => (
                 <TouchableOpacity
+                className='p-4'
                     onPress={() => {
                         setFlashMode(!flashMode)
                     }}
@@ -126,7 +142,7 @@ const CameraScreen = ({ }: Props) => {
         if (scanned || isCouponRedeemed || isCouponInvalid) return;
 
         setScanned(true);
-        fetchBarCodeDataValidation(data);
+        fetchCouponRedeemResults(data);
         setQrData(data);
         setTimeout(() => setScanned(false), 2000); // Enable scanning after 2 seconds
     };
@@ -172,14 +188,14 @@ const CameraScreen = ({ }: Props) => {
     };
 
     // Check if the coupon can be redeemed and offer type
-    const fetchCouponRedeemResults = async (data: string, redeemedType: string) => {
-        if (couponValidationData?.status != 200) return;
+    const fetchCouponRedeemResults = async (data: string, redeemedType?: string) => {
+        // if (couponValidationData?.status != 200) return;
 
         const redeemFormData = new FormData();
 
         redeemFormData.append(getRedeemCouponEndpoint().user_id, userDetails?.id as string);
         redeemFormData.append('qrText', data);
-        redeemFormData.append('redeemType', redeemedType);
+        redeemFormData.append('redeemType', selectedCouponType);
         redeemFormData.append('userType', userDetails?.userType);
 
         try {
@@ -226,7 +242,7 @@ const CameraScreen = ({ }: Props) => {
         // Camera permissions are not granted yet.
         return (
             <View className='flex-1 bg-white items-center justify-center gap-4'>
-                <Text className='font-medium'>We need your permission to show the camera</Text>
+                <Text className='font-medium'>We need your permission to access your camera to scan coupon QR codes</Text>
                 <Button onPress={() => requestPermission()}>
                     <Text>Grant Camera Access</Text>
                 </Button>
@@ -235,45 +251,101 @@ const CameraScreen = ({ }: Props) => {
     }
 
     return (
-        <View className='flex-1'>
+        <View className='flex-1 relative'>
             <CameraView
                 style={styles.camera}
                 enableTorch={flashMode}
                 flash='on'
                 onBarcodeScanned={handleBarCodeScanned}
-            >
-                <BarcodeMask
-                    width={MASK_WIDTH}
-                    height={MASK_HEIGHT}
-                    showAnimatedLine={false}
-                    edgeRadius={8}
+            />
+
+            <BarcodeMask
+                width={MASK_WIDTH}
+                height={MASK_HEIGHT}
+                showAnimatedLine={false}
+                edgeRadius={8}
+            />
+
+            <View className='flex-1 absolute top-[6.5rem] w-full bg-white p-2 py-4 z-10'>
+                <View className='flex-row items-center justify-around'>
+                    <Text className='font-semibold text-lg'>Select Coupon Type:- </Text>
+                    <View className='flex-row items-center justify-center flex-1'>
+                        <RadioGroup value={selectedCouponType} onValueChange={setSelectedCouponType} className='flex-row justify-around gap-8'>
+                            {RADIO_VALUES.map((item) => {
+
+                                const onLabelPress = (label: string) => {
+                                    return () => setSelectedCouponType(label)
+                                };
+
+                                return (
+                                    <React.Fragment key={item.value}>
+                                        <View className='flex-row gap-2 items-center'>
+                                            <RadioGroupItem aria-labelledby={`label-for-${item.value}`} value={item.value} />
+                                            <Label nativeID={`label-for-${item.value}`} onPress={() => onLabelPress(item.value)}>
+                                                {item.label}
+                                            </Label>
+                                        </View>
+                                    </React.Fragment>
+                                )
+                            })}
+                        </RadioGroup>
+                    </View>
+                </View>
+            </View>
+
+            {couponValidationData?.status != 200 && (
+                <CouponErrorDialog
+                    isCouponInvalid={isCouponInvalid}
+                    validationData={couponValidationData}
+                    setIsCouponInvalid={setIsCouponInvalid}
                 />
+            )}
 
-                {couponValidationData?.status != 200 && (
-                    <CouponErrorDialog
-                        isCouponInvalid={isCouponInvalid}
-                        validationData={couponValidationData}
-                        setIsCouponInvalid={setIsCouponInvalid}
-                    />
-                )}
+            {couponValidationData?.status != 200 && (
+                <CouponErrorDialog
+                    isCouponInvalid={isCouponInvalid}
+                    validationData={couponValidationData}
+                    setIsCouponInvalid={setIsCouponInvalid}
+                />
+            )}
 
-                {isCouponTypeMultiple && (
-                    <CouponTypeRedeemDialog
-                        isCouponTypeMultiple={isCouponTypeMultiple}
-                        validationData={couponValidationData}
-                        fetchCouponRedeemResults={fetchCouponRedeemResults}
-                        qrData={qrData}
-                    />
-                )}
+            {isCouponRedeemed && (
+                <CouponRedeemedDialog
+                    isCouponRedeemed={isCouponRedeemed}
+                    redeemedData={coupondRedeemedData}
+                    setIsCouponRedeem={setIsCouponRedeem}
+                />
+            )}
+            <BarcodeMask
+                width={MASK_WIDTH}
+                height={MASK_HEIGHT}
+                showAnimatedLine={false}
+                edgeRadius={8}
+            />
+            {couponValidationData?.status != 200 && (
+                <CouponErrorDialog
+                    isCouponInvalid={isCouponInvalid}
+                    validationData={couponValidationData}
+                    setIsCouponInvalid={setIsCouponInvalid}
+                />
+            )}
 
-                {isCouponRedeemed && (
-                    <CouponRedeemedDialog
-                        isCouponRedeemed={isCouponRedeemed}
-                        redeemedData={coupondRedeemedData}
-                        setIsCouponRedeem={setIsCouponRedeem}
-                    />
-                )}
-            </CameraView>
+            {isCouponTypeMultiple && (
+                <CouponTypeRedeemDialog
+                    isCouponTypeMultiple={isCouponTypeMultiple}
+                    validationData={couponValidationData}
+                    fetchCouponRedeemResults={fetchCouponRedeemResults}
+                    qrData={qrData}
+                />
+            )}
+
+            {isCouponRedeemed && (
+                <CouponRedeemedDialog
+                    isCouponRedeemed={isCouponRedeemed}
+                    redeemedData={coupondRedeemedData}
+                    setIsCouponRedeem={setIsCouponRedeem}
+                />
+            )}
         </View>
     )
 }

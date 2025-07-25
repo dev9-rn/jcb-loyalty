@@ -10,14 +10,15 @@ import { LogOutIcon } from '@/libs/icons/LogoutIcon';
 import useAuth from '@/hooks/useAuth'
 import MultiLangualDropdown from './MultiLangualDropdown'
 import { useTranslation } from 'react-i18next'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+// import VersionCheck from 'react-native-version-check-expo';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
     const { userDetails } = useUser();
-    const insets = useSafeAreaInsets();
     const { logout } = useAuth()
     const { t } = useTranslation();
+    // const currentVersion = VersionCheck.getCurrentVersion()
+    // VersionCheck.getCountry().then(country => console.log(country))
 
     return (
         <View className='flex-1'>
@@ -59,6 +60,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             </DrawerContentScrollView>
 
             <View className='p-4 m-4 border-t border-gray-200'>
+                {/* <Text className='mb-2 text-primary font-medium'>V {currentVersion}</Text> */}
                 <MultiLangualDropdown />
             </View>
         </View >
