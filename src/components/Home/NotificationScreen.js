@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
-import { BackHandler, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import {   StyleSheet, View, ScrollView, TouchableOpacity, AppRegistry } from 'react-native';
 import { Card, Text, Container, Header, Left, Body, Icon, Title, Right } from 'native-base';
-import Loader from '../../Utility/Loader';
 import App, { URL, APIKEY, ACCESSTOKEN } from '../../App';
-import { createStackNavigator, createAppContainer } from 'react-navigation';
-import HomeScreen from './HomeScreen';
 var moment = require('moment');
+import {createAppContainer ,createStackNavigator} from "react-navigation" 
+// import {createStackNavigator} from "react-navigation-stack"
+import HomeScreen from './HomeScreen';
+import { strings } from '../../locales/i18n';
+import { connect } from 'react-redux';
+import * as utilities from "../../Utility/utilities";
+import Loader from '../../Utility/Loader';
+import AsyncStorage from '@react-native-community/async-storage';
+import { isMaintenance } from '../../services/MaintenanceService/MaintenanceService';
 
 const AppNavigator = createStackNavigator({
 	AppJSScreen: { screen: HomeScreen, navigationOptions: { header: null } },
 });
 const AppContainer = createAppContainer(AppNavigator);
-export default class NotificationScreen extends Component {
+
+class NotificationScreen extends Component {
 	constructor(props) {
 		super(props);
+		console.log("NotificationScreen.js");
 		this.state = {
 			data: [],
 			deleteItem: false,
@@ -24,6 +31,7 @@ export default class NotificationScreen extends Component {
 			distributorId: '',
 			redirecT: false
 		};
+		// console.log(this.props.navigation.state.routeName);
 	}
 	showHideHomeScrn = () => {
 		this.setState({
@@ -32,6 +40,7 @@ export default class NotificationScreen extends Component {
 			this.navigator && this.navigator.dispatch({ type: 'Navigate', routeName: "AppJSScreen", params: "hii" });
 		})
 	}
+
 	async getDataFromAPi() {
 		await AsyncStorage.getItem('USERDATA')
 			.catch(err => { alert("Error") })
@@ -40,6 +49,11 @@ export default class NotificationScreen extends Component {
 				this.setState({ distributorId: lData.data.id }, () => {
 					const formData = new FormData();
 					formData.append('distributorId', this.state.distributorId);
+					if (this.props.languageControl) {
+						formData.append('language', 'en');
+					} else {
+						formData.append('language', 'hi');
+					}
 					this.getNotifications(formData);
 				})
 			})
@@ -60,64 +74,35 @@ export default class NotificationScreen extends Component {
 			.then((response) => response.json())
 			.then((responseJson) => {
 				this.setState({ data: responseJson.notifications, loading: false });
-			})
-			.catch((error) => {
+				console.log("Notification response", responseJson)			})
+			.catch(async (error) => {
+				await isMaintenance({navigation : this.props.navigation});
 				alert(error)
 			});
 	};
 	componentDidMount() {
-		console.log(this.props);
-		if (this.props.navigation.state.routeName === "DemoNotificationScreen") {
-			console.log("inside notify prop");
-			this.setState({ redirecT: true })
-		} else {
-			this.setState({ redirecT: false })
-		}
-		BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
 		this.getDataFromAPi();
 	}
-	componentWillUnMount() {
-		BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-	}
 	handleBackPress = () => {
-		console.log("press back clicked");
-
 		this.props.navigation.navigate('HomeScreen');
 		return true;
 	}
 	showNotfyScreen() {
 		return (
-			<ScrollView keyboardShouldPersistTaps="handled">
-				{/* <Header style={{ backgroundColor: '#0000FF' }}>
-					<Left style={{}}>
+			<ScrollView keyboardShouldPersistTaps="always" style={{ backgroundColor: '#1a1a1a' }}>
+				<Header style={{ backgroundColor: '#fab032' }}>
+					<Left style={{ flex: 0.5 }}>
 						<TouchableOpacity onPress={this.showHideHomeScrn} style={{ marginLeft: 5 }}>
-							<Icon type="FontAwesome" name="arrow-left" style={{ color: '#FFFFFF', fontSize: 25 }} />
-						</TouchableOpacity>
-					</Left>
-					<Body style={{ alignItems: 'flex-start', }}>
-						<Title style={{ color: '#FFFFFF', fontSize: 16 }}>NOTIFICATIONS</Title>
-					</Body>
-				</Header> */}
-
-				<Header style={{ backgroundColor: '#0000FF' }} hasTabs>
-					<Left style={{ flex: 0.2 }}>
-						<TouchableOpacity onPress={this.showHideHomeScrn}>
 							<Icon type="FontAwesome" name="long-arrow-left" style={{ fontSize: 25, color: '#FFFFFF', paddingRight: 10 }} />
 						</TouchableOpacity>
 					</Left>
-					<Body style={{ flex: 0.6, alignItems: 'center' }}>
-						<Title style={{ textAlign: 'center', color: '#FFFFFF' }}>NOTIFICATIONS</Title>
+					<Body style={{ flex: 0.8 }}>
+						<Title style={{ color: '#FFFFFF', fontSize: 16 }}>{strings('login.NotificationScreen_title')}</Title>
 					</Body>
-					<Right style={{ flex: 0.2 }}>
-					</Right>
 				</Header>
-
-				<Loader
-					loading={this.state.loading}
-					text={this.state.loaderText}
-				/>
+				<Loader loading={this.state.loading} text={this.state.loaderText} />
 				<View style={styles.container}>
-					{this.state.data.length > 0 ?
+					{this.state.data && this.state.data.length > 0 ?
 						this.state.data.map((data, i) => {
 							return <Card style={styles.cardContainer} key={i}>
 								<Text style={{ fontWeight: 'bold' }}>{moment(data.created_date).format('DD-MMM-YYYY')}</Text>
@@ -126,8 +111,14 @@ export default class NotificationScreen extends Component {
 						})
 						:
 						<Container>
-							<View style={styles.backGroundTextForNoti}>
-								<Text style={{ fontSize: 28, color: '#BDBDBD' }}>No notifications available!</Text>
+							<View style={{
+								flex: 1,
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								backgroundColor: this.props.enableDarkTheme ? 'black' : 'white'
+							}}>
+								<Text style={{ fontSize: 28, color: '#BDBDBD' }}>{strings('login.NotificationScreen_Error')}</Text>
 							</View>
 						</Container>
 					}
@@ -142,7 +133,7 @@ export default class NotificationScreen extends Component {
 	}
 	render() {
 		return (
-			<View style={styles.container}>
+			<View>
 				{this.state.showHideHomeScreen ? (this.state.redirecT ? this.showHomeScreen() : this.handleBackPress()) : this.showNotfyScreen()}
 			</View>
 		)
@@ -164,6 +155,13 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'column',
 		alignItems: 'center',
-		justifyContent: 'center'
+		justifyContent: 'center',
 	},
 });
+const mapStateToProps = (state) => {
+	return {
+		enableDarkTheme: state.VerifierReducer.enableDarkTheme,
+		languageControl: state.VerifierReducer.languageEnglish,
+	}
+}
+export default connect(mapStateToProps, null)(NotificationScreen)

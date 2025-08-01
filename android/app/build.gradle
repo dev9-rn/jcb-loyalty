@@ -293,7 +293,7 @@ dependencies {
     implementation project(':react-native-share')
     implementation project(':react-native-compress-image')
     implementation project(':react-native-background-task')
-    implementation project(':react-native-fingerprint-scanner')
+    // implementation project(':react-native-fingerprint-scanner')
     // implementation project(':rn-range-slider')
     // implementation project(':rn-update-apk')
     implementation project(':react-native-torch')

@@ -1,112 +1,119 @@
-import React, { Component } from 'react';
-import { StatusBar, Button,  BackHandler, Platform, StyleSheet, View, TextInput, Image, TouchableOpacity } from 'react-native';
+import React, { Component,useEffect } from 'react';
+import { StatusBar, Button, BackHandler, Platform, StyleSheet, View, TextInput, Image, TouchableOpacity, Alert, Linking, ScrollView } from 'react-native';
 import { Header, Left, Body, Content, Card, CardItem, Text, Title, Icon } from 'native-base';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import AsyncStorage from '@react-native-community/async-storage';
+;
 import LinearGradient from 'react-native-linear-gradient';
 import LoginService from '../../services/LoginService/LoginService';
-import { LAT, LONG, LOC_ERROR } from '../../Utility/GeoLocation';
-import OfflineNotice from '../../Utility/OfflineNotice';
-import Loader from '../../Utility/Loader';
-import * as utilities from '../../Utility/utilities';
-import * as app from '../../App';
 import Modal from "react-native-modal";
-import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../App';
 import SplashScreen from 'react-native-splash-screen';
+import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../App';
 import { connect } from 'react-redux';
 import { strings } from '../../locales/i18n';
 import I18n from 'react-native-i18n';
-import { setLoginData } from '../../Redux/Actions/InstituteActions';
+import * as utilities from "../../Utility/utilities";
+import * as app from '../../App';
+import AsyncStorage from '@react-native-community/async-storage';
+import VersionCheck from 'react-native-version-check';
 import { bindActionCreators } from 'redux';
-import MyColors from '../../Utility/Colors';
-// import AsyncStorage from '@react-native-community/async-storage';
+import { setLoginData } from '../../Redux/Actions/InstituteActions';
+import { isMaintenance } from '../../services/MaintenanceService/MaintenanceService';
 
- class LoginScreen extends Component {
+class LoginScreen extends Component {
 
   constructor(props) {
     super(props);
-
+    console.log("Login.js");
     this.state = {
-      isConnected: true,
       mobileNumber: '',
       password: '',
       borderBottomColorPassword: '#757575',
       borderBottomColorUserName: '#757575',
-      loading: false,
-      loaderText: 'Logging in...',
       isModalVisible: false,
       brandCode: '',
       brandCodeError: ''
     };
+    this.getUserData();
   }
+
   toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
   };
-  // componentWillMount() {
-  //   this.setState({ isConnected: app.ISNETCONNECTED });
-  //   this.getUserData();
-  // }
   componentDidMount() {
-    this.setState({ isConnected: app.ISNETCONNECTED });
-    this.getUserData();
-    // SplashScreen.hide()
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
-    // NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+    console.log(this.props);
+		BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      payload => {
+        this.setState(this.state);
+      }
+    );
   }
 
   componentWillUnmount() {
+    // this.willFocusSubscription.remove();
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-    // NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
   }
 
   handleBackPress = () => {
-    // Alert.alert(
-    //   'Exit App',
-    //   'Are you sure you want to exit this app',
-    //   [
-    //     {text: 'NO', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-    //     {text: 'YES', onPress: () => { BackHandler.exitApp(); }},
-    //   ],
-    //   { cancelable: false }
-    // );
     BackHandler.exitApp();
     return true;
-  }
-
-  handleConnectivityChange = isConnected => {
-    if (isConnected) {
-      alert(isConnected);
-      this.setState({ isConnected });
-    } else {
-      alert(isConnected)
-      this.setState({ isConnected });
-      utilities.showToastMsg('No network available! Please check the connectivity settings and try again.');
+	}
+  // componentDidMount(){
+  //   // this.checkUpdateNeeded();
+  // }
+   async checkUpdateNeeded() {
+    try{
+    let updateNeeded = await VersionCheck.needUpdate();
+    // const latestVersion = await VersionCheck.getLatestVersion();
+    // const currentVersion = VersionCheck.getCurrentVersion()   
+    if (updateNeeded && updateNeeded.isNeeded) {
+        //Alert the user and direct to the app url
+        Alert.alert(
+          'Please Update',
+          'Latest Version of the app is now available on playstore. Update the app to continue using....',
+          [{
+            text:'Update',
+            onPress:() => {
+              BackHandler.exitApp();
+              Linking.openURL(updateNeeded.storeUrl);
+            },
+          },],
+          {cancelable: false},
+        );
     }
-  };
-
-  async closeActivityIndicator() {
-    await setTimeout(() => {
-      this.setState({ loading: false });
-    });
   }
+  catch(error)
+  { console.log("Version check error",error);}
+}
 
   async getUserData() {
-    await AsyncStorage.getItem('USERDATA', (err, result) => {   // USERDATA is set on VerifierLoginScreen
+    await AsyncStorage.getItem('ISMAINTENANCE', async (err, result) => {   // USERDATA is set on VerifierLoginScreen
       var lData = JSON.parse(result);
-      if (lData) {
-        // if(lData.hasOwnProperty('data')){
-        if (lData.data.id) {
-          this.props.navigation.navigate('HomeScreen');
-        }
-        // }
-
+      console.log("===========lData?.isMaintenanceEnabled" ,lData?.isMaintenanceEnabled)
+      if(lData?.isMaintenanceEnabled){
+        this.props.navigation.navigate('MaintenancePage');
+        // return lData?.isMaintenanceEnabled;
+      }else{
+        await AsyncStorage.getItem('USERDATA', (err, result) => {   // USERDATA is set on VerifierLoginScreen
+          var lData = JSON.parse(result);
+          console.log('getuser data....',lData);
+          if (lData) {
+            if (lData.data.id) {
+              this.props.navigation.navigate('HomeScreen');
+            }
+          }
+        });
       }
+      console.log('ISMAINTENANCE....',lData?.isMaintenanceEnabled);
     });
+    
   }
 
   _validateMobileNumber() {
+    console.log("inside1");
     let lMobileNumber = this.state.mobileNumber;
     let res = '';
+    
     res = utilities.checkMobileNumber(lMobileNumber);
     if (!res || lMobileNumber.trim().length < 10) {
       this.setState({ phoneNumberError: "This mobile number appears to be invalid." });
@@ -122,105 +129,64 @@ import MyColors from '../../Utility/Colors';
 
     var loginApiObj = new LoginService();
 
-    this.setState({ loading: true });
     await loginApiObj.login(formData);
     var lResponseData = await loginApiObj.getRespData();
+    console.log(lResponseData);
     this.setState({ mobileNumber: '' })
     this.closeActivityIndicator();
-    console.log("lResponse data:", lResponseData);
+
     if (!lResponseData) {
       this.closeActivityIndicator();
-      utilities.showToastMsg('Something went wrong. Please try again later');
+      alert('Something went wrong. Please try again later');
       return true;
     }
-    else if (lResponseData.status == 400 || lResponseData.status == 500 || lResponseData.status == 422 || lResponseData.status == 403
+    else if (lResponseData.status == 400 || lResponseData.status == 500 || lResponseData.status == 422 
       || lResponseData.status == 503 || lResponseData.status == 451) {
       this.closeActivityIndicator();
-      utilities.showToastMsg(lResponseData.message);
+      alert(lResponseData.message);
+    } else if (lResponseData.status == 403) {
+      alert(lResponseData.message);
+      this.props.navigation.navigate('LoginScreen');
+      AsyncStorage.clear();
       return;
     }
     else if (lResponseData.status == 200) {
       this.closeActivityIndicator();
-      utilities.showToastMsg('OTP sent successfully');
-      console.log("otp data:", lResponseData);
+      // alert('OTP sent successfully');
       try {
-        // await AsyncStorage.setItem('USERDATA',JSON.stringify(lResponseData));
         this.props.navigation.navigate('OTPVerification', { mobileNumber: lMobileNumber });
       } catch (error) {
-        console.log(error);
+        console.log("console.logh" ,error);
       }
     } else {
       this.closeActivityIndicator();
-      utilities.showToastMsg('Something went wrong. Please try again later');
+      alert('Something went wrong. Please try again later');
     }
   }
 
   async _onPressButton() {
+    console.log(this.state.mobileNumber);
+    let lMobileNumber = this.state.mobileNumber;
+    var isValidMobileNumber = '';
 
-    if (!this.state.isConnected || !app.ISNETCONNECTED) {
-      // alert(app.ISNETCONNECTED);
-      utilities.showToastMsg('No network available! Please check the connectivity settings and try again.');
-    } else {
-
-      let lMobileNumber = this.state.mobileNumber;
-      var isValidMobileNumber = '';
-
-      if (lMobileNumber == '') {
-        utilities.showToastMsg('Enter mobile number');
-      }
-      else if (lMobileNumber) {
-        isValidMobileNumber = await this._validateMobileNumber();
-        if (isValidMobileNumber) {
-          this.callForAPI();
-        } else {
-          utilities.showToastMsg('Wrong login credentials! Please check and try again');
-        }
+    if (lMobileNumber == '') {
+      alert('Enter mobile number');
+      return;
+    }
+    else if (lMobileNumber) {
+      isValidMobileNumber = await this._validateMobileNumber();
+      if (isValidMobileNumber) {
+        
+        this.callForAPI();
       } else {
-        alert('Server error');
+        alert('Wrong login credentials! Please check and try again');
       }
-    }
-  }
-
-  _showOffline() {
-    if (!app.ISNETCONNECTED) {
-      return (
-        <OfflineNotice />
-      )
-    }
-  }
-
-  _showHeader() {
-    if (Platform.OS == 'ios') {
-      return (
-        <Header style={{ backgroundColor: '#0000FF' }}>
-          <Left style={{ flex: 0.1 }}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('HomeScreen')}>
-              <Icon type="FontAwesome" name="long-arrow-left" style={{ fontSize: 25, color: '#FFFFFF', paddingLeft: 10, paddingRight: 10 }} />
-            </TouchableOpacity>
-          </Left>
-          <Body style={{ flex: 0.9 }}>
-            <Title style={{ color: '#FFFFFF' }}>Sec Doc SeQR</Title>
-          </Body>
-        </Header>
-      )
     } else {
-      return (
-        <Header style={{ backgroundColor: '#0000FF' }}>
-          <Left style={{ flex: 0.1 }}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('HomeScreen')}>
-              <Icon type="FontAwesome" name="long-arrow-left" style={{ fontSize: 25, color: '#FFFFFF', paddingLeft: 10, paddingRight: 10 }} />
-            </TouchableOpacity>
-          </Left>
-          <Body style={{ flex: 0.9, alignItems: 'center' }}>
-            <Title style={{ color: '#FFFFFF', fontSize: 16 }}>Sec Doc SeQR</Title>
-          </Body>
-
-        </Header>
-      )
+      alert('Server error');
     }
   }
+
   verifyBrandID = () => {
-    this.setState({ loading: true })
     const formData = new FormData();
     formData.append('brandCode', this.state.brandCode);
     var lUrl = URL + 'validateBrand';
@@ -229,61 +195,51 @@ import MyColors from '../../Utility/Colors';
       headers: {
         'Accept': 'application\/json',
         'Content-Type': 'multipart\/form-data',
-        'apikey': APIKEY,
-        'accesstoken': ACCESSTOKEN
+        'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
       },
       body: formData,
-    })
-      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((responseJson) => {
-        this.setState({ loading: false })
-        console.log(responseJson);
         if (responseJson.status == 422) {
-          this.setState({ brandCodeError: responseJson.message,brandCode:'' })
+          this.setState({ brandCodeError: responseJson.message })
         } else if (responseJson.status == 200) {
           this.setState({ brandCodeError: '' }, () => {
             AsyncStorage.setItem('BRANDCODE', JSON.stringify(responseJson.brand_id));
-            this.toggleModal();
             this.navigateToSignUpScreen();
           })
         } else {
 
         }
       })
-      .catch((error) => {
-        this.setState({ loading: false })
+      .catch(async (error) => {
+        await isMaintenance({navigation : this.props.navigation});
         console.log(error);
       });
   }
   navigateToSignUpScreen = () => {
     this.props.navigation.navigate('SignUpScreen')
   }
+
+  closeActivityIndicator() {
+    setTimeout(() => {
+      this.setState({ animating: false, loading: false });
+    });
+  }
   render() {
     return (
-      <View style={styles.container}>
-
-        <OfflineNotice />
-
-        <StatusBar
-          barStyle="light-content"
-        />
-
-        <Loader
-          loading={this.state.loading}
-          text={this.state.loaderText}
-        />
-
+      // <ScrollView keyboardShouldPersistTaps="always">
+      <ScrollView contentContainerStyle={{flex: 1}} keyboardShouldPersistTaps="always" style={styles.container}>
         <View style={styles.containerLevel1}>
-          <View>
-            <Image
-              style={{ width: 310, height: 1000, padding:10 }}
+          <View style={{ marginTop: 30 }}>
+           <Image
+              style={{ width: 250, height: 200 }}
               resizeMode='contain'
               source={require('../../images/iTunesArtwork.png')}
             />
           </View>
         </View>
         <View style={styles.loginViewContainer}>
-          <KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
+          <ScrollView keyboardShouldPersistTaps="always">
             <Card style={styles.cardContainer}>
 
               <CardItem header style={styles.cardHeader}>
@@ -292,18 +248,18 @@ import MyColors from '../../Utility/Colors';
 
               <View style={{ paddingLeft: 0, paddingRight: 0, marginTop: 10 }}>
                 <View style={styles.inputContainer}>
-
+                {/* <Text>{strings('login.paymentOptions_screen_placeholder_mobileno')}</Text> */}
                   <TextInput
                     style={{
                       borderBottomColor: this.state.borderBottomColorUserName,
                       ...styles.inputs
                     }}
                     value={this.state.mobileNumber}
-                    placeholderTextColor='#757575'
                     keyboardType='number-pad'
                     maxLength={10}
                     placeholder={strings('login.paymentOptions_screen_placeholder_mobileno')}
-                    onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
+                    placeholderTextColor='#757575'
+                    onFocus={() => { this.setState({ borderBottomColorUserName: '#D24943' }) }}
                     onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
                     onChangeText={(mobileNumber) => this.setState({ mobileNumber })}
                   />
@@ -315,10 +271,10 @@ import MyColors from '../../Utility/Colors';
                   <TouchableOpacity onPress={() => this._onPressButton()}>
                     <View style={styles.buttonLogin}>
 
-                      <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.linearGradient}>
+                      <LinearGradient colors={['#fab032', '#fab032', '#fab032']} style={styles.linearGradient}>
                         <Text style={styles.buttonText}>
-                        {strings('login.distributorLogin')}
-                    </Text>
+                          {strings('login.login_button')}
+                        </Text>
                       </LinearGradient>
 
                     </View>
@@ -328,14 +284,14 @@ import MyColors from '../../Utility/Colors';
                       <Card style={styles.cardContainer}>
                         <CardItem header >
                           <Text style={{ textAlign: 'center', flex: 1, paddingLeft: 10 }}>{strings('login.brandCodeInsert')}</Text>
-                          <TouchableOpacity onPress={(isModalVisible) => this.setState({ isModalVisible: false, brandCodeError: "" })}>
+                          <TouchableOpacity onPress={(isModalVisible) => this.setState({ isModalVisible: false, brandCodeError: '' })}>
                             <Icon type="FontAwesome" name="times" style={{ fontSize: 25, color: 'red', paddingLeft: 13 }} />
                           </TouchableOpacity>
                         </CardItem>
                         <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }} />
                         <View style={{ marginTop: 20 }}>
                           <Text>{strings('login.brandCode')} : </Text>
-                          <TextInput
+                          {/* <TextInput
                             style={{
                               borderBottomColor: this.state.borderBottomColorUserName,
                               ...styles.inputs
@@ -345,7 +301,7 @@ import MyColors from '../../Utility/Colors';
                             onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
                             onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
                             onChangeText={(brandCode) => this.setState({ brandCode })}
-                          />
+                          /> */}
                           {this.state.brandCodeError ?
                             <View style={{ marginTop: 15, marginLeft: 20 }}>
                               <Text style={{ color: 'red' }}>{this.state.brandCodeError}</Text>
@@ -360,17 +316,26 @@ import MyColors from '../../Utility/Colors';
                   </Modal>
                   <View>
                     <TouchableOpacity style={{ marginTop: 15, paddingLeft: 10 }} >
-                      {/* <Text style={{ color: '#1784C7', fontSize: 12}}>Click here to sign up</Text> onPress={() => this.props.navigation.navigate('SignUpScreen')}*/}
-                      <Text style={{ color: '#1784C7', fontSize: 12 }} onPress={this.toggleModal}>{strings('login.clickHereToSignUp')}</Text>
+                       {/* <Text style={{color: '#fab032', fontSize: 14}} onPress={() => this.props.navigation.navigate('SignUpScreen')}>Click here to sign up</Text> */}
+                      <Text style={{ color: '#fab032', fontSize: 12 }} onPress={this.toggleModal}>{strings('login.clickHereToSignUp')}</Text>
                     </TouchableOpacity>
                   </View>
                 </Content>
               </View>
             </Card>
-
-          </KeyboardAwareScrollView>
+            {/* <TouchableOpacity onPress={() => this.props.navigation.navigate('MechanicLoginScreen')} style={{ alignItems: 'center' }}>
+              <View style={styles.buttonLogin1}>
+                <LinearGradient colors={['#fab032', '#fab032', '#fab032']} style={styles.linearGradient}>
+                  <Text style={styles.buttonText}>
+                    {strings('login.clickForMechanic')}
+                  </Text>
+                </LinearGradient>
+              </View>
+            </TouchableOpacity> */}
+          </ScrollView>
         </View>
-      </View>
+      </ScrollView>
+      // {/* </ScrollView> */}
     )
   }
 };
@@ -418,9 +383,16 @@ const styles = StyleSheet.create({
   },
   buttonLogin: {
     marginTop: 10,
-    backgroundColor: '#0000FF',
+    backgroundColor: '#fab032',
     borderRadius: 5,
-    flex: 1
+    flex: 1,
+  },
+  buttonLogin1: {
+    marginTop: 30,
+    backgroundColor: '#fab032',
+    borderRadius: 5,
+    width: 350,
+    bottom: 5
   },
   linearGradient: {
     flex: 1,
@@ -439,7 +411,6 @@ const styles = StyleSheet.create({
 
 })
 
-
 const mapStateToProps = (state) => {
   if (state.VerifierReducer.languageEnglish == "English - (English)") {
     I18n.locale = 'en'
@@ -453,7 +424,7 @@ const mapStateToProps = (state) => {
     I18n.locale = 'ma'
   } else if (state.VerifierReducer.languageEnglish == "Gujarati - (ગુજરાતી)") {
     I18n.locale = 'gu'
-  } else if (state.VerifierReducer.languageEnglish == "Telugu - (తెలుగు)") {
+  } else if (state.VerifierReducer.languageEnglish == "Telgu - (Telgu)") {
     I18n.locale = 'tl'
   } else if (state.VerifierReducer.languageEnglish == "Tamil - (தமிழ்)") {
     I18n.locale = 'ta'

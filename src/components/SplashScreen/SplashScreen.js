@@ -1,4 +1,4 @@
-import {createStackNavigator} from 'react-navigation';
+// import {createStackNavigator} from 'react-navigation-stack';
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 

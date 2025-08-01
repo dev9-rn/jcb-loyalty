@@ -13,12 +13,14 @@ import * as utilities from '../../Utility/utilities';
 // import { URL, HEADER } from '../../App';
 import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../App';
 import AsyncStorage from '@react-native-community/async-storage';
-import MyColors from '../../Utility/Colors';
+// import MyColors from '../../Utility/Colors';
 
 export default class RemoveAccount extends Component {
     constructor(props) {
         super(props);
+        console.log(this.distributorId);
         this.distributorId;
+        this.userType;
         this.state = {
             setNavigationScreen: '',
             backgroundColorHeader: '',
@@ -106,8 +108,9 @@ export default class RemoveAccount extends Component {
 		formData.append('distributorId', this.state.distributorId);
 		formData.append('userType', this.state.userType);
 		formData.append('language', "en");
-		console.log(formData+"------"+APIKEY+"---"+this.state.accesstoken);
-		fetch(`https://seqrloyalty.com/npl/api/removeAccount`, {
+		console.log(formData);
+        // console.log(formData+"------"+APIKEY+"---"+this.state.accesstoken);
+		fetch(`https://seqrloyalty.com/demo/apiv1/removeAccount`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'multipart\/form-data',
@@ -126,14 +129,14 @@ export default class RemoveAccount extends Component {
                     
 					this.props.navigation.navigate('LoginScreen');
 
-					utilities.showToastMsg(response.message);
+					alert(response.message);
 
-				} else if (response.status == 409) { utilities.showToastMsg(response.message); }
-				else if (response.status == 422) { utilities.showToastMsg(response.message); }
-				else if (response.status == 400) { utilities.showToastMsg(response.message); }
-				else if (response.status == 403) { utilities.showToastMsg(response.message); this.props.navigation.navigate('LoginScreen') }
-				else if (response.status == 405) { utilities.showToastMsg(response.message); }
-				else if (response.status == 500) { utilities.showToastMsg(response.message); }
+				} else if (response.status == 409) { alert(response.message); }
+				else if (response.status == 422) { alert(response.message); }
+				else if (response.status == 400) { alert(response.message); }
+				else if (response.status == 403) { alert(response.message); this.props.navigation.navigate('LoginScreen') }
+				else if (response.status == 405) { alert(response.message); }
+				else if (response.status == 500) { alert(response.message); }
 			})
 			.catch(error => {
 				this.setState({ loading: false })

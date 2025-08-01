@@ -339,21 +339,21 @@ class HomeScreen extends Component {
         <Header style={{ backgroundColor: '#fff' }}>
           <Left style={{ flex: 0.1 }}>
             <TouchableOpacity onPress={() => { this.toggleControlPanel() }}>
-              <Icon type="FontAwesome" name="bars" style={{ fontSize: 25, color: '#0000ff', paddingRight: 10 }} />
+              <Icon type="FontAwesome" name="bars" style={{ fontSize: 25, color: '#fab032', paddingRight: 10 }} />
             </TouchableOpacity>
           </Left>
           <Body style={{ flex: 0.8, alignItems: 'center' }}>
-            <Title style={{ color: '#0000ff', fontSize: 16 }}>{strings('login.dashboard_title')}</Title>
+            <Title style={{ color: '#fab032', fontSize: 16 }}>{strings('login.dashboard_title')}</Title>
           </Body>
           <Right style={{ flex: 0.1 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
               <TouchableOpacity onPress={() => { this._onPressNotificationIcon() }}>
                 <IconBadge
                   MainElement={
-                    <Icon type="FontAwesome" name="bell" style={{ fontSize: 30, height: 35, width: 40, color: '#0000ff', margin: 7, marginBottom: 0 }} />
+                    <Icon type="FontAwesome" name="bell" style={{ fontSize: 30, height: 35, width: 40, color: '#fab032', margin: 7, marginBottom: 0 }} />
                   }
                   BadgeElement={
-                    <Text style={{ color: '#0000ff', fontSize: 10 }}>{this.state.count}</Text>
+                    <Text style={{ color: '#fab032', fontSize: 10 }}>{this.state.count}</Text>
                   }
                   IconBadgeStyle={
                     {
@@ -438,7 +438,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#EBF5FB',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2  }}>{strings('login.Value_of_Coupons_Scanned')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCouponsScanned}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCouponsScanned}</Text>
                   </View>
                   {/* <Text style={{ padding: 20, textAlign: 'center', fontSize: 24 }}>{this.state.totalCouponsRedeemed}</Text> */}
                 </Card>
@@ -458,7 +458,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2  }}>{strings('login.Value_of_Coupons_Scanned')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCashCouponsScanned}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCashCouponsScanned}</Text>
                   </View>
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2,color:'green' }}>{strings('login.No_of_Coupons_Credited')}</Text>
@@ -468,7 +468,7 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2,color:'green'  }}>{strings('login.Value_of_Coupons_Credited')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCashCouponsCredited}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCashCouponsCredited}</Text>
                   </View>
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2,color:'orange' }}>{strings('login.No_of_Coupons_Pending')}</Text>
@@ -478,30 +478,25 @@ class HomeScreen extends Component {
                   <View style={{ backgroundColor:'#f5eef8',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2 ,color:'orange' }}>{strings('login.Value_of_Coupons_Pending')}</Text>
                     {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfCashCouponsPending}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfCashCouponsPending}</Text>
                   </View>
                   {/* <Text style={{ padding: 20, textAlign: 'center', fontSize: 24 }}>{this.state.totalCouponsRedeemed}</Text> */}
                 </Card>
 
-                <Card style={{ flex: 0.5, marginRight: 5, padding: 5 ,borderRadius:10}}>
+                {/* <Card style={{ flex: 0.5, marginRight: 5, padding: 5 ,borderRadius:10}}>
                 <View style={{ flexDirection:'row',marginBottom:5,}}>
                   <Text style={{ textAlign:'left', fontWeight:'bold',fontSize:18,marginLeft:2 }}>{strings('login.foc_Coupons')}</Text>
                   <Text style={{  textAlign: 'right',fontSize:18,marginLeft:2, flex:1, marginRight:8,color:'darkgray'}}>Total</Text>
                   </View>
-                  {/* <Text style={{ height: this.props.languageControl == "Tamil - (தமிழ்)" ? 40 : 35, textAlign:'left', fontWeight:'bold',fontSize:18,marginLeft:5 }}>FOC Coupons</Text> */}
-                  {/* <Text style={{ height: this.props.languageControl == "Tamil - (தமிழ்)" ? 40 : 35, textAlign: 'left',fontSize:16,marginLeft:5  }}>{strings('login.total_coupon_scan')}</Text> */}
                   <View style={{ backgroundColor:'#eafaf1',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2, }}>{strings('login.No_of_Coupons_Scanned')}</Text>
-                    {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
                     <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalNoOfFOCCouponsScanned}</Text>
                   </View>
                   <View style={{ backgroundColor:'#eafaf1',margin:2,borderRadius:5,flexDirection:'row'}}>
                     <Text style={{ padding:8, textAlign: 'left',fontSize:14,flex:3,marginLeft:2  }}>{strings('login.Value_of_Coupons_Scanned')}</Text>
-                    {/* <Text style={{ padding:8, textAlign: 'right',fontSize:16,marginLeft:5,  marginRight:5}}>: </Text> */}
-                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>{this.state.totalValueOfFOCCouponsScanned}</Text>
+                    <Text style={{ padding:8, textAlign: 'right',fontSize:14,marginLeft:2, flex:1, marginRight:2}}>Rs.{this.state.totalValueOfFOCCouponsScanned}</Text>
                   </View>
-                  {/* <Text style={{ padding: 20, textAlign: 'center', fontSize: 24 }}>{this.state.totalCouponsRedeemed}</Text> */}
-                </Card>
+                </Card> */}
               </View>
 
               {/* {this.state.loading ? <View style={{ justifyContent: 'center' }}>

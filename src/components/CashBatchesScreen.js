@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { StatusBar, AsyncStorage, StyleSheet, View, TouchableOpacity, Alert, ScrollView, BackHandler, PermissionsAndroid } from 'react-native';
-import { Text, ListItem, Header, Left, Body, Right, Card, Title, Button, Icon } from 'native-base';
+import { StatusBar, StyleSheet, View, TouchableOpacity, Alert, ScrollView, BackHandler, PermissionsAndroid, Platform, Linking } from 'react-native';
+import { Text, ListItem, Header, Left, Body, Right, Card, Title, Button, Icon, TabHeading } from 'native-base';
 import Loader from '../Utility/Loader';
-import * as utilities from '../Utility/utilities';
+import * as utilities from './Utility/utilities';
 import moment from 'moment';
 import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../src/App';
 import { Col, Grid } from "react-native-easy-grid";
-import DatePicker from 'react-native-date-picker'
+import DatePicker from 'react-native-date-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { strings } from '../locales/i18n';
 import { connect } from 'react-redux';
 var _ = require('lodash');
@@ -14,10 +15,12 @@ import { Dropdown } from 'react-native-material-dropdown';
 import Modal from "react-native-modal";
 import RNFetchBlob from 'rn-fetch-blob';
 import { writeFile, readFile } from 'react-native-fs';
-// import XLSX from 'xlsx';
+import XLSX from 'xlsx';
 // import ReactExport from "react-export-excel";
 import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs';
+import MyColors from './Utility/Colors';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class CashBatchesScreen extends Component {
 
@@ -36,13 +39,13 @@ class CashBatchesScreen extends Component {
             loading: false,
             isDateTimePickerVisible: false,
             isDateTimePickerVisible1: false,
-            frmDate: moment().clone().startOf('month').locale('en').format("DD-MM-YYYY"),
-            toDate: moment().locale('en').format('DD-MM-YYYY'),
-            frmDate: this.props.navigation.state.params.frmDate ? this.props.navigation.state.params.frmDate : moment().clone().startOf('month').locale('en').format("DD-MM-YYYY"),
+            // frmDate: moment().locale('en').clone().startOf('month').format("DD-MM-YYYY"),
+            // toDate: moment().locale('en').format('DD-MM-YYYY'),
+            frmDate: this.props.navigation.state.params.frmDate ? this.props.navigation.state.params.frmDate : moment().locale('en').clone().startOf('month').format("DD-MM-YYYY"),
             toDate: this.props.navigation.state.params.toDate ? this.props.navigation.state.params.toDate : moment().locale('en').format('DD-MM-YYYY'),
             fromDateError: '',
             toDateError: '',
-            distributorId: '',
+            carpenterId: '',
             lResponseData: '',
             redeemHistory: [],
             redeemHistoryCash: [],
@@ -57,8 +60,10 @@ class CashBatchesScreen extends Component {
             selectedMonthName: '',
             isModalVisible: false,
             dataToShowOnModal: {},
+            accesstoken:'',
             open1:false,
             open2:false
+            
         };
     }
     _getYearList = () => {
@@ -74,18 +79,20 @@ class CashBatchesScreen extends Component {
     downloadTheFile = () => {
         this.setState({ loading: true })
         const formData = new FormData();
-        formData.append('distributorId', this.state.distributorId);
-        // formData.append('year', this.state.selectedYear);
+        formData.append('distributorId', this.state.carpenterId);
+        formData.append('year', this.state.selectedYear);
         formData.append('startDate', this.state.frmDate);
         formData.append('endDate', this.state.toDate);
+        formData.append('userType', this.state.userType);
+        formData.append('language','en');
 
-        fetch(URL+"/exportDistCashBatchReport", {
+        fetch("https://seqrloyalty.com/demo/apiv1/getCashBatches", {
             method: 'POST',
             headers: {
                 'Accept': 'application\/json',
                 'Content-Type': 'multipart\/form-data',
                 'apikey': APIKEY,
-                'accesstoken': ACCESSTOKEN
+                'accesstoken': this.state.accesstoken
             },
             body: formData,
         })
@@ -99,7 +106,13 @@ class CashBatchesScreen extends Component {
                     responseJson.message,
                     [
                         // { text: "Ok", onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                        { text: "OK", onPress: () => { this.downloadFile(responseJson.reportLink) } },
+                        { text: "OK", onPress: () => { 
+                            Platform.OS == "android" ?
+                            this.downloadFile(responseJson.reportLink) 
+                            :
+                            this.showFile(responseJson.reportLink)
+                        } },
+                        // { text: "OK", onPress: () => { this.downloadFile("https://seqrloyalty.com/karigar/uploads/excels/mobile/Karigar Credit Batch SCUBE01 05_08_2021_11_11_47_.xlsx") } },
                     ],
                     { cancelable: false }
                 );
@@ -112,26 +125,85 @@ class CashBatchesScreen extends Component {
     }
     getLocalPath(url) {
         const filename = url.split('/').pop();
-        return `${RNFS.DownloadDirectoryPath}/${filename}`;
+        if(Platform.OS == "android")
+        {
+            return `${RNFS.DownloadDirectoryPath}/${filename}`;
+        }
+        else{
+             return `${RNFS.DocumentDirectoryPath}/${filename}`;
+        }
+       
     }
     async downloadFile(fileUrl) {
         this.setState({ loading: true });
         const url = fileUrl;
         const localFile = this.getLocalPath(url);
         const options = {
-            fromUrl: url,
-            toFile: localFile
+            fromUrl: encodeURI(url),
+            toFile: localFile,
+            fileCache : true
         };
         RNFS.downloadFile(options).promise
             .then(async () => {
                 this.setState({ loading: false });
-                FileViewer.open(localFile)
+                console.log(localFile);
+                if(Platform.OS == "android")
+              {
+                FileViewer.open(localFile,{
+                    displayName: "Documents",
+                    showOpenWithDialog: true,
+                    showAppsSuggestions: true,
+
+                })
+                .catch(() => {
+                    Alert.alertWithType("warn", "Sorry", "Cannot open file...", 5000);
+                  });
+                }
+                else{
+                    console.log("else");
+                    try{
+                      
+
+                    }
+                    catch (e) {
+                        console.warn(TAG, "An error occurred", JSON.stringify(e));
+                    }
+                }
+            
+               
             })
             .catch(error => {
                 this.setState({ animating: false, loading: false });
                 console.warn("Error in downloading file" + error);
             });
     }
+
+    /////////////////
+    async showFile (fileUrl) {
+        const ext = fileUrl.split(/[#?]/)[0].split('.').pop().trim()
+        return new Promise((resolve, reject) => {
+          RNFetchBlob.config({
+             fileCache: true,
+             path: dirs.DocumentDir + "/Magicgrip.xls",
+             appendExt: ext
+          })
+            .fetch('GET', encodeURI(fileUrl))
+            .then(res => {
+              console.log('The file saved to ', res.path())
+              const downloadFile =
+                Platform.OS === 'android' ? 'file://' + res.path() : '' + res.path()
+              setTimeout(() => {
+                FileViewer.open(downloadFile, { showOpenWithDialog: true, onDismiss: () => RNFetchBlob.fs.unlink(res.path()) })
+              }, 350)
+              resolve(true)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      }
+    /////////////////
     requestCameraPermission = async () => {
         try {
             const granted = await PermissionsAndroid.request(
@@ -182,11 +254,12 @@ class CashBatchesScreen extends Component {
         this._getYearList();
     }
     async _getAsyncData() {
-        await AsyncStorage.getItem('USERDATA', (err, result) => {		// USERDATA is set on SignUP screen
-            var lData = JSON.parse(result);
+        await AsyncStorage.multiGet(['USERDATA','ACCESSTOKEN'], (err, result) => {		// USERDATA is set on SignUP screen
+            var lData = JSON.parse(result[0][1]);
+            this.setState({ accesstoken : result[1][1] })
             if (lData) {
                 // this.distributorId = lData.data.id;
-                this.setState({ distributorId: lData.data.id, userType: lData.data.userType }, () => {
+                this.setState({ carpenterId: lData.data.id, userType: lData.data.userType }, () => {
                     this.callApi()
                 })
             }
@@ -196,32 +269,32 @@ class CashBatchesScreen extends Component {
         this.setState({ loading: true })
         const formData = new FormData();
 
-        formData.append('distributorId', this.state.distributorId);
+        formData.append('carpenterId', this.state.carpenterId);
         formData.append('startDate', this.state.frmDate);
         formData.append('endDate', this.state.toDate);
         // formData.append('year', this.state.selectedYear);
         // formData.append('toDate', this.state.toDate);
         // formData.append('offset', this.state.offset);
         // formData.append('redeemType', 'Cash');
-        formData.append('userType', "0");
-        // if (this.props.languageControl) {
-        //     formData.append('language', 'en');
-        // } else {
-        //     formData.append('language', 'hi');
-        // }
+        formData.append('userType', this.state.userType);
+        if (this.props.languageControl) {
+            formData.append('language', 'en');
+        } else {
+            formData.append('language', 'hi');
+        }
         console.log(formData);
         console.log(APIKEY);
         console.log(ACCESSTOKEN);
 
 
-        var lUrl = URL + 'getCashBatches';
+        var lUrl = URL + 'getCashBatchesCarpenter';
         fetch(lUrl, {
             method: 'POST',
             headers: {
                 'Accept': 'application\/json',
                 'Content-Type': 'multipart\/form-data',
                 'apikey': APIKEY,
-                'accesstoken': ACCESSTOKEN
+                'accesstoken': this.state.accesstoken
             },
             body: formData,
         })
@@ -295,7 +368,7 @@ class CashBatchesScreen extends Component {
                 <View style={{ flex: 1, backgroundColor: this.props.enableDarkTheme ? '#1a1a1a' : 'white', marginTop: 10 }}>
                     <ScrollView>
                         {this.state.redeemHistoryCashArr.map((item, key) => (
-                            <Card style={{ padding: 10, height: 125 }}>
+                            <Card key={key} style={{ padding: 10, height: 125 }}>
                                 <View style={{ flexDirection: "row", }}>
                                     <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap" }}>
                                         <Text style={{ fontWeight: "bold" }}>{strings('login.batch')}: </Text>
@@ -352,19 +425,14 @@ class CashBatchesScreen extends Component {
     }
 
     handleDatePicked = date => {
-        let a = moment(date).format("DD-MM-YYYY");
-        let b = this.state.toDate;
-
-        let fromDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-        let toDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-
-        console.log(fromDate , fromDate)
+        let a = moment(date, 'DD-MM-YYYY');
+        let b = moment(this.state.toDate, 'DD-MM-YYYY');
         this.setState({ redeemHistoryCashArr: [] }, () => {
-            if (fromDate.isAfter(toDate)) {
+            if (moment(a).isAfter(b)) {
                 this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open1:false })
             } else {
                 this.forceUpdate();
-                this.setState({ fromDateError: '', toDateError: '', frmDate: a, frmDatePass: date,open1:false }, () => {
+                this.setState({ fromDateError: '', toDateError: '', frmDate: a.format("DD-MM-yyyy"), frmDatePass: date,open1:false }, () => {
                     this.callApi();
                 })
             }
@@ -374,20 +442,12 @@ class CashBatchesScreen extends Component {
         console.log(date);
         console.log("=-=-=-=-=-=-=-=-=-=-=-=----=-======-=-=-=-=-=-=-=-==-=-=-=-=-=");
         this.setState({ redeemHistoryCashArr: [] }, () => {
-
-            // let a = moment(date, 'DD-MM-YYYY');
-            // let b = moment(this.state.frmDate, 'DD-MM-YYYY');
-
-            let a = moment(date).format("DD-MM-YYYY");
-            let b = this.state.frmDate;
-
-            let fromDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-            let toDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-
-            if (toDate.isBefore(fromDate)) {
+            let a = moment(date, 'DD-MM-YYYY');
+            let b = moment(this.state.frmDate, 'DD-MM-YYYY');
+            if (a < b) {
                 this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
             } else {
-                this.setState({ toDate: a, toDateError: '', fromDateError: '', toDatePass: date,open2:false }, () => {
+                this.setState({ toDate: a.format("DD-MM-yyyy"), toDateError: '', fromDateError: '', toDatePass: date,open2:false }, () => {
                     this.callApi();
                 })
             }
@@ -408,10 +468,10 @@ class CashBatchesScreen extends Component {
         return (
             <View style={{ flex: 1, backgroundColor: this.props.enableDarkTheme ? '#1a1a1a' : 'white' }}>
                 <Loader loading={this.state.loading} text={this.state.loaderText} />
-                <Header style={{ backgroundColor: '#0000FF', borderBottomWidth: 1 }}>
+                <Header style={{ backgroundColor: MyColors.distributorColor, borderBottomWidth: 1 }}>
                     <Left style={{ flex: 0.2 }}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("HomeScreen") }}>
-                            <Icon type="FontAwesome" name="long-arrow-left" style={{ fontSize: 25, color: '#FFFFFF', paddingRight: 10 }} />
+                            <Icon type="FontAwesome5" name="arrow-left" style={{ fontSize: 20, color: '#FFFFFF', paddingRight: 10 }} />
                         </TouchableOpacity>
                     </Left>
                     <Body style={{ flex: 1, alignItems: 'center' }}>
@@ -426,31 +486,13 @@ class CashBatchesScreen extends Component {
                             : null}
                     </Right>
                 </Header>
-                <StatusBar backgroundColor="#0000FF" barStyle="light-content" />
+                <StatusBar backgroundColor={MyColors.distributorColor} barStyle="light-content" />
 
                 <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                    <View style={{ flexDirection: "row" ,alignItems : 'center'}}>
-                        <Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black', marginTop: 13 }}>{strings('login.coupon_history_fromDate')} : </Text>
-                        <View style={{ marginTop: 13 }}>
-                            <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open1: true }) }}>
-                                <Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.frmDate}</Text>
-                             </TouchableOpacity>
-                            <DatePicker
-                                modal
-                                mode="date"
-                                open={this.state.open1}
-                                date={new Date(moment(`${this.state.frmDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
-                                maximumDate={new Date()}
-                                color="#000000"
-                                textColor="#000000"
-                                onConfirm={(date) => {
-                                    this.handleDatePicked(date) 
-                                }}
-                                onCancel={() => {
-                                // setOpen(false)
-                                this.setState({ open1: false})
-                                }}
-                            />
+                    <View style={{flex:1,flexDirection: "row" }}>
+                        <Text style={{ fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black', marginTop: 15 }}>{strings('login.coupon_history_fromDate')} : </Text>
+                        <View style={{ marginTop: 15,  }}>
+
                             {/* <DatePicker
                                 date={this.state.frmDate}
                                 confirmBtnText="Select"
@@ -458,9 +500,10 @@ class CashBatchesScreen extends Component {
                                 mode="date"
                                 format="DD-MM-YYYY"
                                 locale={moment.locale('en')}
-                                maxDate={moment().locale('en').format('DD-MM-YYYY')}
+                                maxDate={moment().format('DD-MM-YYYY')}
                                 showIcon={false}
-                                onDateChange={(date) => { this.handleDatePicked(date) }}
+                                // onCancel={ this.hideDateTimePicker }
+                                onConfirm={(date) => { this.handleDatePicked(date) }}
                                 customStyles={{
                                     dateInput: {
                                         borderWidth: 0,
@@ -471,40 +514,42 @@ class CashBatchesScreen extends Component {
                                 }}
                                 style={{ width: 100 }}
                             /> */}
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: "row" }}>
-                        <Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black', marginTop: 13 }}>{strings('login.coupon_history_toDate')} : </Text>
-                        <View style={{ marginTop: 13}}>
-                            <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open2: true }) }}>
-                                <Text style={{ color:"#000000"}}>{this.state.toDate}</Text>
-                            </TouchableOpacity>
+                             {/* <Button  title="Open" onPress={() => this.setState({open:true}) } /> */}
+                             <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open1: true }) }}>
+                             <Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.frmDate}</Text>
+                             </TouchableOpacity>
                             <DatePicker
                                 modal
                                 mode="date"
-                                open={this.state.open2}
-                                date={new Date(moment(`${this.state.toDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
+                                open={this.state.open1}
+                                date={new Date()}
                                 maximumDate={new Date()}
                                 color="#000000"
                                 textColor="#000000"
                                 onConfirm={(date) => {
-
-                                    this.handleDatePicked1(date) 
+                                    this.handleDatePicked(date) 
                                 }}
                                 onCancel={() => {
                                 // setOpen(false)
-                                this.setState({ open2: false})
+                                this.setState({ open1: false})
                                 }}
+                                
                             />
+                           
+                        </View>
+                    </View>
+                    <View style={{ flex:1,flexDirection: "row" }}>
+                        <Text style={{ fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black', marginTop: 15 }}>{strings('login.coupon_history_toDate')} : </Text>
+                        <View style={{ marginTop: 15, }}>
                             {/* <DatePicker
                                 date={this.state.toDate}
                                 confirmBtnText="Select"
                                 cancelBtnText="Cancel"
-                                locale={moment.locale('en')}
                                 // date={moment().clone().startOf('month').format("YYYY-MM-DD")}
                                 mode="date"
                                 format="DD-MM-YYYY"
-                                maxDate={moment().locale('en').format('DD-MM-YYYY')}
+                                locale={moment.locale('en')}
+                                maxDate={moment().format('DD-MM-YYYY')}
                                 showIcon={false}
                                 onDateChange={(date) => { this.handleDatePicked1(date) }}
                                 customStyles={{
@@ -517,6 +562,26 @@ class CashBatchesScreen extends Component {
                                 }}
                                 style={{ width: 100 }}
                             /> */}
+                             <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open2: true }) }}>
+                             <Text style={{ color:"#000000"}}>{this.state.toDate}</Text>
+                             </TouchableOpacity>
+                              <DatePicker
+                                modal
+                                mode="date"
+                                open={this.state.open2}
+                                date={new Date()}
+                                maximumDate={new Date()}
+                                color="#000000"
+                                textColor="#000000"
+                                onConfirm={(date) => {
+
+                                    this.handleDatePicked1(date) 
+                                }}
+                                onCancel={() => {
+                                // setOpen(false)
+                                this.setState({ open2: false})
+                                }}
+                            />
                         </View>
                     </View>
                 </View>
@@ -530,7 +595,7 @@ class CashBatchesScreen extends Component {
                         <Text style={{ color: 'red' }}>{this.state.toDateError}</Text>
                     </View>
                     : <View></View>}
-                <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey', marginTop: 0, margin:1}} />
+                <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey', marginTop: 20, }} />
 
                 {/* <View style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", paddingHorizontal: 10 }}>
                     <View style={{ flex: 1, alignItems: "center" }}>

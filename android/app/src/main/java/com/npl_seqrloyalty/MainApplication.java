@@ -6,7 +6,7 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.jamesisaac.rnbackgroundtask.BackgroundTaskPackage;
-import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
+// import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
 // import com.ashideas.rnrangeslider.RangeSliderPackage;
 // import net.mikehardy.rnupdateapk.RNUpdateAPKPackage;
 import com.RNFetchBlob.RNFetchBlobPackage; 

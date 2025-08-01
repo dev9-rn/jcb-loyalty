@@ -1,5 +1,6 @@
 
 import { URL, APIKEY, ACCESSTOKEN } from '../../App';
+import NavigationService from '../NavigationService';
 
 class NotificationService {
 
@@ -30,7 +31,8 @@ class NotificationService {
 				this.setRespData(responseJson);
 				console.log(responseJson);
 			})
-			.catch((error) => {
+			.catch(async (error) => {
+				await isMaintenance({navigation : NavigationService});
 				console.error(error);
 			});
 	};

@@ -7,6 +7,7 @@ export const setLanguage = (obj) => {
     }
 }
 export const clearTheStoreOnLogout = (obj) => {
+    // console.log(obj, obj);
     return {
         type: actionTypes.CLEAR_STORE,
         payload: obj

@@ -58,7 +58,7 @@ export default class App extends React.Component {
       if (status !== RESULTS.GRANTED) {
         if(Platform.OS === 'android'){
           await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            android.PERMISSIONS.POST_NOTIFICATIONS,
           );
         }else{
           requestNotifications(['alert', 'sound']).then(({status, settings}) => {
@@ -141,7 +141,7 @@ export default class App extends React.Component {
 
 // export const URL = "https:\/\/scube.net.in\/seqr_doc\/gen\/services\/";
 // export const URL = "http://192.168.0.5:808/nandan_petrochem/api/";
-export const URL = "https://seqrloyalty.com/hyundai/api/";  //live api
+export const URL = "https://seqrloyalty.com/jcb/api/";  //live api
 // export const URL = "https://seqrloyalty.com/npl/apiv1/"; // risk mgmt tasks api
 
 // export const URL = "https://seqrloyalty.com/developer/api/"; // npl developer api
@@ -150,7 +150,7 @@ export const HEADER = {
   Accept: 'application\/json',
   'Content-Type': 'multipart\/form-data',
 };
-export const APIKEY = 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE';
+export const APIKEY = 'eIrJLF5;&B:cVh30WDlh1}Ww_BtId@';
 export var ACCESSTOKEN = '';
 export var FCMTOKEN = '';
 export var scanQRData = [];

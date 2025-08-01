@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {  BackHandler, Dimensions, Platform, StyleSheet, View, TouchableOpacity, StatusBar,Linking } from 'react-native';
 import { Container, Header, Left, Body, Right, Content, Card, CardItem, Text, Title, Item, Icon, Toast  } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
+
 export default class AboutUs extends React.Component{
 
 	constructor(props) {
@@ -35,7 +36,7 @@ export default class AboutUs extends React.Component{
   			var lData = JSON.parse(result);
   			console.log(result);
   			if (lData.user_type == '1') {
-  				this.setState({ setNavigationScreen: 'VerifierMainScreen', backgroundColorHeader: '#0000FF'});
+  				this.setState({ setNavigationScreen: 'VerifierMainScreen', backgroundColorHeader: '#fab032'});
   			}else if (lData.user_type == '2') {
   				this.setState({ setNavigationScreen: 'InstituteMainScreen', backgroundColorHeader: '#D34A44'});
   			}

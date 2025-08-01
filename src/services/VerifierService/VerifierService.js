@@ -1,5 +1,6 @@
 
 import { URL, HEADER } from '../../App';
+import { isMaintenance } from '../MaintenanceService/MaintenanceService';
 
 class VerifierService{
 	
@@ -26,7 +27,8 @@ class VerifierService{
     		console.log(JSON.stringify(responseJson));
     		this.setRespData(responseJson);
     	})
-    	.catch((error) => {
+    	.catch(async (error) => {
+			await isMaintenance({navigation : this.props.navigation});
       		console.error(error);
     	});
 	};

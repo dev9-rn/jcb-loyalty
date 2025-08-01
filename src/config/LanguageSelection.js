@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, AsyncStorage, ScrollView, View, StyleSheet, Image, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
+import { Alert, ScrollView, View, StyleSheet, Image, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
 import { Accordion, Text, Icon, Card, Button } from "native-base";
 import I18n from 'react-native-i18n';
 import moment from 'moment';
@@ -11,7 +11,7 @@ import { Grid, Row, Col } from 'react-native-easy-grid';
 import SplashScreen from 'react-native-splash-screen';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { strings } from '../locales/i18n';
-import * as app from '../../App';
+// import AsyncStorage from '@react-native-community/async-storage';
 
 var deviceLocale = I18n.currentLocale()
 class LanguageSelection extends Component {
@@ -35,11 +35,11 @@ class LanguageSelection extends Component {
         }
     }
     componentDidMount() {
-        // this.props.navigation.navigate('LanguageSelection')
+        // this.props.navigation.navigate('LoginScreen')
         if (this.props.redirectToHome || this.props.redirectToHomeFrmVeri) {
             this.props.navigation.navigate('HomeScreen')
         } else if (this.props.showHideLanguageScreen) {
-            this.props.navigation.navigate('LandingScreen')
+            this.props.navigation.navigate('LoginScreen')
         } else {
             SplashScreen.hide()
         }
@@ -81,7 +81,7 @@ class LanguageSelection extends Component {
             I18n.locale = 'ta'
             this.props.navigation.navigate('LoginScreen')
         } else if (this.state.isTelgu) {
-            this.props.setLanguage('Telugu - (తెలుగు)')
+            this.props.setLanguage('Telgu - (Telgu)')
             this.props.setIntituteUserData(true)
             I18n.locale = 'tl'
             this.props.navigation.navigate('LoginScreen')
@@ -139,8 +139,8 @@ class LanguageSelection extends Component {
                             <Text onPress={() => this.setState({ isEnglish: false, isHinde: false, isMarathis: false, isPunjabi: false, isGuj: true, isTelgu: false, isTamil: false, isUrdu: false, isBengali: false, isKannada: false, isOdia: false, isFrench: false, isSwahili: false })} style={{ textAlign: 'center', fontSize: 13 }}>(ગુજરાતી)</Text>
                         </Card>
                         <Card style={{ marginLeft: 10, marginRight: 10, height: 90, borderRadius: 5, justifyContent: 'center', backgroundColor: this.state.isTelgu ? '#e6e6e6' : 'white' }}>
-                            <Text onPress={() => this.setState({ isEnglish: false, isHinde: false, isMarathis: false, isPunjabi: false, isGuj: false, isTelgu: true, isTamil: false, isUrdu: false, isBengali: false, isKannada: false, isOdia: false, isFrench: false, isSwahili: false })} style={{ textAlign: 'center', fontWeight: 'bold' }}>Telugu</Text>
-                            <Text onPress={() => this.setState({ isEnglish: false, isHinde: false, isMarathis: false, isPunjabi: false, isGuj: false, isTelgu: true, isTamil: false, isUrdu: false, isBengali: false, isKannada: false, isOdia: false, isFrench: false, isSwahili: false })} style={{ textAlign: 'center', fontSize: 13 }}>(తెలుగు)</Text>
+                            <Text onPress={() => this.setState({ isEnglish: false, isHinde: false, isMarathis: false, isPunjabi: false, isGuj: false, isTelgu: true, isTamil: false, isUrdu: false, isBengali: false, isKannada: false, isOdia: false, isFrench: false, isSwahili: false })} style={{ textAlign: 'center', fontWeight: 'bold' }}>Telgu</Text>
+                            <Text onPress={() => this.setState({ isEnglish: false, isHinde: false, isMarathis: false, isPunjabi: false, isGuj: false, isTelgu: true, isTamil: false, isUrdu: false, isBengali: false, isKannada: false, isOdia: false, isFrench: false, isSwahili: false })} style={{ textAlign: 'center', fontSize: 13 }}>(Telgu)</Text>
                         </Card>
                     </Col>
                     <Col>

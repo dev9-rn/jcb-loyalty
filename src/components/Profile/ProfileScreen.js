@@ -1,27 +1,25 @@
 import React, { Component } from 'react';
-import {  Alert, StatusBar,  BackHandler, Dimensions, Platform, StyleSheet, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import { Alert, StatusBar, BackHandler, Dimensions, Platform, StyleSheet, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import {
 	Container, Header, Left, Body, Right, Content, Card, CardItem, Text,
 	Title, Item, Label, Toast, InputGroup, Input, Icon, Form
 } from 'native-base';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Picker } from 'native-base';
+
 import LinearGradient from 'react-native-linear-gradient';
 
 import LoginService from '../../services/LoginService/LoginService';
 import ProfileService from '../../services/ProfileService/ProfileService';
-import { LAT, LONG, LOC_ERROR } from '../../Utility/GeoLocation';
-
-import Loader from '../../Utility/Loader';
-import * as utilities from '../../Utility/utilities';
-import * as app from '../../App';
-import { Dropdown } from 'react-native-material-dropdown';
-var _ = require('lodash');
-
 import { strings } from '../../locales/i18n';
-import I18n from 'react-native-i18n';
+import * as app from '../../App';
+import { Dropdown } from 'react-native-material-dropdown-v2';
+var _ = require('lodash');
+import RNPicker from "rn-modal-picker";
 import { connect } from 'react-redux';
+import * as utilities from "../../Utility/utilities";
+import Loader from '../../Utility/Loader';
+import AsyncStorage from '@react-native-community/async-storage';
+import { Picker } from 'native-base';
+import { ScrollView } from 'react-native';
 
 var isBrandData = false;
 var isCountryData = false;
@@ -32,7 +30,7 @@ var isCityData = false;
 // var statesList = [];
 // var citiesList = [];
 
- class ProfileScreen extends React.Component {
+class ProfileScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -41,18 +39,15 @@ var isCityData = false;
 		this.statesList = [];
 		this.citiesList = [];
 		this.state = {
-			isConnected: true,
+			selectedBrandId: '',
 			name: '',
 			email: '',
 			phoneNumber: '',
 			address: '',
 			street: '',
 			pincode: '',
-			brandId: '',
 			borderBottomColorPassword: '#757575',
 			borderBottomColorUserName: '#757575',
-			loading: false,
-			loaderText: 'Please wait...',
 			nameError: null,
 			emailError: null,
 			phoneNumberError: null,
@@ -75,13 +70,8 @@ var isCityData = false;
 		};
 	}
 
-	componentWillMount() {
-		this.setState({ isConnected: app.ISNETCONNECTED });
-	}
-
 	componentDidMount() {
 		BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
-		// this._showNetErrMsg();
 		this.getAsyncUserData();
 		this._getAsyncData();
 	}
@@ -95,26 +85,6 @@ var isCityData = false;
 		return true;
 	}
 
-	_showNetErrMsg() {
-		if (!this.state.isConnected || !app.ISNETCONNECTED) {
-			Alert.alert(
-				'No network available',
-				'Connect to internet',
-				[
-					{ text: 'SETTINGS', onPress: () => { } },
-					{ text: 'BACK', onPress: () => { this.props.navigation.navigate('VerifierMainScreen') } },
-					{ text: 'CONTINUE', onPress: () => { this.setState({ isConnected: false }) } },
-				],
-				{ cancelable: false }
-			)
-		}
-	}
-
-	closeActivityIndicator() {
-		setTimeout(() => {
-			this.setState({ loading: false });
-		});
-	}
 
 	async getAsyncUserData() {
 		await AsyncStorage.multiGet(['USERDATA'], (err, result) => {    // FCMTOKEN is set on App.js
@@ -132,21 +102,29 @@ var isCityData = false;
 	async _getUserData() {
 		const formData = new FormData();
 		formData.append('distributorId', this.distributorId);
-		console.log("this.distributorId" + this.distributorId)
+		if (this.props.languageControl) {
+			formData.append('language', 'en');
+		} else {
+			formData.append('language', 'hi');
+		}
 
 		var profileApiObj = new ProfileService();
 		this.setState({ loading: true });
 		await profileApiObj.getDistributorProfile(formData);
 		var lResponseData = profileApiObj.getRespData();
 		if (!lResponseData) {
-			utilities.showToastMsg('Something went wrong. Please try again later');
-		} else if (lResponseData.status == 500 || lResponseData.status == 400 || lResponseData.status == 403) {
-			utilities.showToastMsg(lResponseData.message);
-		} else if (lResponseData.status == 200) {
-			console.log("lResponseData.data ---" + lResponseData.data.country_id);
-			console.log("lResponseData.data ---" + lResponseData.data.state_id);
-			console.log("lResponseData.data ---" + lResponseData.data.city_id);
+			alert('Something went wrong. Please try again later');
+		} else if (lResponseData.status == 500 || lResponseData.status == 400) {
+			alert(lResponseData.message);
+		} else if (lResponseData.status == 403) {
+			alert(lResponseData.message);
+			this.props.navigation.navigate('LoginScreen');
+			AsyncStorage.clear();
+			return;
+		}
+		else if (lResponseData.status == 200) {
 			this.userdata = lResponseData.data;
+	
 			this.setState({
 				name: lResponseData.data.name,
 				phoneNumber: lResponseData.data.mobile,
@@ -159,11 +137,15 @@ var isCityData = false;
 				panNo: lResponseData.data.pan_no,
 				selectedCity: lResponseData.data.city_id,
 				selectedStates: lResponseData.data.state_id,
-				selectedCountry: lResponseData.data.country_id
+				selectedCountry: lResponseData.data.country_id,
+				selectedBrandId: lResponseData.data.brand_id
 			});
-
+			console.log("1");
+			console.log(this.state.selectedStates);
+			this.setState({ loading: false });
+			
 		} else {
-			utilities.showToastMsg('Something went wrong. Please try again later');
+			alert('Something went wrong. Please try again later');
 		}
 	}
 
@@ -190,7 +172,7 @@ var isCityData = false;
 		for (var i = 0; i < lData.length; i++) {
 			var dataObj = {};
 			dataObj.id = parseInt(lData[i].id);
-			dataObj.value = lData[i].name;
+			dataObj.name = lData[i].name;
 			arrayData.push(dataObj);
 
 		}
@@ -200,6 +182,9 @@ var isCityData = false;
 			dataObj.value = lBrandData[j].name;
 			if (dataObj.id === parseInt(this.state.selectedBrandId)) {
 				this.setState({ loading: true });
+				console.log("-=-=-=-");
+				console.log(dataObj.value);
+
 				this.setState({ brandName: dataObj.value })
 				// arrayData.push(dataObj);
 			}
@@ -207,33 +192,33 @@ var isCityData = false;
 		for (var k = 0; k < lCountriesData.length; k++) {
 			var dataObj = {};
 			dataObj.id = parseInt(lCountriesData[k].id);
-			dataObj.value = lCountriesData[k].name;
+			dataObj.name = lCountriesData[k].name;
 			if (dataObj.id == parseInt(this.state.selectedCountry)) {
 				this.setState({ loading: true });
 				this._setCountry(parseInt(this.state.selectedCountry))
-				this.setState({ country_name: dataObj.value })
+				this.setState({ country_name: dataObj.name })
 				// arrayData.push(dataObj);
 			}
 		}
 		for (var l = 0; l < lStateData.length; l++) {
 			var dataObj = {};
 			dataObj.id = parseInt(lStateData[l].id);
-			dataObj.value = lStateData[l].name;
+			dataObj.name = lStateData[l].name;
 			if (dataObj.id == parseInt(this.state.selectedStates)) {
 				this.setState({ loading: true });
 				this._setStates(parseInt(this.state.selectedStates))
-				this.setState({ state_name: dataObj.value })
+				this.setState({ state_name: dataObj.name })
 				// arrayData.push(dataObj);
 			}
 		}
 		for (var m = 0; m < lCitiesData.length; m++) {
 			var dataObj = {};
 			dataObj.id = parseInt(lCitiesData[m].id);
-			dataObj.value = lCitiesData[m].name;
+			dataObj.name = lCitiesData[m].name;
 			if (dataObj.id == parseInt(this.state.selectedCity)) {
 				this.setState({ loading: true });
 				this._setCity(parseInt(this.state.selectedCity))
-				this.setState({ city_name: dataObj.value })
+				this.setState({ city_name: dataObj.name })
 				// arrayData.push(dataObj);
 			}
 		}
@@ -243,6 +228,9 @@ var isCityData = false;
 			let initialData = {};
 			initialData.id = this.state.selectedBrandId;
 			initialData.value = this.state.brandName;
+			console.log("-=-=-=-0000");
+			console.log(this.state.brandName);
+
 			arrayData.unshift(initialData);
 			this.brandData = arrayData;
 			this.setState({ brand: arrayData });
@@ -251,7 +239,7 @@ var isCityData = false;
 			isCountryData = true;
 			let initialData = {};
 			initialData.id = this.state.selectedCountry;
-			initialData.value = this.state.country_name;
+			initialData.name = this.state.country_name;
 			arrayData.unshift(initialData);
 			this.countryList = arrayData;
 			// let CountryItems = this.countryList.map( (s, i) => {
@@ -263,7 +251,7 @@ var isCityData = false;
 			isStatesData = true;
 			let initialData = {};
 			initialData.id = this.state.selectedStates;
-			initialData.value = this.state.state_name;
+			initialData.name = 'Select State';
 			arrayData.unshift(initialData);
 			this.statesList = arrayData;
 
@@ -275,7 +263,7 @@ var isCityData = false;
 			isCityData = true;
 			let initialData = {};
 			initialData.id = this.state.selectedCity;
-			initialData.value = 'Select City';
+			initialData.name = 'Select City';
 			arrayData.unshift(initialData);
 			this.citiesList = arrayData;
 
@@ -292,10 +280,19 @@ var isCityData = false;
 		this.setState({ loading: true });
 		await brandApiObj.getBrands();
 		var lResponseData = brandApiObj.getRespData();
-
+		console.log("brands:", lResponseData);
 		this.closeActivityIndicator();
 		this._setPickerData(lResponseData);
 	}
+
+
+
+	closeActivityIndicator() {
+		setTimeout(() => {
+		  this.setState({ loading: false });
+		});
+	  }
+	
 
 	async callForAPICountrty() {
 		var countryApiObj = new LoginService();
@@ -312,7 +309,11 @@ var isCityData = false;
 		this.setState({ loading: true });
 		const formData = new FormData();
 		formData.append('countryId', parseInt(pCountryId));
-
+		if (this.props.languageControl) {
+			formData.append('language', 'en');
+		} else {
+			formData.append('language', 'hi');
+		}
 		await statesApiObj.getStatesByCountry(formData);
 		var lResponseData = statesApiObj.getRespData();
 		this.closeActivityIndicator();
@@ -324,6 +325,11 @@ var isCityData = false;
 		this.setState({ loading: true });
 		const formData = new FormData();
 		formData.append('stateId', parseInt(pStateId));
+		if (this.props.languageControl) {
+			formData.append('language', 'en');
+		} else {
+			formData.append('language', 'hi');
+		}
 
 		await statesApiObj.getCitiesByState(formData);
 		var lResponseData = statesApiObj.getRespData();
@@ -350,9 +356,11 @@ var isCityData = false;
 
 	_setCountry(CountryName, countryList) {
 		if (countryList) {
-			let idForCountry = _.filter(countryList, { value: CountryName })[0].id
+			this.statesList = [];
+			this.citiesList = [];
+			let idForCountry = _.filter(countryList, { name: CountryName })[0].id
 			if (CountryName != '') {
-				this.setState({ selectedCountry: idForCountry });
+				this.setState({ selectedCountry: idForCountry, state_name: '', city_name: '' });
 				this._getStatesByCountry(idForCountry);
 			} else {
 				this.setState({ selectedCountry: idForCountry });
@@ -369,13 +377,14 @@ var isCityData = false;
 
 	_setStates(pStates, statesList) {
 		if (statesList) {
-			if (pStates != 0) {
-				let idForState = _.filter(statesList, { value: pStates })[0].id
-				this.setState({ selectedStates: idForState });
-				this._getCitiesByState(idForState);
-			} else {
-				this.setState({ selectedStates: idForState });
+			this.citiesList = [];
+			if (pStates === "Select State") {
+				this.setState({ selectedStates: "", city_name: '' });
+				return;
 			}
+			let idForState = _.filter(statesList, { name: pStates })[0].id
+			this.setState({ selectedStates: idForState, city_name: '' });
+			this._getCitiesByState(idForState);
 		} else {
 			if (pStates != 0) {
 				this.setState({ selectedStates: pStates });
@@ -388,10 +397,10 @@ var isCityData = false;
 
 	_setCity(city, citiesList) {
 		if (citiesList) {
-			let idForState = _.filter(citiesList, { value: city })[0].id
+			let idForState = _.filter(citiesList, { name: city })[0].id
 			this.setState({ selectedCity: idForState });
 		} else {
-			this.setState({ selectedCity: city });
+			this.setState({ selectedCity: "" });
 		}
 	}
 
@@ -399,7 +408,7 @@ var isCityData = false;
 		let lName = this.state.name;
 		let res = utilities.checkSpecialChar(lName);
 		if (!res) {
-			this.setState({ nameError: "Special characters are not allowed." });
+			this.setState({ nameError: strings('login.spcError') });
 		}
 		return res;
 	}
@@ -409,7 +418,7 @@ var isCityData = false;
 		let res = '';
 		res = utilities.checkMobileNumber(lPhoneNumber);
 		if (!res || lPhoneNumber.trim().length < 10) {
-			this.setState({ phoneNumberError: "This phone number appears to be invalid." });
+			this.setState({ phoneNumberError: strings('login.phnInvalid') });
 		}
 		return res;
 	}
@@ -418,7 +427,7 @@ var isCityData = false;
 		let lEmail = this.state.email;
 		let res = utilities.checkEmail(lEmail);
 		if (!res) {
-			this.setState({ emailError: "This email address is invalid" });
+			this.setState({ emailError: strings('login.emailInvalid') });
 		}
 		return res;
 	}
@@ -455,7 +464,7 @@ var isCityData = false;
 		let res = '';
 		res = utilities.checkPanNo(lPanNo);
 		if (!res) {
-			this.setState({ panNoError: "This pan number appears to be invalid." });
+			this.setState({ panNoError: strings('login.panNoInvalid') });
 		}
 		return res;
 	}
@@ -490,6 +499,12 @@ var isCityData = false;
 		formData.append('companyName', lCompanyName);
 		formData.append('panNo', lPanNo);
 		formData.append('gstNo', lGstNo);
+		if (this.props.languageControl) {
+			formData.append('language', 'en');
+		} else {
+			formData.append('language', 'hi');
+		}
+		console.log(formData);
 
 		var profileApiObj = new ProfileService();
 		// this.props.navigation.navigate('OTPVerification');
@@ -500,155 +515,170 @@ var isCityData = false;
 
 		if (!lResponseData || lResponseData.status == 500) {
 			this.closeActivityIndicator();
-			utilities.showToastMsg('Something went wrong. Please try again later');
+			alert('Something went wrong. Please try again later');
 		} else if (lResponseData.status == 400 || lResponseData.status == 409 || lResponseData.status == 422) {
 			this.closeActivityIndicator();
 			this.setState({ phoneNumberError: lResponseData.message });
-			utilities.showToastMsg(lResponseData.message);
+			alert(lResponseData.message);
 		} else if (lResponseData.status == 200) {
 			this.closeActivityIndicator();
-			utilities.showToastMsg(lResponseData.message);
+			alert(lResponseData.message);
 			this.props.navigation.navigate('HomeScreen');
 		} else {
 			this.closeActivityIndicator();
-			utilities.showToastMsg('Something went wrong. Please try again later');
+			alert('Something went wrong. Please try again later');
 		}
 	}
 
 	_onPressButton() {
-		if (!app.ISNETCONNECTED) {
-			utilities.showToastMsg('No network available! Please check the connectivity settings and try again.');
+		let lName = this.state.name;
+		let lEmail = this.state.email;
+		let lPhoneNumber = this.state.phoneNumber;
+		let lAddress = this.state.address;
+		let lStreet = this.state.street;
+		let lPincode = this.state.pincode;
+		let lBrand = this.state.selectedBrandId;
+		let lCountry = this.state.selectedCountry;
+		let lStates = this.state.selectedStates;
+		let lCity = this.state.selectedCity;
+		let lPanNo = this.state.panNo;
+
+		var isValidName = '';
+		var isValidMobileNumber = '';
+		var isValidEmail = '';
+
+		if (lName === "") {
+			this.setState({ nameError: strings('login.nameError') });
+			return;
+		} else {
+			this.setState({ nameError: null });
+		}
+
+		if (lEmail === "") {
+			this.setState({ emailError: strings('login.emError') });
+			return;
+		} else {
+			this.setState({ emailError: null });
+		}
+
+		if (lPhoneNumber === "") {
+			this.setState({ phoneNumberError: strings('login.phnError') });
+			return;
+		} else {
+			this.setState({ phoneNumberError: null });
+		}
+
+		if (lAddress === "") {
+			this.setState({ addressError: strings('login.addError') });
+			return;
+		} else {
+			this.setState({ addressError: null });
+		}
+
+		if (lStreet === "") {
+			this.setState({ streetError: strings('login.streetError') });
+			return;
+		} else {
+			this.setState({ streetError: null });
+		}
+
+		if (lPincode === "") {
+			this.setState({ pincodeError: strings('login.PinCodeError') });
+			return;
+		} else {
+			this.setState({ pincodeError: null });
+		}
+
+		// if (!lBrand || lBrand == 0) {
+		// 	alert('Please select Brand');
+		// 	this.setState({ brandError: "Brand required." });
+		// } else {
+		// 	this.setState({ brandError: null });
+		// }
+
+		if (!lCountry || lCountry == 0) {
+			Alert.alert(
+				'Alert',
+				strings('login.countryError'),
+				[
+					{ text: strings('login.OK'), onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+				],
+				{ cancelable: false }
+			);
+			this.setState({ countryError: strings('login.countryError') });
+			return;
+		} else {
+			this.setState({ countryError: null });
+		}
+
+		if (!lStates || lStates == 0) {
+			Alert.alert(
+				'Alert',
+				strings('login.stateError'),
+				[
+					{ text: strings('login.OK'), onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+				],
+				{ cancelable: false }
+			);
+			this.setState({ stateError: strings('login.stateError') });
+			return;
+		} else {
+			this.setState({ stateError: null });
+		}
+
+		if (!lCity || lCity == 0) {
+			Alert.alert(
+				'Alert',
+				strings('login.cityError'),
+				[
+					{ text: strings('login.OK'), onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+				],
+				{ cancelable: false }
+			);
+			this.setState({ cityError: strings('login.cityError') });
+			return;
+		} else {
+			this.setState({ cityError: null });
+		}
+
+		if (this.state.nameError == null && this.state.emailError == null && this.state.phoneNumberError == null && this.state.addressError == null && this.state.streetError == null && this.state.pincodeError == null) {
+			;
+			isValidName = this._validateName();
+			// isValidUserName = this._validateUserName();
+			isValidMobileNumber = this._validateMobileNumber();
+			isValidEmail = this._validateEmail();
+			// isValidBrand = this._validateBrand();
+			// isValidCity = this._validCity();
+
+			if (lPanNo) {
+				isValidPanNo = this._validatePanNo();
+			}
+
+			if (isValidName && isValidEmail && isValidMobileNumber) {
+				this.callForAPI();
+			}
 
 		} else {
-			let lName = this.state.name;
-			let lEmail = this.state.email;
-			let lPhoneNumber = this.state.phoneNumber;
-			let lAddress = this.state.address;
-			let lStreet = this.state.street;
-			let lPincode = this.state.pincode;
-			let lBrand = this.state.selectedBrandId;
-			let lCountry = this.state.selectedCountry;
-			let lStates = this.state.selectedStates;
-			let lCity = this.state.selectedCity;
-			let lPanNo = this.state.panNo;
-
-			var isValidName = '';
-			var isValidMobileNumber = '';
-			var isValidEmail = '';
-
-			if (lName === "") {
-				this.setState({ nameError: "Name is required." });
-				return;
-			} else {
-				this.setState({ nameError: null });
-			}
-
-			if (lEmail === "") {
-				this.setState({ emailError: "Email required." });
-				return;
-			} else {
-				this.setState({ emailError: null });
-			}
-
-			if (lPhoneNumber === "") {
-				this.setState({ phoneNumberError: "Phone number required." });
-				return;
-			} else {
-				this.setState({ phoneNumberError: null });
-			}
-
-			if (lAddress === "") {
-				this.setState({ addressError: "Address can't be blank." });
-				return;
-			} else {
-				this.setState({ addressError: null });
-			}
-
-			if (lStreet === "") {
-				this.setState({ streetError: "Street can't be blank." });
-				return;
-			} else {
-				this.setState({ streetError: null });
-			}
-
-			if (lPincode === "") {
-				this.setState({ pincodeError: "Pincode can't be blank." });
-				return;
-			} else {
-				this.setState({ pincodeError: null });
-			}
-
-			// if (!lBrand || lBrand == 0) {
-			// 	alert('Please select Brand');
-			// 	this.setState({ brandError: "Brand required." });
-			// } else {
-			// 	this.setState({ brandError: null });
-			// }
-
-			if (!lCountry || lCountry == 0) {
-				alert('Please select Country');
-				this.setState({ countryError: "Select Country." });
-				return;
-			} else {
-				this.setState({ countryError: null });
-			}
-
-			if (!lStates || lStates == 0) {
-				alert('Please select State');
-				this.setState({ stateError: "State required." });
-				return;
-			} else {
-				this.setState({ stateError: null });
-			}
-
-			if (!lCity || lCity == 0) {
-				alert('Please select City');
-				this.setState({ cityError: "City required." });
-				return;
-			} else {
-				this.setState({ cityError: null });
-			}
-
-			if (this.state.nameError == null && this.state.emailError == null && this.state.phoneNumberError == null && this.state.addressError == null && this.state.streetError == null && this.state.pincodeError == null) {
+			if (lName != "") {
+				lName = '';
 				isValidName = this._validateName();
-				// isValidUserName = this._validateUserName();
-				isValidMobileNumber = this._validateMobileNumber();
-				isValidEmail = this._validateEmail();
-				// isValidBrand = this._validateBrand();
-				isValidCountry = this._validateCountry();
-				isValidState = this._validateState();
-				// isValidCity = this._validCity();
-
-				if (lPanNo) {
-					isValidPanNo = this._validatePanNo();
-				}
-
-				if (isValidName && isValidEmail && isValidMobileNumber && isValidState && isValidCountry) {
-					this.callForAPI();
-				}
-
-			} else {
-				if (lName != "") {
-					lName = '';
-					isValidName = this._validateName();
-				}
-				if (lEmail != '') {
-					lEmail = '';
-					isValidEmail = this._validateEmail();
-				}
-				if (lPhoneNumber != '') {
-					lPhoneNumber = '';
-					isValidMobileNumber = this._validateMobileNumber();
-				}
-				// if (lUserName) {
-				// 	lUserName = '';
-				// 	isValidUserName = this._validateUserName();
-				// }
-				// if (lPassword != '') {
-				// 	lPassword = '';
-				// 	isValidPassword = this._validatePassword();
-				// }
 			}
+			if (lEmail != '') {
+				lEmail = '';
+				isValidEmail = this._validateEmail();
+			}
+			if (lPhoneNumber != '') {
+				lPhoneNumber = '';
+				isValidMobileNumber = this._validateMobileNumber();
+			}
+			// if (lUserName) {
+			// 	lUserName = '';
+			// 	isValidUserName = this._validateUserName();
+			// }
+			// if (lPassword != '') {
+			// 	lPassword = '';
+			// 	isValidPassword = this._validatePassword();
+			// }
 		}
 	}
 
@@ -678,13 +708,13 @@ var isCityData = false;
 					<Body style={{ flex: 0.9, alignItems: 'center', }}>
 						<Title style={{ color: '#FFFFFF', fontSize: 16, marginLeft: -10 }}>{strings('login.profile_distributor_title')}</Title>
 					</Body>
-
 				</Header>
 			)
 		}
 	}
-
 	render() {
+		// console.log(this.state.brandName);
+
 		var BrandItems;
 		var CountryItems;
 		var StateItems;
@@ -712,7 +742,7 @@ var isCityData = false;
 		}
 
 		return (
-			<View style={styles.container}>
+			<View style={{ flex: 1, backgroundColor: this.props.enableDarkTheme ? 'black' : 'white' }}>
 
 				{this._showHeader()}
 				<StatusBar
@@ -725,8 +755,14 @@ var isCityData = false;
 				/>
 
 				<View style={styles.signUpViewContainer}>
-					<KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
-						<Card style={styles.cardContainer}>
+					<ScrollView keyboardShouldPersistTaps="always">
+						<Card style={{
+							padding: 15,
+							marginTop: 20,
+							marginLeft: 10,
+							marginRight: 10,
+							backgroundColor: this.props.enableDarkTheme ? '#1a1a1a' : 'white'
+						}}>
 
 							<Content>
 								<Form>
@@ -745,10 +781,10 @@ var isCityData = false;
 										</Form>
 									) :
 										<Item floatingLabel>
-											<Label>{strings('login.profile_distributor_name')}</Label>
+											<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_name')}</Label>
 											<Input
 												value={this.state.name}
-												style={{ marginTop: 3 }}
+												style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 												autoFocus={true}
 												onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 												onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
@@ -771,11 +807,10 @@ var isCityData = false;
 										</Form>
 									) :
 										<Item floatingLabel>
-											{/* <Label>+91 Phone number</Label> */}
-											<Label>{strings('login.profile_distributor_phnNo')}</Label>
+											<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_phnNo')}</Label>
 											<Input
 												value={this.state.phoneNumber}
-												style={{ marginTop: 3 }}
+												style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 												keyboardType='number-pad'
 												maxLength={10}
 												onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
@@ -799,10 +834,10 @@ var isCityData = false;
 										</Form>
 									) :
 										<Item floatingLabel>
-											<Label>{strings('login.profile_distributor_email')}</Label>
+											<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_email')}</Label>
 											<Input
 												value={this.state.email}
-												style={{ marginTop: 3 }}
+												style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 												keyboardType='email-address'
 												onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 												onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
@@ -825,10 +860,10 @@ var isCityData = false;
 										</Form>
 									) :
 										<Item floatingLabel>
-											<Label>{strings('login.profile_distributor_address')}</Label>
+											<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_address')}</Label>
 											<Input
 												value={this.state.address}
-												style={{ marginTop: 3 }}
+												style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 												onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 												onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
 												onChangeText={(address) => this.setState({ address })}
@@ -851,10 +886,10 @@ var isCityData = false;
 										</Form>
 									) :
 										<Item floatingLabel>
-											<Label>{strings('login.profile_distributor_street')}</Label>
+											<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_street')}</Label>
 											<Input
 												value={this.state.street}
-												style={{ marginTop: 3 }}
+												style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 												onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 												onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
 												onChangeText={(street) => this.setState({ street })}
@@ -876,29 +911,16 @@ var isCityData = false;
 										</Form>
 									) :
 										<Item floatingLabel>
-											<Label>{strings('login.profile_distributor_pincode')}</Label>
+											<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_pincode')}</Label>
 											<Input
 												value={this.state.pincode}
-												style={{ marginTop: 3 }}
+												style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 												onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 												onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
 												onChangeText={(pincode) => this.setState({ pincode })}
 											/>
 										</Item>
 									}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 									<View style={{ width: '80%', marginLeft: Dimensions.get('window').width * 0.07 }}>
 										{/* <Picker
@@ -911,6 +933,8 @@ var isCityData = false;
 											<Dropdown
 												label={this.state.brandName}
 												data={this.brandData}
+												style={{ color: this.props.enableDarkTheme ? 'white' : "(default: rgba(0, 0, 0, 5))" }}
+												baseColor={this.props.enableDarkTheme ? 'grey' : "(default: rgba(0, 0, 0, 5))"}
 												disabled={true}
 												onChangeText={(brand) => this._setBrand(brand)}
 											/>
@@ -920,56 +944,104 @@ var isCityData = false;
 
 
 
-									<View style={{ width: '80%', marginLeft: Dimensions.get('window').width * 0.07 }}>
+									<View style={{ width: '80%', marginLeft: Dimensions.get('window').width * 0.07, marginTop: 30 }}>
 										{/* <Picker
 											selectedValue={this.state.selectedCountry}
 											style={{ flex: 0.3 }}
 											onValueChange={(country) => this._setCountry(country)}>
 											{CountryItems}
 										</Picker> */}
-										<Dropdown
+										{/* <Dropdown
 											label={this.state.country_name}
 											data={this.countryList}
 											baseColor="(default: rgba(0, 0, 0, 5))"
 											onChangeText={(value) => { this._setCountry(value, this.countryList) }}
+										/> */}
+
+										<RNPicker
+											dataSource={this.countryList}
+											dummyDataSource={this.countryList}
+											defaultValue={true}
+											pickerTitle={"Select Country"}
+											pickerItemTextStyle={styles.listTextViewStyle}
+											showSearchBar={true}
+											disablePicker={false}
+											changeAnimation={"none"}
+											searchBarPlaceHolder={"Search....."}
+											showPickerTitle={true}
+											selectedLabel={this.state.country_name}
+											placeHolderLabel={"Please Select Country"}
+											selectedValue={(index, item) => { this._setCountry(item.name, this.countryList), this.setState({ country_name: item.name }) }}
 										/>
 									</View>
 
-									<View style={{ width: '80%', marginLeft: Dimensions.get('window').width * 0.07 }}>
+									<View style={{ width: '80%', marginLeft: Dimensions.get('window').width * 0.07, marginTop: 20 }}>
 										{/* <Picker
 											selectedValue={this.state.selectedStates}
 											style={{ flex: 0.3 }}
 											onValueChange={(states) => this._setStates(states)}>
 											{StateItems}
 										</Picker> */}
-										<Dropdown
+										{/* <Dropdown
 											label={this.state.state_name}
 											data={this.statesList}
 											baseColor="(default: rgba(0, 0, 0, 5))"
 											onChangeText={(states) => this._setStates(states, this.statesList)}
+										/> */}
+
+										<RNPicker
+											dataSource={this.statesList}
+											dummyDataSource={this.statesList}
+											defaultValue={true}
+											pickerTitle={"Select State"}
+											pickerItemTextStyle={styles.listTextViewStyle}
+											showSearchBar={true}
+											disablePicker={false}
+											changeAnimation={"none"}
+											searchBarPlaceHolder={"Search....."}
+											showPickerTitle={true}
+											selectedLabel={this.state.state_name}
+											placeHolderLabel={"Please Select State"}
+											selectedValue={(index, item) => { this._setStates(item.name, this.statesList), this.setState({ state_name: item.name }) }}
 										/>
 									</View>
 
-									<View style={{ width: '80%', marginLeft: Dimensions.get('window').width * 0.07 }}>
+									<View style={{ width: '80%', marginLeft: Dimensions.get('window').width * 0.07, marginTop: 20 }}>
 										{/* <Picker
 											selectedValue={this.state.selectedCity}
 											style={{ flex: 0.3 }}
 											onValueChange={(city) => this._setCity(city)}>
 											{CityItems}
 										</Picker> */}
-										<Dropdown
+										{/* <Dropdown
 											label={this.state.city_name}
 											data={this.citiesList}
 											baseColor="(default: rgba(0, 0, 0, 5))"
 											onChangeText={(city) => this._setCity(city, this.citiesList)}
+										/> */}
+
+										<RNPicker
+											dataSource={this.citiesList}
+											dummyDataSource={this.citiesList}
+											defaultValue={true}
+											pickerItemTextStyle={styles.listTextViewStyle}
+											pickerTitle={"Select City"}
+											showSearchBar={true}
+											disablePicker={false}
+											changeAnimation={"none"}
+											searchBarPlaceHolder={"Search....."}
+											showPickerTitle={true}
+											selectedLabel={this.state.city_name}
+											placeHolderLabel={"Please Select City"}
+											selectedValue={(index, item) => { this._setCity(item.name, this.citiesList), this.setState({ city_name: item.name }) }}
 										/>
 									</View>
 
 									<Item floatingLabel>
-										<Label>{strings('login.profile_distributor_companyName')}</Label>
+										<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_companyName')}</Label>
 										<Input
 											value={this.state.companyName}
-											style={{ marginTop: 3 }}
+											style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 											onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 											onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
 											onChangeText={(companyName) => this.setState({ companyName })}
@@ -990,10 +1062,10 @@ var isCityData = false;
 										</Form>
 									) :
 										<Item floatingLabel>
-											<Label>{strings('login.profile_distributor_panNo')}</Label>
+											<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_panNo')}</Label>
 											<Input
 												value={this.state.panNo}
-												style={{ marginTop: 3 }}
+												style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 												onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 												onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
 												onChangeText={(panNo) => this.setState({ panNo })}
@@ -1001,38 +1073,41 @@ var isCityData = false;
 										</Item>
 									}
 									<Item floatingLabel>
-										<Label>{strings('login.profile_distributor_GSTno')}</Label>
+										<Label style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.profile_distributor_GSTno')}</Label>
 										<Input
 											value={this.state.gstNo}
-											style={{ marginTop: 3 }}
+											style={{ marginTop: 3, color: this.props.enableDarkTheme ? 'white' : 'black' }}
 											onFocus={() => { this.setState({ borderBottomColorUserName: '#50CAD0' }) }}
 											onBlur={() => { this.setState({ borderBottomColorUserName: '#757575' }); }}
 											onChangeText={(gstNo) => this.setState({ gstNo })}
 										/>
 									</Item>
-									
-									
-									
+
 									<Content padder>
 										<TouchableOpacity onPress={() => this._onPressButton()}>
 											<View style={styles.buttonSignUp}>
-												<LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.linearGradient}>
+												<LinearGradient colors={['#fab032', '#fab032', '#fab032']} style={styles.linearGradient}>
 													<Text style={styles.buttonTextSignUp}>{strings('login.profileScreenSubmit')}</Text>
 												</LinearGradient>
 											</View>
+
+											
 										</TouchableOpacity>
-										
+									{/* { Platform.OS === 'ios' ?  */}
+									 <TouchableOpacity onPress={() => this.props.navigation.navigate('RemoveAccount')}>
+										<Text  style={{ color:'red' }}> Remove My Account</Text>
+									</TouchableOpacity> 
+									
+									{/* } */}
 
 									</Content>
 
-									<TouchableOpacity style={{ alignSelf:'flex-start'}}onPress={() => this.props.navigation.navigate('RemoveAccount')}>
-										<Text  style={{ color:'red',padding:8 }}> Remove My Account</Text>
-									</TouchableOpacity>
+								
 
 								</Form>
 							</Content>
 						</Card>
-					</KeyboardAwareScrollView>
+					</ScrollView>
 				</View>
 			</View>
 		)
@@ -1073,7 +1148,7 @@ const styles = StyleSheet.create({
 	},
 	buttonSignUp: {
 		marginTop: 10,
-		marginBottom: 10,
+		marginBottom: 50,
 		backgroundColor: '#0000FF',
 		borderRadius: 5,
 		flex: 1
@@ -1082,7 +1157,7 @@ const styles = StyleSheet.create({
 		padding: 10,
 		color: 'white',
 		textAlign: 'center',
-
+		fontWeight: 'bold',
 	},
 	buttonOTP: {
 		flex: 1,
@@ -1153,9 +1228,20 @@ const styles = StyleSheet.create({
 		marginLeft: 18,
 		fontSize: 12,
 		color: 'red'
-	}
+	},
+	listTextViewStyle: {
+		color: "#000",
+		borderBottomWidth: 0.5,
+		borderBottomColor: 'grey',
+		marginVertical: 10,
+		flex: 0.9,
+		marginHorizontal: 10,
+		textAlign: "left"
+	},
 })
 const mapStateToProps = (state) => {
+	console.log(state.VerifierReducer.enableDarkTheme);
+
 	return {
 		languageControl: state.VerifierReducer.languageEnglish,
 		enableDarkTheme: state.VerifierReducer.enableDarkTheme

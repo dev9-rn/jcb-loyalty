@@ -1,5 +1,7 @@
 
 import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../App';
+import { isMaintenance } from '../MaintenanceService/MaintenanceService';
+import NavigationService from '../NavigationService';
 
 class LoginService {
 
@@ -20,8 +22,8 @@ class LoginService {
 	}
 
 	async logOut(pFormData) {
-		debugger;
 		var lUrl = URL + 'logout';
+		// alert(ACCESSTOKEN);
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
@@ -36,18 +38,14 @@ class LoginService {
 			.then((responseJson) => {
 				this.setRespData(responseJson);
 			})
-			.catch((error) => {
+			.catch(async (error) => {
+				await isMaintenance({navigation : NavigationService});
 				console.error(error);
 			});
 	};
 
 	async login(pFormData) {
-		debugger
 		var lUrl = URL + 'login';
-
-		console.log(pFormData)
-		console.log("URL" + URL)
-		console.log("APIKEY" + APIKEY)
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
@@ -59,13 +57,15 @@ class LoginService {
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
+				console.log("then response" ,responseJson);
+				
 				// alert(JSON.stringify(responseJson))
-				console.log("===============-=------------------------------====-=========");
-				console.log("responseJson" + responseJson);
 				this.setRespData(responseJson);
 			})
-			.catch((error) => {
-				console.error(error);
+			.catch(async (error) => {
+				console.error("====error",error);
+				await isMaintenance({navigation : NavigationService});
+				return true;
 			});
 	};
 
@@ -76,36 +76,35 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
+				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
 			}
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
 				this.setRespData(responseJson);
 			})
-			.catch((error) => {
+			.catch(async (error) => {
+				await isMaintenance({navigation : NavigationService});
 				console.error(error);
 			});
 	};
 
 	async getCountries() {
 		var lUrl = URL + 'getCountries';
-
-		console.log(lUrl);
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
+				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
 			}
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
-				console.log("working Country");
 				this.setRespData(responseJson);
 			})
-			.catch((error) => {
+			.catch(async (error) => {
+				await isMaintenance({navigation : NavigationService});
 				console.error(error);
 			});
 	};
@@ -117,17 +116,16 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
+				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
 			},
 			body: pFormData
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
-				console.log(responseJson);
-
 				this.setRespData(responseJson);
 			})
-			.catch((error) => {
+			.catch(async (error) => {
+				await isMaintenance({navigation : NavigationService});
 				console.error(error);
 			});
 	};
@@ -139,7 +137,7 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
+				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
 			},
 			body: pFormData
 		})
@@ -147,34 +145,34 @@ class LoginService {
 			.then((responseJson) => {
 				this.setRespData(responseJson);
 			})
-			.catch((error) => {
+			.catch(async (error) => {
+				await isMaintenance({navigation : NavigationService});
 				console.error(error);
 			});
 	};
 
 	async registration(pFormData) {
-		debugger;
 		var lUrl = URL + 'register';
+		console.log(lUrl, pFormData);
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'JE*U#?tg$%|RFU6uXw>p^I+e7$+#oE'
+				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
 			},
 			body: pFormData,
 		}).then((response) => response.json())
 			.then((responseJson) => {
-				console.log(responseJson);
 				this.setRespData(responseJson);
 			})
-			.catch((error) => {
+			.catch(async (error) => {
 				console.error(error);
+				await isMaintenance({navigation : NavigationService});
 				// this.setRespData({'Error':'Service API failure','Message': error});
 			});
 	};
 	async verifyOtp(pFormData) {
-		debugger;
 		var lUrl = URL + 'verifyOtp';
 		await fetch(lUrl, {
 			method: 'POST',
@@ -186,20 +184,14 @@ class LoginService {
 			body: pFormData,
 		}).then((response) => response.json())
 			.then((responseJson) => {
-				console.log(responseJson);
 				this.setRespData(responseJson);
-				if (responseJson.status === 403) {
-
-				} else if (responseJson.status === 422 || responseJson.status == 503 || responseJson.status == 451) {
-
-				} else if(responseJson.status == 200){
-					console.log("aaya andr bhai");
+				if (responseJson.data) {
 					this.setAccessToken(responseJson.data.accesstoken);
-
 				}
 			})
-			.catch((error) => {
+			.catch(async (error) => {
 				console.error(error);
+				await isMaintenance({navigation : NavigationService});
 				// this.setRespData({'Error':'Service API failure','Message': error});
 			});
 	};

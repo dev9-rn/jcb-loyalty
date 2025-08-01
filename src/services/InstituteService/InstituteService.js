@@ -1,5 +1,7 @@
 
 import { URL, HEADER } from '../../App';
+import { isMaintenance } from '../MaintenanceService/MaintenanceService';
+import NavigationService from '../NavigationService';
 
 class InstituteService{
 	
@@ -26,7 +28,8 @@ class InstituteService{
     		console.log(JSON.stringify(responseJson));
     		this.setRespData(responseJson);
     	})
-    	.catch((error) => {
+    	.catch(async (error) => {
+			await isMaintenance({navigation : NavigationService});
       		console.error(error);
     	});
 	};
@@ -44,7 +47,8 @@ class InstituteService{
     		console.log(JSON.stringify(responseJson));
     		this.setRespData(responseJson);
     	})
-    	.catch((error) => {
+    	.catch(async (error) => {
+			await isMaintenance({navigation : NavigationService});
       		console.error(error);
     	});
 	};
@@ -62,7 +66,8 @@ class InstituteService{
     		console.log(JSON.stringify(responseJson));
     		this.setRespData(responseJson);
     	})
-    	.catch((error) => {
+    	.catch(async (error) => {
+			await isMaintenance({navigation : NavigationService});
       		console.error(error);
     	});
 	};

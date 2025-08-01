@@ -7,7 +7,7 @@ export const COLORS = {
     rosybrown : "#bc8f8f",
     lightcoral : "#f08080",
     indianred :"#cd5c5c",
-    steelblue:'#0000ff',
+    steelblue:'#fab032',
     crimson:'#D34A44'
     // steelblue :"#4682b4",
     // crimson :"#dc143c"

@@ -32,83 +32,41 @@ class ReportScreen extends Component {
             })
     }
 
-    imagePickerHandler = async(type) => {
-        try{
-            if(this.state.isPermissionGranted){
-                if(type == "capture"){
-                    await launchCamera({
-                        saveToPhotos: true,
-                        mediaType: 'photo',
-                        includeBase64: false,
-                        includeExtra: true,
-                    } , res =>{ 
-                        console.log("===result res" , JSON.stringify(res , null,2))
-                        if (res.didCancel) {
-                            // alert("u have cancelled.")
-                        } else if (res.error) {
-                            console.log("image pucker" , res.error)
-                            alert("u have an error.")
-                        } else {
-                            this.setState({
-                                isImage: true,
-                                pickedImage: { uri: res?.assets[0].uri }
-                            })
-                        }
-                    });
-                }else{
-                    await launchImageLibrary({
-                        selectionLimit: 0,
-                        mediaType: 'photo',
-                        includeBase64: false,
-                        includeExtra: true,
-                    } , res =>{ 
-                        console.log("===result res" , JSON.stringify(res , null,2))
-                        if (res.didCancel) {
-                            // alert("u have cancelled.")
-                        } else if (res.error) {
-                            console.log("image pucker" , res.error)
-                            alert("u have an error.")
-                        } else {
-                            this.setState({
-                                isImage: true,
-                                pickedImage: { uri: res?.assets[0].uri }
-                            })
-                        }
-                    });
-                }
-            }else{
-                Alert.alert('Need Camera Persmission ', '', [
-                    {
-                        text: 'Cancel',
-                        onPress: () => console.log('Cancel Pressed'),
-                    },
-                    {
-                      text: 'Open Setting',
-                      onPress: () => {this._openSettings()},
-                    },
-            
-                  ])
+    imagePickerHandler = async (type) => {
+        try {
+          if (this.state.isPermissionGranted) {
+            const options = {
+              mediaType: 'photo',
+              saveToPhotos: true,
+            };
+      
+            let result;
+            if (type === 'capture') {
+              result = await launchCamera(options);
+            } else {
+              result = await launchImageLibrary(options);
             }
-            
-        }catch(e){
-            console.log(e)
+      
+            if (result.didCancel) {
+              console.log('User canceled image picker');
+            } else if (result.errorCode) {
+              console.log('Error:', result.errorMessage);
+            } else if (result.assets && result.assets.length > 0) {
+              this.setState({
+                isImage: true,
+                pickedImage: { uri: result.assets[0].uri },
+              });
+            }
+          } else {
+            Alert.alert('Need Camera Permission', '', [
+              { text: 'Cancel', onPress: () => console.log('Cancel Pressed') },
+              { text: 'Open Settings', onPress: this._openSettings },
+            ]);
+          }
+        } catch (e) {
+          console.error('Image picker error:', e);
         }
-        
-        // console.log("===result" , result)
-        // ImagePicker.showImagePicker({ title: "Pick an image" }, res => {
-        //     if (res.didCancel) {
-        //         // alert("u have cancelled.")
-        //     } else if (res.error) {
-        //         console.log("image pucker" , res.error)
-        //         alert("u have an error.")
-        //     } else {
-        //         this.setState({
-        //             isImage: true,
-        //             pickedImage: { uri: res.uri }
-        //         })
-        //     }
-        // });
-    }
+      };
 
     _openSettings() {
         if (Platform.OS == 'ios') {
@@ -147,7 +105,6 @@ class ReportScreen extends Component {
         });
     
     }
-    
     _onPressSendButton = (distributorId) => {
         this.setState({ showHideLoading: true })
         const photo = {
@@ -207,7 +164,7 @@ class ReportScreen extends Component {
     _showHeader() {
         if (Platform.OS == 'ios') {
             return (
-                <Header style={{ backgroundColor: '#0000FF', display: 'flex' }}>
+                <Header style={{ backgroundColor: '#fab032', display: 'flex' }}>
                     <Grid>
                         <Col style={{ justifyContent: 'center' }}>
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('HomeScreen')}>
@@ -222,7 +179,7 @@ class ReportScreen extends Component {
             )
         } else {
             return (
-                <Header style={{ backgroundColor: '#0000FF' }}>
+                <Header style={{ backgroundColor: '#fab032' }}>
                     <Left style={{ flex: 0.1 }}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('HomeScreen')}>
                             <Icon type="FontAwesome" name="long-arrow-left" style={{ fontSize: 25, color: '#FFFFFF', paddingLeft: 10, }} />

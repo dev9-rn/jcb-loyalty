@@ -1,105 +1,34 @@
 import React, { Component } from 'react';
-import { Alert, BackHandler, Dimensions, Platform, StyleSheet, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, StatusBar, FlatList } from 'react-native';
-import { Container, Header, Left, Body, Right, Card, CardItem, Text, Title, Icon, ListItem } from 'native-base';
+import { Alert, BackHandler, Dimensions, Platform, StyleSheet, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, StatusBar } from 'react-native';
+import { Container, Header, Left, Body, Right, Content, Card, CardItem, Text, Title, Item, Icon, Toast, Tab, Tabs } from 'native-base';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import Loader from '../../Utility/Loader';
-import AsyncStorage from '@react-native-community/async-storage';
 import HistoryService from '../../services/HistoryService/HistoryService';
-import * as utilities from '../../Utility/utilities';
-import moment from 'moment';
+import Tab1 from './Tab1';
+import Tab2 from './Tab2';
 import { strings } from '../../locales/i18n';
-import I18n from 'react-native-i18n';
-import DatePicker from 'react-native-date-picker'
 import { connect } from 'react-redux';
-import { Col, Grid } from "react-native-easy-grid";
-
-
+import AsyncStorage from '@react-native-community/async-storage';
 class HistoryScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: false,
-			loaderText: '',
-			distributorId: '',
 			historyCleared: false,
-			isDateTimePickerVisible: false,
-			isDateTimePickerVisible1: false,
-			frmDate: moment().locale('en').format('DD-MM-YYYY'),
-			toDate: moment().locale('en').format('DD-MM-YYYY'),
 			redeemHistory: [],
 			redeemHistoryCash: [],
-			fromDateError: '',
-			toDateError: '',
 			redeemHistoryScheme: [],
-			loaderText: 'Please wait...',
+			userType: ''
 		};
 	}
 
-	showDateTimePicker = () => {
-		this.setState({ isDateTimePickerVisible: true, isDateTimePickerVisible1: false });
-	};
-	showDateTimePicker1 = () => {
-		this.setState({ isDateTimePickerVisible: false, isDateTimePickerVisible1: true });
-	};
+	componentWillMount() {
 
-	hideDateTimePicker = () => {
-		this.setState({ isDateTimePickerVisible: false, isDateTimePickerVisible1: false });
-	};
-
-	handleDatePicked = date => {
-        let a = moment(date).format("DD-MM-YYYY");
-        let b = this.state.toDate;
-
-        let fromDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-        let toDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-
-        console.log(fromDate , fromDate)
-        this.setState({ redeemHistoryCashArr: [] }, () => {
-            if (fromDate.isAfter(toDate)) {
-                this.setState({ fromDateError: 'FromDate cannot be greater than toDate.', noMoreDataError: '',open1:false })
-            } else {
-                this.forceUpdate();
-                this.setState({ fromDateError: '', toDateError: '', frmDate: a, frmDatePass: date,open1:false }, () => {
-                    this._getRedeemHistory();
-                })
-            }
-        })
-    };
-
-	
-    handleDatePicked1 = date => {
-        console.log(date);
-        console.log("=-=-=-=-=-=-=-=-=-=-=-=----=-======-=-=-=-=-=-=-=-==-=-=-=-=-=");
-        this.setState({ redeemHistoryCashArr: [] }, () => {
-
-            // let a = moment(date, 'DD-MM-YYYY');
-            // let b = moment(this.state.frmDate, 'DD-MM-YYYY');
-
-            let a = moment(date).format("DD-MM-YYYY");
-            let b = this.state.frmDate;
-
-            let fromDate = moment(`${b}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-            let toDate = moment(`${a}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS');
-
-            if (toDate.isBefore(fromDate)) {
-                this.setState({ toDateError: strings('login.FromDateError'), noMoreDataError: '',open2:false })
-            } else {
-                this.setState({ toDate: a, toDateError: '', fromDateError: '', toDatePass: date,open2:false }, () => {
-                    this._getRedeemHistory();
-                })
-            }
-        })
-    };
-
-	componentWillMount() {}
-
+	}
 	componentDidMount() {
 		BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
 		this._getAsyncData();
 	}
-
 	componentWillUnMount() {
 		BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
 	}
@@ -109,36 +38,13 @@ class HistoryScreen extends React.Component {
 		return true;
 	}
 
-	_clearHistory() {
-		Alert.alert(
-			'Delete history?',
-			'This will delete all the scan history.',
-			[
-				{ text: 'CANCEL' },
-				{
-					text: 'DELETE', onPress: () => {
-						this.setState({ redeemHistory: [], historyCleared: true });
-					}
-				},
-			],
-			{ cancelable: true }
-		);
-	}
-
-	closeActivityIndicator() {
-		setTimeout(() => {
-			this.setState({ loading: false });
-		});
-	}
-
 	async _getAsyncData() {
-		await AsyncStorage.getItem('USERDATA', (err, result) => {
+		await AsyncStorage.getItem('USERDATA', (err, result) => {		// USERDATA is set on SignUP screen
 			var lData = JSON.parse(result);
 			if (lData) {
+				this.setState({ userType: lData.data.userType })
 				// this.distributorId = lData.data.id;
-				this.setState({ distributorId: lData.data.id }, () => {
-					this._getRedeemHistory()
-				})
+				// this._getRedeemHistory(lData.data.id);
 			}
 		});
 	}
@@ -146,69 +52,44 @@ class HistoryScreen extends React.Component {
 	async _getRedeemHistory(distributorId) {
 		const formData = new FormData();
 
-		formData.append('distributorId', this.state.distributorId);
-		formData.append('fromDate', this.state.frmDate);
-		formData.append('toDate', this.state.toDate);
-		formData.append('redeemType', 3);
-		formData.append('offset', 0);
-		formData.append('userType', 0);
-
-		console.log(this.state.frmDate);
-		console.log(this.state.toDate);
-		console.log('distributorId', distributorId);
-
+		formData.append('distributorId', distributorId);
+		formData.append('fromDate', '05-06-2019');
+		formData.append('toDate', '05-06-2019');
+		formData.append('userType', this.state.userType);
+		if (this.props.languageControl) {
+			formData.append('language', 'en');
+		} else {
+			formData.append('language', 'hi');
+		}
 
 		var historyApiObj = new HistoryService();
 
-		this.setState({ loading: true });
 		await historyApiObj.getRedeemHistory(formData);
 		var lResponseData = historyApiObj.getRespData();
 		await this.closeActivityIndicator();
 
 		if (!lResponseData) {
-			utilities.showToastMsg('Something went wrong. Please try again later');
-		} else if (lResponseData.status == 500 || lResponseData.status == 400 || lResponseData.status == 403) {
-			utilities.showToastMsg(lResponseData.message);
-		} else if (lResponseData.status == 200) {
-			if (lResponseData.redeemHistory.length == 0) {
-				this.setState({ redeemHistory: lResponseData.redeemHistory });
-				this.dataVerify(lResponseData)
-			} else if (lResponseData.redeemHistory.length > 0) {
-				this.setState({ redeemHistory: lResponseData.redeemHistory });
-				this.dataVerify(lResponseData)
-			}
-		} else {
-			utilities.showToastMsg('Something went wrong. Please try again later');
-		}
-	}
-
-	dataVerify = (lResponseData) => {
-		this.setState({ loading: false })
-		if (!lResponseData) {
-			utilities.showToastMsg('Something went wrong. Please try again later');
-		} else if (lResponseData.status == 500 || lResponseData.status == 400 || lResponseData.status == 403) {
-			this.setState({ noMoreDataError: "" })
-			utilities.showToastMsg(lResponseData.message);
-			this.setState({ noMoreDataError: "" })
-		} else if (lResponseData.status == 404) {
-			this.setState({ noMoreDataError: "No more data." })
+			alert('Something went wrong. Please try again later');
+		} else if (lResponseData.status == 500 || lResponseData.status == 400) {
+			alert(lResponseData.message);
+		} else if (lResponseData.status == 403) {
+			alert(lResponseData.message);
+			this.props.navigation.navigate('LoginScreen');
+			AsyncStorage.clear();
 			return;
-		}
-		else if (lResponseData.status == 200) {
-			this.setState({ noMoreDataError: "" })
-			
+		} else if (lResponseData.status == 200) {
+			debugger
 			if (lResponseData.redeemHistory.length == 0) {
-				this.setState({ redeemHistory: lResponseData.redeemHistory, redeemHistoryScheme: [], redeemHistoryCash: [] });
+				this.setState({ redeemHistory: lResponseData.redeemHistory });
 			} else if (lResponseData.redeemHistory.length > 0) {
 				var redeemCashArr = [];
 				var redeemSchemeArr = [];
-				console.log("WorkingMain" + lResponseData.redeemHistory.length);
 				for (var i = 0; i < lResponseData.redeemHistory.length; i++) {
 					if (lResponseData.redeemHistory[i].distributor_redeemed_type == '0') {
 						var redeemCashObj = {};
 						redeemCashObj.redeemHistoryCash = lResponseData.redeemHistory[i];
 						redeemCashArr.push(redeemCashObj);
-						this.state.redeemHistoryCashArr.push(redeemCashObj)
+
 					} else {
 						var redeemSchemeObj = {};
 						redeemSchemeObj.redeemHistoryScheme = lResponseData.redeemHistory[i];
@@ -218,46 +99,13 @@ class HistoryScreen extends React.Component {
 				this.setState({ redeemHistory: lResponseData.redeemHistory, redeemHistoryCash: redeemCashArr, redeemHistoryScheme: redeemSchemeArr });
 			}
 		} else {
-			utilities.showToastMsg('Something went wrong. Please try again later');
-			this.setState({ redeemHistoryCash: [] })
+			alert('Something went wrong. Please try again later');
 		}
 	}
-	renderFooter = () => {
-		return (
-			<View>
-				{this.state.noMoreDataError ?
-					<Text style={{ color: 'red', textAlign: 'center', }}>{this.state.noMoreDataError}</Text>
-					: <Text></Text>}
-			</View>
-		)
-	};
-
-
-	handleLoadMore = () => {
-		if (!this.state.noMoreDataError) {
-			this._getRedeemHistory();
-		}
-	};
 
 	_showHeader() {
-		if (Platform.OS == 'ios') {
 			return (
-				<Header style={{ backgroundColor: '#0000FF' }} hasTabs>
-					<Left style={{ flex: 0.2 }}>
-						<TouchableOpacity onPress={() => this.props.navigation.navigate('HomeScreen')}>
-							<Icon type="FontAwesome" name="long-arrow-left" style={{ fontSize: 25, color: '#FFFFFF', paddingRight: 10 }} />
-						</TouchableOpacity>
-					</Left>
-					<Body style={{ flex: 0.6, alignItems: 'center' }}>
-						<Title style={{ textAlign: 'center', color: '#FFFFFF' }}>{strings('login.coupon_history_title')}</Title>
-					</Body>
-					<Right style={{ flex: 0.2 }}>
-					</Right>
-				</Header>
-			)
-		} else {
-			return (
-				<Header style={{ backgroundColor: '#0000FF' }} hasTabs>
+				<Header style={{ backgroundColor: '#fab032' }} hasTabs>
 					<Left style={{ flex: 0.2 }}>
 						<TouchableOpacity onPress={() => this.props.navigation.navigate('HomeScreen')}>
 							<Icon type="FontAwesome" name="long-arrow-left" style={{ fontSize: 25, color: '#FFFFFF', paddingRight: 10 }} />
@@ -267,242 +115,26 @@ class HistoryScreen extends React.Component {
 						<Title style={{ color: '#FFFFFF', fontSize: 16 }}>{strings('login.coupon_history_title')}</Title>
 					</Body>
 					<Right style={{ flex: 0.2 }}>
+
 					</Right>
 				</Header>
 			)
-		}
 	}
-
-	_displayList() {
-		var items1 = this.state.redeemHistory
-		// var items = this.props.redeemCash;
-		if (items1.length == 0) {
-			return (
-				<View style={styles.noRecord}>
-					<Text style={{ fontSize: 28, color: '#BDBDBD' }}>{strings('login.NoHistory_Error')}</Text>
-				</View>
-			)
-		} else {
-			return (
-				<View style={{ flex: 1 }}>
-					{/* <FlatList
-						data={this.state.redeemHistoryCash}
-						extraData={this.state}
-						key={(item, index) => item.index}
-						keyExtractor={(item, index) => item.index}
-						renderItem={({ item, index }) =>
-							<ListItem key={index} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-								<View style={{ flex: 1, flexDirection: 'row', }}>
-									<View style={{ flex: 0.9, }} >
-										<Text style={{ alignSelf: 'flex-start', fontSize: 14 }}>Serial No : {item.redeemHistoryCash.id}</Text>
-									</View>
-									<View style={{ flex: 0.1, flexDirection: 'row' }}>
-										<Text style={{ fontSize: 12, color: 'green', paddingRight: 3 }}>{'\u20B9'}</Text>
-										<Text style={{ fontSize: 14 }}>{item.redeemHistoryCash.value}</Text>
-									</View>
-								</View>
-								<View style={{ flex: 0.1, flexDirection: 'row' }}>
-									<View style={{ flex: 0.9, }} >
-										<Text style={{ alignSelf: 'flex-start', fontSize: 14 }}>Item Code : {item.redeemHistoryCash.item_code}</Text>
-									</View>
-								</View>
-
-								<View style={{ flex: 1, }} >
-									<Text style={{ fontSize: 14 }}>Redemtion Date : {item.redeemHistoryCash.distributor_redemption_date}</Text>
-								</View>
-								<View style={{ flex: 1 }}>
-									<Text style={{ fontSize: 14 }}>Status : {item.redeemHistoryCash.sap_interface_flag}</Text>
-								</View>
-							</ListItem>
-						}
-					/> */}
-
-					<FlatList
-						data={this.state.redeemHistory}
-						extraData={this.state}
-						renderItem={({ item, index }) => (
-							<ListItem key={index} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-								<View style={{ flex: 1, flexDirection: 'row', }}>
-									<View style={{ flex: 0.8, }} >
-										<Text style={{ alignSelf: 'flex-start', fontSize: 14 }}>Serial No : {item.id}</Text>
-									</View>
-									<View style={{ flex: 0.2, flexDirection: 'row' }}>
-										<Text style={{ fontSize: 14, color: 'green' }}>{item.value}</Text>
-										<Text style={{ fontSize: 12, color: 'green', paddingLeft: 3 }}>Points</Text>
-									</View>
-								</View>
-								<View style={{ flex: 0.1, flexDirection: 'row' }}>
-									<View style={{ flex: 0.9, }} >
-										<Text style={{ alignSelf: 'flex-start', fontSize: 14 }}>Item Code : {item.item_code}</Text>
-									</View>
-								</View>
-								<View style={{ flex: 1, }} >
-									<Text style={{ fontSize: 14 }}>Redemtion Date :  {moment(item.distributor_redemption_date).format('DD-MM-YYYY h:mm A')}</Text>
-								</View>
-								{/* <View style={{ flex: 1 }}>
-									<Text style={{ fontSize: 14 }}>Status : {item.sap_interface_flag}</Text>
-								</View> */}
-							</ListItem>
-						)}
-						keyExtractor={(item, index) => index.toString()}
-						ListFooterComponent={this.renderFooter.bind(this)}
-						onEndReachedThreshold={0.1}
-						onEndReached={this.handleLoadMore.bind(this)}
-					/>
-				</View>
-			)
-		}
-	}
-
-	_renderItem = ({ item }) => {
-		return (
-			<Card>
-				<CardItem>
-					<Body>
-					<View style={{ flex: 1, flexDirection: 'row', }}>
-									<View style={{ flex: 0.9, }} >
-										<Text style={{ alignSelf: 'flex-start', fontSize: 14 }}>Serial No : {item.id}</Text>
-									</View>
-									<View style={{ flex: 0.1, flexDirection: 'row' }}>
-										<Text style={{ fontSize: 12, color: 'green', paddingRight: 3 }}>{'\u20B9'}</Text>
-										<Text style={{ fontSize: 14 }}>{item.value}</Text>
-									</View>
-								</View>
-								<View style={{ flex: 0.1, flexDirection: 'row' }}>
-									<View style={{ flex: 0.9, }} >
-										<Text style={{ alignSelf: 'flex-start', fontSize: 14 }}>Item Code : {item.item_code}</Text>
-									</View>
-								</View>
-								<View style={{ flex: 1, }} >
-									<Text style={{ fontSize: 14 }}>Redemtion Date : {item.distributor_redemption_date}</Text>
-								</View>
-								<View style={{ flex: 1 }}>
-									<Text style={{ fontSize: 14 }}>Status : {item.sap_interface_flag}</Text>
-								</View>
-					</Body>
-				</CardItem>
-			</Card>
-		);
-	};
 
 	render() {
 		return (
 			<View style={styles.container}>
-		
 				{this._showHeader()}
+				<Tabs>
+					<Tab heading={strings('login.coupon_history_cash')} tabStyle={{ backgroundColor: this.props.enableDarkTheme ? 'black' : 'blue' }} textStyle={{ color: '#fff' }} activeTabStyle={{ backgroundColor: this.props.enableDarkTheme ? '#1a1a1a' : 'blue' }} activeTextStyle={{ color: '#fff', fontWeight: 'normal' }}>
+						<Tab1 props={this.props} redeemCash={this.state.redeemHistoryCash} />
+					</Tab>
 
-				<StatusBar barStyle="light-content" />
-				<Loader loading={this.state.loading} text={this.state.loaderText} />
-				<View style={{ flex: this.state.fromDateError || this.state.toDateError ? 0.2 : 0.1, marginTop: 5 }}>
-					<Grid style={{ marginTop: 10, margin: 5 }}>
-						<Col size={2.5}>
-							<Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,
-								alignSelf:'center', fontWeight: 'bold' }}>{strings('login.report_history_fromDate')} : </Text>
-						</Col>
-						<Col size={3} >
-							<TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open1: true }) }}>
-                             	<Text onPress={() => { this.setState({ open1: true })} }  style={{ color:"#000000"}}>{this.state.frmDate}</Text>
-                             </TouchableOpacity>
-                            <DatePicker
-                                modal
-                                mode="date"
-                                open={this.state.open1}
-                                date={new Date(moment(`${this.state.frmDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
-                                color="#000000"
-                                textColor="#000000"
-								maximumDate={new Date()}
-                                onConfirm={(date) => {
-                                    this.handleDatePicked(date) 
-                                }}
-                                onCancel={() => {
-                                // setOpen(false)
-                                this.setState({ open1: false})
-                                }}
-                            />
-							{/* <DatePicker
-								date={this.state.frmDate}
-								confirmBtnText={"Done"}
-								cancelBtnText={"Cancel"}
-								mode="date"
-								locale={moment.locale('en')}
-								format="DD-MM-YYYY"
-								maxDate={moment().format('DD-MM-YYYY')}
-								showIcon={false}
-								onDateChange={(date) => { this.handleDatePicked(date) }}
-								style={{ width: 90, height: 25, justifyContent: 'center' }}
-								customStyles={{
-									dateInput: {
-										borderWidth: 0,
-									}
-								}}
-							/> */}
-						</Col>
-						<Col size={2}>
-							<Text style={{ fontSize: this.props.languageControl == "English" || this.props.languageControl == "English - (English)" ? 15 : 12,fontWeight: 'bold' }}>{strings('login.report_history_toDate')} : </Text>
-						</Col>
-						<Col size={3}>
-							<TouchableOpacity style={{ paddingRight: 10 }} onPress={() => { this.setState({ open2: true }) }}>
-                             	<Text onPress={() => { this.setState({ open2: true })} }  style={{ color:"#000000"}}>{this.state.toDate}</Text>
-                            </TouchableOpacity>
-                            <DatePicker
-                                modal
-                                mode="date"
-                                open={this.state.open2}
-                                date={new Date(moment(`${this.state.toDate}T07:42:47.876Z` ,'DD-MM-YYYYTHH:mm:ss.SSS').utc().toISOString())}
-                                color="#000000"
-								maximumDate={new Date()}
-                                textColor="#000000"
-                                onConfirm={(date) => {
-									console.log("ghfgdfhgiudf" ,date)
-                                    this.handleDatePicked1(date) 
-                                }}
-                                onCancel={() => {
-                                // setOpen(false)
-                                this.setState({ open2: false})
-                                }}
-                            />
-							{/* <DatePicker
-								date={this.state.toDate}
-								confirmBtnText={"Done"}
-								cancelBtnText={"Cancel"}
-								mode="date"
-								locale={moment.locale('en')}
-								format="DD-MM-YYYY"
-								maxDate={moment().format('DD-MM-YYYY')}
-								showIcon={false}
-								onDateChange={(date) => { this.handleDatePicked1(date) }}
-								style={{ width: 90, height: 25, justifyContent: 'center' }}
-								customStyles={{
-									dateInput: {
-										borderWidth: 0,
-									}
-								}}
-							/> */}
-						</Col>
-					</Grid>
-					{this.state.fromDateError ?
-						<View style={{ marginTop: 15, marginLeft: 20 }}>
-							<Text style={{ color: 'red' }}>{this.state.fromDateError}</Text>
-						</View>
-						: <View></View>}
-					{this.state.toDateError ?
-						<View style={{ marginTop: 15, marginLeft: 20 }}>
-							<Text style={{ color: 'red' }}>{this.state.toDateError}</Text>
-						</View>
-						: <View></View>}
-					{/* <DateTimePicker
-						isVisible={this.state.isDateTimePickerVisible}
-						onConfirm={this.handleDatePicked}
-						onCancel={this.hideDateTimePicker}
-					/>
-					<DateTimePicker
-						isVisible={this.state.isDateTimePickerVisible1}
-						onConfirm={this.handleDatePicked1}
-						onCancel={this.hideDateTimePicker}
-					/> */}
-					{/* <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey', marginTop: 0, margin: 1 }} /> */}
-				</View>
-				{this._displayList()}
+					<Tab heading={strings('login.coupon_history_scheme')} tabStyle={{ backgroundColor: this.props.enableDarkTheme ? 'black' : 'blue' }} textStyle={{ color: '#fff' }} activeTabStyle={{ backgroundColor: this.props.enableDarkTheme ? '#1a1a1a' : 'blue' }} activeTextStyle={{ color: '#fff', fontWeight: 'normal' }}>
+						<Tab2 props={this.props} redeemScheme={this.state.redeemHistoryScheme} />
+					</Tab>
+				</Tabs>
+
 			</View>
 		)
 	}
@@ -512,19 +144,11 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-	noRecord: {
-		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		justifyContent: 'center'
-	}
-});
-
+})
 const mapStateToProps = (state) => {
 	return {
 		enableDarkTheme: state.VerifierReducer.enableDarkTheme,
 		languageControl: state.VerifierReducer.languageEnglish,
 	}
 }
-
-export default connect(mapStateToProps, null)(HistoryScreen);
+export default connect(mapStateToProps, null)(HistoryScreen)

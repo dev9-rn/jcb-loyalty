@@ -1,5 +1,7 @@
 
 import { URL, HEADER, APIKEY, ACCESSTOKEN } from '../../App';
+import { isMaintenance } from '../MaintenanceService/MaintenanceService';
+import NavigationService from '../NavigationService';
 
 class HomeService{
 	
@@ -33,7 +35,8 @@ class HomeService{
     	.then((responseJson) => {
     		this.setRespData(responseJson);
     	})
-    	.catch((error) => {
+    	.catch(async (error) => {
+			await isMaintenance({navigation : NavigationService});
       		console.error(error);
     	});
 	};

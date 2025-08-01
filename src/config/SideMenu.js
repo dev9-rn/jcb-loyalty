@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { NavigationActions, DrawerActions } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Alert, ScrollView, View, StyleSheet, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Alert, ScrollView, Modal , View, StyleSheet, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Icon, Accordion, Text,Card } from "native-base";
 import LoginService from '../services/LoginService/LoginService';
+import { Picker } from 'native-base';
 // import * as app from '../../App';
 import * as utilities from '../Utility/utilities';
 import { Grid, Col, Row } from 'react-native-easy-grid';
@@ -15,45 +16,17 @@ import Loader from '../Utility/Loader';
 import { strings } from '../locales/i18n';
 import I18n from 'react-native-i18n';
 import moment from 'moment';
+import { Dropdown } from 'react-native-material-dropdown-v2';
 import SwitchToggle from "react-native-switch-toggle";
-import { Dropdown } from 'react-native-material-dropdown';
 import { setLanguage, setCounterValue, setCounter1Value, enableDarkTheme, fingerPrintEnableAuth, setMechanicData } from '../Redux/Actions/VerifierActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { clearInsti } from '../Redux/Actions/InstituteActions';
+import RNPicker from "rn-modal-picker";
+import { color } from 'react-native-reanimated';
 var pkg = require("../../package.json");
 
-
-// var menuList;
-
-
-var languageDropDown = [{
-  value: 'English - (English)',
-}, {
-  value: 'Hindi - (हिन्दी)',
-}, {
-  value: 'Marathi - (मराठी)',
-}, {
-  value: 'Punjabi - (ਪੰਜਾਬੀ)',
-}, {
-  value: 'Gujarati - (ગુજરાતી)',
-}, {
-  value: 'Telugu - (తెలుగు)',
-}, {
-  value: 'Tamil - (தமிழ்)',
-}, {
-  value: 'Bengali - (বাংলা)',
-}, {
-  value: 'Urdu - (اردو)',
-}, {
-  value: 'Kannada - (ಕನ್ನಡ)',
-}, {
-  value: 'Odia - (ଓଡିଆ)',
-}
-];
-
 class SideMenu extends Component {
-
   constructor(props) {
     super(props);
     this.distributorId;
@@ -65,7 +38,9 @@ class SideMenu extends Component {
       loading: false,
       menuList: [],
       changeThemeEnable: '',
-      accesstoken:''
+      accesstoken:'',
+      selectedLanguage: this.props.languageControl, // Store the selected language
+      modalVisible: false, // Track the modal visibility
     };
     this._renderContent = this._renderContent.bind(this);
     this._renderHeader = this._renderHeader.bind(this);
@@ -81,6 +56,75 @@ class SideMenu extends Component {
     // ];
   }
 
+  updateMenuList = () => {
+    this.setState({
+      menuList: [
+        { title: strings('login.profile'), nav1: 'ProfileScreen' },
+        { title: strings('login.sdemenu_scan'), nav1: 'ScanScreen' },
+        { title: strings('login.sidemenu_couponhistory'), nav1: 'HistoryScreen' },
+        { title: strings('login.cashbash'), nav1: 'CashBatchesScreen' },
+        { title: strings('login.sidemenu_report'), nav1: 'ReportScreen' },
+        { title: strings('login.sidemenu_reporthistory'), nav1: 'ReportHistory' },
+        { title: strings('login.Manual') },
+        { title: strings('login.logout') },
+        { title: "LANGUAGE" },
+      ],
+    });
+  };
+
+  
+
+  // Open the language selection modal
+  openLanguageModal = () => {
+    this.setState({ modalVisible: true });
+  };
+
+  // Close the language selection modal
+  closeLanguageModal = () => {
+    this.setState({ modalVisible: false });
+  };
+
+  // Handle language selection
+  onSelectLanguage = (language) => {
+    this.props.setLanguage(language);
+    I18n.locale = this.getLocale(language);
+    this.setState({ selectedLanguage: language, modalVisible: false });
+    this.updateMenuList(); // Update menu list with new translations
+    // this.getAsyncData()
+  };
+
+  // Map selected language to the I18n locale
+  getLocale = (language) => {
+    switch (language) {
+      case 'English - (English)':
+        return 'en';
+      case 'Hindi - (हिन्दी)':
+        return 'hi';
+      case 'French - (Française)':
+        return 'fr';
+      case 'Punjabi - (ਪੰਜਾਬੀ)':
+        return 'pa';
+      case 'Marathi - (मराठी)':
+        return 'ma';
+      case 'Gujarati - (ગુજરાતી)':
+        return 'gu';
+      case 'Telugu - (తెలుగు)':
+        return 'tl';
+      case 'Bengali - (বাংলা)':
+        return 'ben';
+      case 'Urdu - (اردو)':
+        return 'ur';
+      case 'Kannada - (ಕನ್ನಡ)':
+        return 'kan';
+      case 'Odia - (ଓଡିଆ)':
+        return 'od';
+      case 'Swahili - (Kiswahili)':
+        return 'swa';
+      // Add other languages as needed
+      default:
+        return 'en';
+    }
+  };
 
   navigateToScreen = (route) => () => {
     const navigateAction = NavigationActions.navigate({
@@ -106,6 +150,8 @@ class SideMenu extends Component {
     require('moment/locale/kn.js');
     require('moment/locale/sw.js');
 
+    console.log("------------" , I18n.currentLocale())
+
     if (I18n.currentLocale() == 'hi') {
       moment.locale('hi');
     } else if (I18n.currentLocale() == 'fr') {
@@ -113,8 +159,8 @@ class SideMenu extends Component {
     } else if (I18n.currentLocale() == 'en') {
       moment.locale('en');
     } else if (I18n.currentLocale() == 'pa') {
-      moment.locale('en');
-    } else if (I18n.currentLocale() == 'ma') {
+      moment.locale('pa');
+    } else if (I18n.currentLocale() == 'mr') {
       moment.locale('mr');
     } else if (I18n.currentLocale() == 'gu') {
       moment.locale('gu');
@@ -129,13 +175,19 @@ class SideMenu extends Component {
     } else if (I18n.currentLocale() == 'kan') {
       moment.locale('kn');
     } else if (I18n.currentLocale() == 'od') {
-      moment.locale('en');
+      moment.locale('od');
     } else if (I18n.currentLocale() == 'swa') {
       moment.locale('sw');
     }
     else {
       moment.locale('en');
     }
+
+    // this.updateMenuList();
+
+    
+
+    
   }
 
   componentDidMount() {
@@ -148,6 +200,7 @@ class SideMenu extends Component {
     );
     // setTimeout(() => { this.getAsyncData() }, 500);
   }
+
   async closeActivityIndicator() {
     await setTimeout(() => {
       this.setState({ loading: false });
@@ -165,12 +218,10 @@ class SideMenu extends Component {
         this.setState({
          name: lData.data.company_name ? lData.data.company_name : lData.data.shop_name, imageURL: lData.data.brand_logo, userType: lData.data.userType,
           menuList: [
-        { title: strings('login.payment_screen_waller_details'), nav1:  'BankDetailScreen' },
-        { title: strings('login.sidemenu_mywallet'), nav1:  'WalletScreen' },
         { title: strings('login.profile'), nav1:  'ProfileScreen' },
         { title: strings('login.sdemenu_scan'), nav1: 'ScanScreen' },
         { title: strings('login.sidemenu_couponhistory'), nav1: 'HistoryScreen' },
-        // { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
+        { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
         { title: strings('login.sidemenu_report'), nav1: 'ReportScreen' } ,
         { title: strings('login.sidemenu_reporthistory'), nav1: 'ReportHistory' } ,
         { title: strings('login.Manual')},
@@ -181,6 +232,7 @@ class SideMenu extends Component {
        });
       //  this.setState({ isLoaded: true });
         this.distributorId = lData.data.id;
+        this.updateMenuList(); // Update menu list with translations
         // this.fcmToken = lDataFcmToken.fcmToken;
       }
     });
@@ -204,10 +256,11 @@ class SideMenu extends Component {
     if (!lResponseData) {
       utilities.showToastMsg('Something went wrong. Please try again later');
     } else if (lResponseData.status == 200) {
+      this.props.prop.navigation.navigate('LoginScreen');
       AsyncStorage.clear();
       this.props.setLanguage('English - (English)');
       utilities.showToastMsg(lResponseData.message);
-      this.props.prop.navigation.navigate('LoginScreen');
+      
     } else {
       utilities.showToastMsg('Something went wrong. Please try again later');
     }
@@ -285,8 +338,6 @@ class SideMenu extends Component {
     //if (item.title == 'SCAN' || item.title == 'HISTORY' || item.title == 'PROFILE' || item.title == 'REPORT' || item.title == 'REPORT HISTORY' || item.title == 'COUPON HISTORY') {
       if (
         item.title == 'SCAN' || item.title == 'স্ক্যান' || item.title == "Analyse" || item.title == "સ્કેન" || item.title == "स्कैन" || item.title == "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ" || item.title == "स्कॅन" || item.title == "ସ୍କାନ୍ କରନ୍ତୁ |" || item.title == "ਸਕੈਨ" || item.title == "ஊடுகதிர்" || item.title == "స్కాన్" || item.title == "اسکین" || item.title == 'Kanuni' ||
-        item.title == 'MY WALLET' ||
-        item.title == 'BANK DETAILS' ||
         item.title == 'PROFILE' || item.title == 'प्रोफ़ाइल' || item.title == 'Profil' || item.title == 'प्रोफाइल' || item.title == 'ਪ੍ਰੋਫਾਈਲ' || item.title == 'પ્રોફાઇલ' || item.title == 'ప్రొఫైల్' || item.title == 'சுயவிவரம்' || item.title == 'নথিপত্র' || item.title == 'پروفائل' || item.title == 'ಪ್ರೊಫೈಲ್' || item.title == 'ପ୍ରୋଫାଇଲ୍ |' || item.title == 'MWANDISHI' ||
         item.title == 'COUPON HISTORY' || item.title == 'कूपन इतिहास' || item.title == 'Historique des coupons' || item.title == 'कूपन इतिहास' || item.title == 'ਕੂਪਨ ਇਤਿਹਾਸ' || item.title == 'કૂપન ઇતિહાસ' || item.title == 'కూపన్ చరిత్ర' || item.title == 'கூப்பன் வரலாறு' || item.title == 'কুপন ইতিহাস' || item.title == 'کوپن کی تاریخ' || item.title == 'ಕೂಪನ್ ಇತಿಹಾಸ' || item.title == 'କୁପନ୍ ଇତିହାସ |' || item.title == 'Historia ya coupon' ||
         item.title == 'CASH-BATCH REPORT' || item.title == "कैश-बैच रिपोर्ट" || item.title == "নগদ-ব্যাচের প্রতিবেদন" || item.title == "Rapport Cash-Batch" || item.title == "કેશ-બેચ રિપોર્ટ" || item.title == "ನಗದು-ಬ್ಯಾಚ್ ವರದಿ" || item.title == "रोख-बॅच अहवाल" || item.title == "ନଗଦ-ବ୍ୟାଚ୍ ରିପୋର୍ଟ" || item.title == "ਨਕਦ-ਬੈਚ ਦੀ ਰਿਪੋਰਟ" || item.title == "Cash-Batch-rapport" || item.title == "பண-தொகுதி அறிக்கை" || item.title == "నగదు-బ్యాచ్ నివేదిక" || item.title == "کیش بیچ کی رپورٹ" ||
@@ -315,15 +366,6 @@ class SideMenu extends Component {
                 <Icon type="FontAwesome" name="qrcode" style={{ fontSize: 18, color: 'black' }} />
                 :
                 (
-                  item.title == 'MY WALLET'  ?
-                  <Icon type="FontAwesome" name="money" style={{ fontSize: 18, color: 'black' }} />
-                  :
-                  (
-                    item.title == 'BANK DETAILS'  ?
-                    <Icon type="FontAwesome" name="bank" style={{ fontSize: 18, color: 'black' }} />
-                    :                                    
-                (
-                  
                   item.title == 'PROFILE' || item.title == 'प्रोफ़ाइल' || item.title == 'Profil' || item.title == 'प्रोफाइल' || item.title == 'ਪ੍ਰੋਫਾਈਲ' || item.title == 'પ્રોફાઇલ' || item.title == 'ప్రొఫైల్' || item.title == 'சுயவிவரம்' || item.title == 'নথিপত্র' || item.title == 'پروفائل' || item.title == 'ಪ್ರೊಫೈಲ್' || item.title == 'ପ୍ରୋଫାଇଲ୍ |' || item.title == 'MWANDISHI' ?
                   <Icon type="FontAwesome" name="user" style={{ fontSize: 18, color: 'black' }} />
                     :
@@ -353,8 +395,6 @@ class SideMenu extends Component {
                         )
                     )
                     )
-                    )
-                  )
                 )
               }
               {"   "}{item.title}
@@ -389,7 +429,7 @@ class SideMenu extends Component {
   }
   downloadManual = () => {
     alert(1)
-    fetch(`https://seqrloyalty.com/npl/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf`, {
+    fetch(`https://seqrloyalty.com/jcb/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf`, {
     // fetch(`https://seqrloyalty.com/developer/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf`, {
       method: 'POST',
       headers: {
@@ -422,7 +462,7 @@ class SideMenu extends Component {
   }
   openPdf = async () => {
     this.setState({ loading: true });
-    const url = 'https://seqrloyalty.com/npl/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf';
+    const url = 'https://seqrloyalty.com/jcb/usermanual/JCB_mobile%20user_doc_28.11.2024.pdf';
     // const url = 'https://seqrloyalty.com/developer/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf';
     // const url = 'https://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/PDF32000_2008.pdf';
     const localFile = this.getLocalPath(url);
@@ -459,12 +499,10 @@ class SideMenu extends Component {
 
     this.setState({
       menuList: [
-        { title: strings('login.payment_screen_waller_details'), nav1:  'WalletScreen' },
-        { title: strings('login.sidemenu_mywallet'), nav1:  'WalletScreen' },
         { title: strings('login.profile'), nav1:  'ProfileScreen' },
         { title: strings('login.sdemenu_scan'), nav1: 'ScanScreen' },
         { title: strings('login.sidemenu_couponhistory'), nav1: 'HistoryScreen' },
-        // { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
+        { title : strings('login.cashbash'),nav1:'CashBatchesScreen'},
         { title: strings('login.sidemenu_report'), nav1: 'ReportScreen' } ,
         { title: strings('login.sidemenu_reporthistory'), nav1: 'ReportHistory' } ,
         { title: strings('login.Manual')},
@@ -474,96 +512,151 @@ class SideMenu extends Component {
     });
   }
 
+
   render() {
-    console.log("languageControl:",this.props.languageControl);
+    const { enableDarkTheme } = this.props;
+    const languageOptions = [
+      { label: 'English - (English)', value: 'English - (English)' },
+      { label: 'Hindi - (हिन्दी)', value: 'Hindi - (हिन्दी)' },
+      { label: 'French - (Française)', value: 'French - (Française)' },
+      { label: 'Punjabi - (ਪੰਜਾਬੀ)', value: 'Punjabi - (ਪੰਜਾਬੀ)' },
+      { label: 'Marathi - (मराठी)', value: 'Marathi - (मराठी)' },
+      { label: 'Gujarati - (ગુજરાતી)', value: 'Gujarati - (ગુજરાતી)' },
+      { label: 'Telugu - (తెలుగు)', value: 'Telugu - (తెలుగు)' },
+      { label: 'Tamil - (தமிழ்)', value: 'Tamil - (தமிழ்)' },
+      { label: 'Bengali - (বাংলা)', value: 'Bengali - (বাংলা)' },
+      { label: 'Urdu - (اردو)', value: 'Urdu - (اردو)' },
+      { label: 'Kannada - (ಕನ್ನಡ)', value: 'Kannada - (ಕನ್ನಡ)' },
+      { label: 'Odia - (ଓଡିଆ)', value: 'Odia - (ଓଡିଆ)' },
+      // Add other languages here
+    ];
+
     return (
       <View style={styles.container}>
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Loader
+        <ScrollView>
+
+        <Loader
             loading={this.state.loading}
             text={this.state.loaderText}
           />
-          <View style={{ flex: 1, alignItems: 'center', paddingTop: 10, paddingBottom: 0 }} >
-            {/* <View style={{ borderWidth: 1, borderColor: 'rgba(0,0,0,0.2)', borderRadius: 95, overflow: 'hidden', width: '50%', height: '90%' }}> */}
-            <Image source={{ uri: this.state.imageURL }} style={{ width: 100, height: 100, flex: 1 }} resizeMode="contain" />
-            {/* </View> */}
-           
-            <Text style={{ paddingTop: 10, bottom: 10 }}>{this.state.name}</Text>
+
+        <View style={{ flex: 1, alignItems: 'center', paddingTop: 10, paddingBottom: 10 }} resizeMode="contain">
+              <Image source={{ uri: this.state.imageURL }} style={{ width: 100, height: 100, flex: 1 }} resizeMode="contain" />
+            {/* <Text style={{ paddingTop: 10, color: 'grey' }}>{strings('login.welcome')}</Text> */}
+            <Text style={{ color: this.props.enableDarkTheme ? 'white' : 'black' }}>{this.state.name}</Text>
           </View>
+
           <View style={{ alignItems: 'stretch', paddingTop: 0, marginTop: 10 }}>
             <Accordion
               dataArray={this.state.menuList}
               animation={true}
-              // expanded={true}
               expanded={[]}
               renderHeader={this._renderHeader}
               style={{ borderTopWidth: 0.5, borderTopColor: '#FF1E58' }}
             />
           </View>
 
-          <Card style={{ marginTop: 20, backgroundColor: this.props.enableDarkTheme ? 'black' : 'white', elevation: 0 }}>
-            <Text style={{ marginTop: 10, marginLeft: 10, fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.choose_lang')} :</Text>
+          <Text style={{ marginTop: 10, marginLeft: 10, fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.choose_lang')} :</Text>
 
-            <View style={{ marginLeft: 20, marginRight: 20 }}>
-              <Dropdown
-                label={this.props.languageControl}
-                labelFontSize={0}
-                data={languageDropDown}
-                style={{ color: this.props.enableDarkTheme ? 'white' : "(default: rgba(0, 0, 0, 5))" }}
-                baseColor={this.props.enableDarkTheme ? 'white' : "(default: rgba(0, 0, 0, 5))"}
-                onChangeText={(lan) => this.onPress2(lan)}
-                containerStyle={{ bottom: 12 }}
-              />
+          {/* Language Selection Button */}
+          <TouchableOpacity onPress={this.openLanguageModal} style={{marginBottom:10, paddingLeft:10, paddingRight:10}}>
+            <Text style={[styles.languageButton, { color: enableDarkTheme ? 'white' : 'black' }]}>
+              {this.state.selectedLanguage}
+            </Text>
+          </TouchableOpacity>
+
+           <Text style={{ marginTop: 10, marginLeft: 10, textAlign:'center', color: this.props.enableDarkTheme ? 'white' : 'black' }}>Version 1.3</Text>
+
+          {/* Modal for Language Selection */}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={this.closeLanguageModal}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalHeader}>Select Language</Text>
+
+                {/* Render the language options */}
+                <ScrollView style={styles.languageList}>
+                  {languageOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={styles.languageOption}
+                      onPress={() => this.onSelectLanguage(option.value)}
+                    >
+                      <Text style={[styles.languageOptionText, { color: enableDarkTheme ? 'white' : 'black' }]}>
+                        {option.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+
+                {/* Close Button */}
+                <TouchableOpacity onPress={this.closeLanguageModal}>
+                  <Text style={styles.closeButton}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+          </Modal>
 
-          </Card>
-
-          <View>
-            <Text style={{ textAlign: "center" }}>Version {pkg.version}</Text>
-          </View>
-          
         </ScrollView>
-
       </View>
     );
   }
 }
 
-SideMenu.propTypes = {
-  navigation: PropTypes.object
-};
-
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
-    // shadowOpacity: 1,
-    // opacity: 1,
-    borderWidth: 1,
-    borderColor: 'black'
-
+    backgroundColor: '#fff', // or based on dark mode
   },
-  subMenu: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#E8E8E8',
-    paddingLeft: 25,
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingBottom: 10
+  languageButton: {
+    padding: 10,
+    fontSize: 16,
+    textAlign: 'center',
+    backgroundColor: '#ddd',
+    borderRadius: 5,
+    marginTop: 20,
   },
-  imgStyle: {
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.2)',
-    alignItems: 'center',
+  modalOverlay: {
+    flex: 1,
     justifyContent: 'center',
-    width: 150,
-    height: 150,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  modalContainer: {
+    width: '80%',
     backgroundColor: '#fff',
-    borderRadius: 70,
-    resizeMode: 'contain'
-  }
-
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  languageList: {
+    maxHeight: 300,
+    width: '100%',
+  },
+  languageOption: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  languageOptionText: {
+    fontSize: 16,
+  },
+  closeButton: {
+    fontSize: 16,
+    color: '#fab032',
+    marginTop: 20,
+  },
 });
+
 const mapStateToProps = (state) => {
   // console.log(state.VerifierReducer);
   if (state.VerifierReducer.languageEnglish == "English - (English)") {
@@ -601,11 +694,12 @@ const mapStateToProps = (state) => {
     fingerPrintEnable: state.VerifierReducer.enableFingerPrint
   }
 }
+
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     setLanguage: setLanguage, setCounterValue: setCounterValue,
     setCounter1Value: setCounter1Value, enableDarkThemeCall: enableDarkTheme, fingerPrintEnableAuth: fingerPrintEnableAuth, clearInsti: clearInsti, setMechanicData: setMechanicData
   }, dispatch)
 }
-export default connect(mapStateToProps, mapDispatchToProps)(SideMenu)
 
+export default connect(mapStateToProps, mapDispatchToProps)(SideMenu);
