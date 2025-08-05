@@ -182,7 +182,7 @@ const SignInScreen = ({ }: Props) => {
                             onPress={() => router.navigate({
                                 pathname: "/(auth)/sign-up",
                                 params: {
-                                    userType: selectedSignInType.label
+                                    userType: selectedSignInType.label.toLowerCase()
                                 }
                             })}
                         >

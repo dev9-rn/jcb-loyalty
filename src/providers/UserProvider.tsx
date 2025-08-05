@@ -1,13 +1,14 @@
-import { Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import UserContext from '@/context/UserContext'
-import { messaging } from '../../firebaseConfig'
 import { getProfileEndpoint } from '@/libs/utils'
 import axios from 'axios'
 import axiosInstance from '@/utils/axiosInstance'
 import { useToast } from 'react-native-toast-notifications'
 import { storageService } from '@/utils/storageService'
 import { STORAGE_KEYS } from '@/libs/constants'
+import VersionCheck from 'react-native-version-check-expo'
+import { Alert, AppState, Linking, Platform } from 'react-native'
+import { isUpdateRequired } from '@/utils/isUpdateRequired'
 
 type Props = {
     children: React.ReactNode
@@ -19,6 +20,26 @@ const UserProvider = ({ children }: Props) => {
     const [localUserDetails, setLocalUserDetails] = useState<IUserDetails & IMechanicDetails | undefined>(undefined);
 
     const toast = useToast();
+
+    useEffect(() => {
+        // Handler for app state changes
+        const handleAppStateChange = (nextAppState: string) => {
+            if (nextAppState === "active") {
+                checkForVersionUpdate();
+            }
+        };
+
+        // Add event listener
+        const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+        // Initial check on mount
+        checkForVersionUpdate();
+
+        // Cleanup
+        return () => {
+            subscription.remove();
+        };
+    }, []);
 
     const fetchUserProfileDetails = async () => {
 
@@ -45,10 +66,51 @@ const UserProvider = ({ children }: Props) => {
                 return;
             }
         }
+    };
+
+    const checkForVersionUpdate = async () => {
+        try {
+            const latestAvailableVersion = Platform.OS === 'ios' ? await fetch(`https://itunes.apple.com/lookup?id=6744676763&country=IN`)
+                .then(r => r.json())
+                .then((res) => {
+                    return res?.results[0]?.version
+                })
+                : await VersionCheck.getLatestVersion({
+                    provider: 'playStore',
+                    packageName: 'com.daewoo.seqrloyalty',
+                    ignoreErrors: true,
+                });
+
+            const currentVersion = VersionCheck.getCurrentVersion();
+
+            if (isUpdateRequired(currentVersion, latestAvailableVersion)) {
+                Alert.alert(
+                    'Update Required',
+                    'A new version of the app is available. Please update to continue using the app.',
+                    [
+                        {
+                            text: 'Update Now',
+                            onPress: async () => {
+                                Linking.openURL(
+                                    Platform.OS === 'ios'
+                                        ? await VersionCheck.getAppStoreUrl({ appID: '6744676763' })
+                                        : await VersionCheck.getPlayStoreUrl({ packageName: 'com.daewoo.seqrloyalty' })
+                                );
+                            },
+                        },
+                    ],
+                    { cancelable: false }
+                );
+            }
+        } catch (error) {
+
+        }
     }
 
     return (
-        <UserContext.Provider value={{ setUserDetails, userDetails, setLocalUserDetails, localUserDetails, fetchUserProfileDetails }}>
+        <UserContext.Provider
+            value={{ setUserDetails, userDetails, setLocalUserDetails, localUserDetails, fetchUserProfileDetails }}
+        >
             {children}
         </UserContext.Provider>
     )

@@ -11,6 +11,7 @@ import { Toast, useToast } from 'react-native-toast-notifications'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import axios from 'axios'
 import useNotification from '@/hooks/useNotification'
+import i18n from '@/libs/i18n'
 
 type Props = {
     children: React.ReactNode
@@ -121,7 +122,7 @@ const AuthProvider = ({ children }: Props) => {
                     data: response
                 })
             };
-
+            i18n.changeLanguage("en");
             tokenStorage.clearAll();
             storage.clearAll();
             setColorScheme("light");
