@@ -108,13 +108,13 @@ const ProfileScreen = ({ }: Props) => {
 
         const currentUserBrand = brands.find((brand) => brand.id === profileDetails.brand_id);
         const matchedCountry = countryList.find(
-            (country) => country.id === profileDetails.country_id || userDetails?.country_id
+            (country) => country.id == userDetails?.country_id
         );
         const matchedState = stateList.find(
-            (state) => state.id === profileDetails.state_id || userDetails?.state_id
+            (state) => state.id == userDetails?.state_id
         );
         const matchedCity = citiesList.find(
-            (city) => city.id === profileDetails.city_id || userDetails?.city_id
+            (city) => city.id == userDetails?.city_id
         );
 
         reset({
@@ -133,7 +133,7 @@ const ProfileScreen = ({ }: Props) => {
             userPincode: profileDetails.pincode || profileDetails.pin_code,
             userCountry: matchedCountry || { id: "", name: "" },
             userState: matchedState || { id: "", name: "" },
-            userCity: matchedCity || { id: "", name: "" }
+            userCity: matchedCity || { id: "", name: "" },
         });
     }, [profileDetails, brands, countryList, stateList, citiesList]);
 
