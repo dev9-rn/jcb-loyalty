@@ -158,7 +158,7 @@ class SideMenu extends Component {
       moment.locale('fr');
     } else if (I18n.currentLocale() == 'en') {
       moment.locale('en');
-    } else if (I18n.currentLocale() == 'pa') {
+    } else if (I18n.currentLocale() == 'pn') {
       moment.locale('pa');
     } else if (I18n.currentLocale() == 'mr') {
       moment.locale('mr');
@@ -527,7 +527,7 @@ class SideMenu extends Component {
       { label: 'Bengali - (বাংলা)', value: 'Bengali - (বাংলা)' },
       { label: 'Urdu - (اردو)', value: 'Urdu - (اردو)' },
       { label: 'Kannada - (ಕನ್ನಡ)', value: 'Kannada - (ಕನ್ನಡ)' },
-      { label: 'Odia - (ଓଡିଆ)', value: 'Odia - (ଓଡିଆ)' },
+      // { label: 'Odia - (ଓଡିଆ)', value: 'Odia - (ଓଡିଆ)' },
       // Add other languages here
     ];
 

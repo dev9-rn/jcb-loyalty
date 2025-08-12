@@ -1,4 +1,4 @@
-package com.npl_seqrloyalty;
+package com.jcb_seqr_loyality_new;
 
 import com.facebook.react.ReactActivity;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "npl_seqrloyalty";
+    return "jcb_seqr_loyality_new";
   }
 
   /**

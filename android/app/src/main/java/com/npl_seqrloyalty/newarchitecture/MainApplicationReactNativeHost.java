@@ -19,7 +19,7 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.npl_seqrloyalty.BuildConfig;
+import com.jcb_seqr_loyality_new.BuildConfig;
 import com.npl_seqrloyalty.newarchitecture.components.MainComponentsRegistry;
 import com.npl_seqrloyalty.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;

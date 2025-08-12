@@ -1,4 +1,4 @@
-package com.npl_seqrloyalty;
+package com.jcb_seqr_loyality_new;
 
 import android.app.Application;
 import android.content.Context;
@@ -26,7 +26,7 @@ import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 // import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import com.rnfs.RNFSPackage;
-import com.emekalites.react.compress.image.ImageCompressPackage;
+// import com.emekalites.react.compress.image.ImageCompressPackage;
 import cl.json.RNSharePackage; 
 import cl.json.ShareApplication;
 
@@ -94,7 +94,7 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.npl_seqrloyalty.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.jcb_seqr_loyality_new.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

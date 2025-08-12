@@ -14,6 +14,7 @@ import messaging from '@react-native-firebase/messaging';
 import { createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
 import NotificationScreen from './components/Home/NotificationScreen';
 import { RESULTS, checkNotifications, requestNotifications } from 'react-native-permissions';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const AppNavigator = createStackNavigator({
   DemoNotificationScreen: { screen: NotificationScreen, navigationOptions: { header: null } },
@@ -48,21 +49,21 @@ export default class App extends React.Component {
 
   getFireBaseToken = async () => {
     await messaging().getToken()
-    .then(fcmToken => {
-      FCMTOKEN = fcmToken;
-      console.log('------fcmToken' ,fcmToken)
-      AsyncStorage.setItem('FCMTOKEN', JSON.stringify({ fcmToken: fcmToken }));
-    });
-    
-    await checkNotifications().then(async ({status, settings}) => {
+      .then(fcmToken => {
+        FCMTOKEN = fcmToken;
+        console.log('------fcmToken', fcmToken)
+        AsyncStorage.setItem('FCMTOKEN', JSON.stringify({ fcmToken: fcmToken }));
+      });
+
+    await checkNotifications().then(async ({ status, settings }) => {
       if (status !== RESULTS.GRANTED) {
-        if(Platform.OS === 'android'){
+        if (Platform.OS === 'android') {
           await PermissionsAndroid.request(
             android.PERMISSIONS.POST_NOTIFICATIONS,
           );
-        }else{
-          requestNotifications(['alert', 'sound']).then(({status, settings}) => {
-            console.log("====requestNotifications",status)
+        } else {
+          requestNotifications(['alert', 'sound']).then(({ status, settings }) => {
+            console.log("====requestNotifications", status)
           });
         }
       }
@@ -78,7 +79,7 @@ export default class App extends React.Component {
   async getAsyncData() {
     await AsyncStorage.multiGet(['ACCESSTOKEN'], (err, result) => {
       var lData = JSON.parse(result[0][1]);
-      console.log("App.js ldata",lData);
+      console.log("App.js ldata", lData);
       if (lData) {
         ACCESSTOKEN = lData.ACCESSTOKEN;
       }
@@ -86,7 +87,7 @@ export default class App extends React.Component {
   }
   componentDidMount = () => {
     this.getAsyncData();
-    
+
     // this.removeNotificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
     //   console.log("hua open");
     //   this.setState({ showHideNotifyScreen: true })
@@ -124,16 +125,21 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-      <Root>
-        <MenuProvider>
-          {/* {this.state.showHideNotifyScreen ?
+          <Root>
+            <SafeAreaProvider>
+              <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+                <MenuProvider>
+                  {/* {this.state.showHideNotifyScreen ?
             <AppContainer ref={nav => { this.navigator = nav; }} />
             : */}
-            <Route />
-          {/* } */}
-        </MenuProvider>
-      </Root>
-      </PersistGate>
+                  <Route />
+                  {/* } */}
+                </MenuProvider>
+              </SafeAreaView>
+            </SafeAreaProvider>
+
+          </Root>
+        </PersistGate>
       </Provider>
     );
   }

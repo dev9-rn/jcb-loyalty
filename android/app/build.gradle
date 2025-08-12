@@ -154,11 +154,11 @@ android {
   }
 
     defaultConfig {
-        applicationId "com.npl_seqrloyalty"
+        applicationId "com.jcb_seqr_loyality_new"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "3.0"
+        versionCode 6
+        versionName "3.1"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
@@ -291,8 +291,8 @@ android {
 dependencies {
     //    implementation project(':react-native-qr-scanner')
     implementation project(':react-native-share')
-    implementation project(':react-native-compress-image')
-    implementation project(':react-native-background-task')
+    // implementation project(':react-native-compress-image')
+    // implementation project(':react-native-background-task')
     // implementation project(':react-native-fingerprint-scanner')
     // implementation project(':rn-range-slider')
     // implementation project(':rn-update-apk')
