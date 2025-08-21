@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
         if (axios.isAxiosError(error)) {
-            if (error.response?.status === 403 && (!error.config?.url?.includes("/login") && !error.config?.url?.includes("/verifyOtp"))) {
+            if (error.response?.status === 403 && (!error.config?.url?.includes("/login") && !error.config?.url?.includes("/verifyOtp") && !error.config?.url?.includes("/verifyDealer"))) {
                 
                 Toast.show(error.response.data.message, {
                     data: error.response

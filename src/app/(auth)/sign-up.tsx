@@ -260,7 +260,10 @@ const SignUpScreen = ({ }: Props) => {
 
                     <View className='mt-4 gap-3'>
                         <View className='gap-1'>
-                            <Text>{t("signup.fields.fullName")}</Text>
+                            <Text>
+                                {t("signup.fields.fullName")}{" "}
+                                <Text className='text-red-500'>*</Text>
+                            </Text>
 
                             <Controller
                                 control={control}
@@ -279,7 +282,10 @@ const SignUpScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>{t("signup.fields.phoneNumber")}</Text>
+                            <Text>
+                                {t("signup.fields.phoneNumber")}{" "}
+                                <Text className='text-red-500'>*</Text>
+                            </Text>
 
                             <Controller
                                 control={control}
@@ -300,7 +306,9 @@ const SignUpScreen = ({ }: Props) => {
 
                         {userType === t("login.distributor") && (
                             <View className='gap-1'>
-                                <Text>{t("signup.fields.email")}</Text>
+                                <Text>{t("signup.fields.email")}{" "}
+                                    <Text className='text-red-500'>*</Text>
+                                </Text>
 
                                 <Controller
                                     control={control}
@@ -343,7 +351,8 @@ const SignUpScreen = ({ }: Props) => {
                         ) : (
                             <View className='gap-1'>
                                 <Text>
-                                    {t("signup.fields.shopName")}
+                                    {t("signup.fields.shopName")}{" "}
+                                    <Text className='text-red-500'>*</Text>
                                 </Text>
 
                                 <Controller
@@ -367,7 +376,8 @@ const SignUpScreen = ({ }: Props) => {
                         {userType === "retailer" && (
                             <View className='gap-1'>
                                 <Text>
-                                    {t("signup.fields.distributorCode")}
+                                    {t("signup.fields.distributorCode")}{" "}
+                                    <Text className='text-red-500'>*</Text>
                                 </Text>
 
                                 <Controller
@@ -452,7 +462,9 @@ const SignUpScreen = ({ }: Props) => {
 
                         {userType === t("login.distributor") && (
                             <View className='gap-1'>
-                                <Text>{t("signup.fields.selectBrand")}</Text>
+                                <Text>{t("signup.fields.selectBrand")}{" "}
+                                    <Text className='text-red-500'>*</Text>
+                                </Text>
 
                                 <Controller
                                     control={control}
@@ -478,7 +490,9 @@ const SignUpScreen = ({ }: Props) => {
                     <View className='gap-3'>
                         {userType === t("login.distributor") && (
                             <View className='gap-1'>
-                                <Text className=''>{t("signup.fields.street")}</Text>
+                                <Text className=''>{t("signup.fields.street")}{" "}
+                                    <Text className='text-red-500'>*</Text>
+                                </Text>
 
                                 <Controller
                                     control={control}
@@ -498,7 +512,9 @@ const SignUpScreen = ({ }: Props) => {
                         )}
 
                         <View className='gap-1'>
-                            <Text>{t("signup.fields.selectCountry")}</Text>
+                            <Text>{t("signup.fields.selectCountry")}{" "}
+                                <Text className='text-red-500'>*</Text>
+                            </Text>
 
                             <Controller
                                 control={control}
@@ -518,7 +534,9 @@ const SignUpScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>{t("signup.fields.selectState")}</Text>
+                            <Text>{t("signup.fields.selectState")}{" "}
+                                <Text className='text-red-500'>*</Text>
+                            </Text>
 
                             <Controller
                                 control={control}
@@ -538,7 +556,9 @@ const SignUpScreen = ({ }: Props) => {
                         </View>
 
                         <View className='gap-1'>
-                            <Text>{t("signup.fields.selectCity")}</Text>
+                            <Text>{t("signup.fields.selectCity")}{" "}
+                                <Text className='text-red-500'>*</Text>
+                            </Text>
 
                             <Controller
                                 control={control}
