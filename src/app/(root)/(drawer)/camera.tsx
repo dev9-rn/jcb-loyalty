@@ -1,15 +1,23 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import CameraScreen from '../(stack)/camera'
+import { useFocusEffect } from 'expo-router';
+import React, { useState } from 'react';
+import CameraScreen from '../(stack)/camera';
 
-type Props = {}
+const DrawerCameraScreen = () => {
+    const [instanceKey, setInstanceKey] = useState(0);
 
-const DrawerCameraScreen = ({ }: Props) => {
-    return (
-        <>
-            <CameraScreen />
-        </>
-    )
-}
+    useFocusEffect(
+        React.useCallback(() => {
+            setInstanceKey(prev => prev + 1);
+            return () => {
+                // Cleanup if necessary
+                setInstanceKey(0)
+            }
+        }, [])
 
-export default DrawerCameraScreen
+    );
+
+
+    return <CameraScreen key={instanceKey} />;
+};
+
+export default DrawerCameraScreen;
