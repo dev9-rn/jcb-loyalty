@@ -21,8 +21,10 @@ class ReportHistory extends Component {
             loading: false,
             loaderText: 'Loading',
             offset: 0,
-            frmDate: moment().format('DD-MM-YYYY'),
-            toDate: moment().format('DD-MM-YYYY'),
+            frmDate: new Date(),
+            toDate: new Date(),
+            open1: false,
+            open2: false,
             noMoreDataError: '',
             distributorId: ''
         }
@@ -49,34 +51,53 @@ class ReportHistory extends Component {
         this.setState({ isDateTimePickerVisible: false, isDateTimePickerVisible1: false });
     };
     handleDatePicked = date => {
-        let a = date;
-        let b = this.state.toDate
-        if (a > b) {
-            this.setState({ fromDateError: 'FromDate cannot be greater than toDate.' })
+        let selectedDate = date;
+        let currentToDate = this.state.toDate;
+        
+        if (selectedDate > currentToDate) {
+            this.setState({ 
+                fromDateError: 'FromDate cannot be greater than toDate.',
+                loading: false,
+                open1: false
+            });
         } else {
-            this.forceUpdate();
-            this.setState({ fromDateError: '', toDateError: '' })
-            this.setState({ frmDate: date })
-            this._callApiForReportHistory(this.state.distributorId);
+            this.setState({
+                fromDateError: '',
+                toDateError: '',
+                frmDate: selectedDate,
+                open1: false
+            }, () => {
+                this._callApiForReportHistory(this.state.distributorId);
+            });
         }
-        this.setState({ frmDate: a })
-        this.hideDateTimePicker();
     };
     handleDatePicked1 = date => {
-        let a = date;
-        let b = this.state.frmDate;
-        let c = moment().format('DD-MM-YYYY')
-        if (a > c) {
-            this.setState({ toDateError: strings('login.ToDateError') })
-        } else if (a < b) {
-            this.setState({ toDateError: strings('login.FromDateError') })
+        let selectedDate = date;
+        let currentFromDate = this.state.frmDate;
+        let today = new Date();
+        
+        if (selectedDate > today) {
+            this.setState({ 
+                toDateError: strings('login.ToDateError'),
+                loading: false,
+                open2: false
+            });
+        } else if (selectedDate < currentFromDate) {
+            this.setState({ 
+                toDateError: strings('login.FromDateError'),
+                loading: false,
+                open2: false
+            });
         } else {
-            this.setState({ toDateError: '', fromDateError: '' })
-            this.setState({ toDate: date })
-            this._callApiForReportHistory(this.state.distributorId);
+            this.setState({
+                toDateError: '',
+                fromDateError: '',
+                toDate: selectedDate,
+                open2: false
+            }, () => {
+                this._callApiForReportHistory(this.state.distributorId);
+            });
         }
-        this.setState({ toDate: a })
-        this.hideDateTimePicker();
     };
 
     componentDidMount = () => {
@@ -87,8 +108,16 @@ class ReportHistory extends Component {
         this.setState({ loading: true })
         const formData = new FormData();
         formData.append('distributorId', distributorId);
-        formData.append('fromDate', this.state.frmDate);
-        formData.append('toDate', this.state.toDate);
+        // Format fromDate to DD-MM-YYYY
+        const formattedFromDate = typeof this.state.frmDate === 'string' 
+            ? this.state.frmDate 
+            : moment(this.state.frmDate).format('DD-MM-YYYY');
+        // Format toDate to DD-MM-YYYY
+        const formattedToDate = typeof this.state.toDate === 'string'
+            ? this.state.toDate
+            : moment(this.state.toDate).format('DD-MM-YYYY');
+        formData.append('fromDate', formattedFromDate);
+        formData.append('toDate', formattedToDate);
         formData.append('offset', this.state.offset);
         if (this.props.languageControl) {
             formData.append('language', 'en');
@@ -137,7 +166,7 @@ class ReportHistory extends Component {
                 }
             })
             .catch(async (error) => {
-                await isMaintenance({navigation : this.props.navigation});
+                await isMaintenance({ navigation: this.props.navigation });
                 console.log(error);
             });
     }
@@ -257,24 +286,24 @@ class ReportHistory extends Component {
                                     style={{ width: '100%' }}
                                 /> */}
                                 <TouchableOpacity style={{ paddingRight: 2 }} onPress={() => { this.setState({ open1: true }) }}>
-                             <Text onPress={() => { this.setState({ open1: true })} }  style={{  color:"#000000"}}>{this.state.frmDate}</Text>
-                             </TouchableOpacity>
-								 <DatePicker
-                                modal
-                                mode="date"
-                                open={this.state.open1}
-                                date={new Date()}
-                                color="#000000"
-                                textColor="#000000"
-								maximumDate={new Date()}
-                                onConfirm={(date) => {
-                                    this.handleDatePicked(date) 
-                                }}
-                                onCancel={() => {
-                                // setOpen(false)
-                                this.setState({ open1: false})
-                                }}
-                            />
+                                    <Text onPress={() => { this.setState({ open1: true }) }} style={{ color: "#000000" }}>{this.state.frmDate}</Text>
+                                </TouchableOpacity>
+                                <DatePicker
+                                    modal
+                                    mode="date"
+                                    open={this.state.open1}
+                                    date={new Date()}
+                                    color="#000000"
+                                    textColor="#000000"
+                                    maximumDate={new Date()}
+                                    onConfirm={(date) => {
+                                        this.handleDatePicked(date)
+                                    }}
+                                    onCancel={() => {
+                                        // setOpen(false)
+                                        this.setState({ open1: false })
+                                    }}
+                                />
                             </Col>
                             <Col size={1.5}>
                                 <Text style={{ textAlign: 'left', fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.report_history_fromDate')} : </Text>
@@ -300,24 +329,24 @@ class ReportHistory extends Component {
                                     style={{ width: '190%' }}
                                 /> */}
                                 <TouchableOpacity style={{ paddingRight: 2 }} onPress={() => { this.setState({ open2: true }) }}>
-                             <Text onPress={() => { this.setState({ open2: true })} }  style={{ color:"#000000"}}>{this.state.toDate}</Text>
-                             </TouchableOpacity>
-								 <DatePicker
-                                modal
-                                mode="date"
-                                open={this.state.open2}
-                                date={new Date()}
-                                color="#000000"
-								maximumDate={new Date()}
-                                textColor="#000000"
-                                onConfirm={(date) => {
-                                    this.handleDatePicked1(date) 
-                                }}
-                                onCancel={() => {
-                                // setOpen(false)
-                                this.setState({ open2: false})
-                                }}
-                            />
+                                    <Text onPress={() => { this.setState({ open2: true }) }} style={{ color: "#000000" }}>{this.state.toDate}</Text>
+                                </TouchableOpacity>
+                                <DatePicker
+                                    modal
+                                    mode="date"
+                                    open={this.state.open2}
+                                    date={new Date()}
+                                    color="#000000"
+                                    maximumDate={new Date()}
+                                    textColor="#000000"
+                                    onConfirm={(date) => {
+                                        this.handleDatePicked1(date)
+                                    }}
+                                    onCancel={() => {
+                                        // setOpen(false)
+                                        this.setState({ open2: false })
+                                    }}
+                                />
                             </Col>
                             <Col size={1}>
                                 <Text style={{ fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.report_history_toDate')} : </Text>
@@ -328,9 +357,11 @@ class ReportHistory extends Component {
                             <Text style={{ fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black' }}>{strings('login.coupon_history_fromDate')} : </Text>
                             <View style={{ marginTop: 0 }}>
                                 <TouchableOpacity style={{ paddingRight: 2 }} onPress={() => { this.setState({ open1: true }) }}>
-                                    <Text onPress={() => { this.setState({ open1: true })} }  style={{  color:"#000000"}}>{this.state.frmDate}</Text>
+                                    <Text onPress={() => { this.setState({ open1: true }) }} style={{ color: "#000000" }}>
+                                        {typeof this.state.frmDate === 'string' ? this.state.frmDate : moment(this.state.frmDate).format('DD-MM-YYYY')}
+                                    </Text>
                                 </TouchableOpacity>
-								<DatePicker
+                                <DatePicker
                                     modal
                                     mode="date"
                                     open={this.state.open1}
@@ -339,22 +370,24 @@ class ReportHistory extends Component {
                                     textColor="#000000"
                                     maximumDate={new Date()}
                                     onConfirm={(date) => {
-                                        this.handleDatePicked(date) 
+                                        this.handleDatePicked(date)
                                     }}
                                     onCancel={() => {
-                                    // setOpen(false)
-                                    this.setState({ open1: false})
+                                        // setOpen(false)
+                                        this.setState({ open1: false })
                                     }}
                                 />
                             </View>
                             <View >
                                 <Text style={{ fontWeight: 'bold', color: this.props.enableDarkTheme ? 'white' : 'black' }}>  {strings('login.coupon_history_toDate')} : </Text>
                             </View>
-                            <View style={{ marginTop: 0 }}>                              
+                            <View style={{ marginTop: 0 }}>
                                 <TouchableOpacity style={{ paddingRight: 2 }} onPress={() => { this.setState({ open2: true }) }}>
-                                    <Text onPress={() => { this.setState({ open2: true })} }  style={{ color:"#000000"}}>{this.state.toDate}</Text>
+                                    <Text onPress={() => { this.setState({ open2: true }) }} style={{ color: "#000000" }}>
+                                        {typeof this.state.toDate === 'string' ? this.state.toDate : moment(this.state.toDate).format('DD-MM-YYYY')}
+                                    </Text>
                                 </TouchableOpacity>
-								<DatePicker
+                                <DatePicker
                                     modal
                                     mode="date"
                                     open={this.state.open2}
@@ -363,15 +396,15 @@ class ReportHistory extends Component {
                                     maximumDate={new Date()}
                                     textColor="#000000"
                                     onConfirm={(date) => {
-                                        this.handleDatePicked1(date) 
+                                        this.handleDatePicked1(date)
                                     }}
                                     onCancel={() => {
-                                    // setOpen(false)
-                                    this.setState({ open2: false})
+                                        // setOpen(false)
+                                        this.setState({ open2: false })
                                     }}
                                 />
                             </View>
-                        </View> 
+                        </View>
                     }
 
                     {this.state.fromDateError ?

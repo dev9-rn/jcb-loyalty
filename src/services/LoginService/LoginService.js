@@ -5,19 +5,24 @@ import NavigationService from '../NavigationService';
 
 class LoginService {
 
-	responseData: responseData;
-	accessToken: accessToken;
+	constructor() {
+		this.responseData = null;
+		this.accessToken = null;
+	}
+
 	getRespData() {
 		return this.responseData;
 	}
-	setRespData(responseData: data) {
+
+	setRespData(responseData) {
 		this.responseData = responseData;
 	}
 
 	getAccessToken() {
 		return this.accessToken;
 	}
-	setAccessToken(accessToken: accessToken) {
+
+	setAccessToken(accessToken) {
 		this.accessToken = accessToken;
 	}
 
@@ -69,15 +74,17 @@ class LoginService {
 			});
 	};
 
-	async getBrands() {
+	async getBrands(pFormData) {
 		var lUrl = URL + 'getBrands';
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
-			}
+				'apikey': APIKEY,
+				'accesstoken': ACCESSTOKEN
+			},
+			body: pFormData
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
@@ -89,15 +96,17 @@ class LoginService {
 			});
 	};
 
-	async getCountries() {
+	async getCountries(pFormData) {
 		var lUrl = URL + 'getCountries';
 		await fetch(lUrl, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
-			}
+				'apikey': APIKEY,
+				'accesstoken': ACCESSTOKEN
+			},
+			body: pFormData
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
@@ -116,7 +125,8 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
+				'apikey': APIKEY,
+				'accesstoken': ACCESSTOKEN
 			},
 			body: pFormData
 		})
@@ -137,7 +147,8 @@ class LoginService {
 			headers: {
 				'Accept': 'application\/json',
 				'Content-Type': 'multipart\/form-data',
-				'apikey': 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5'
+				'apikey': APIKEY,
+				'accesstoken': ACCESSTOKEN
 			},
 			body: pFormData
 		})

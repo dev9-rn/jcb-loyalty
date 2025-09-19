@@ -55,7 +55,7 @@ class HistoryScreen extends React.Component {
 		formData.append('distributorId', distributorId);
 		formData.append('fromDate', '05-06-2019');
 		formData.append('toDate', '05-06-2019');
-		formData.append('userType', this.state.userType);
+		// formData.append('userType', this.state.userType);
 		if (this.props.languageControl) {
 			formData.append('language', 'en');
 		} else {

@@ -256,10 +256,12 @@ class CashBatchesScreen extends Component {
     async _getAsyncData() {
         await AsyncStorage.multiGet(['USERDATA','ACCESSTOKEN'], (err, result) => {		// USERDATA is set on SignUP screen
             var lData = JSON.parse(result[0][1]);
+            console.log(lData, "lData ++++");
+            
             this.setState({ accesstoken : result[1][1] })
             if (lData) {
                 // this.distributorId = lData.data.id;
-                this.setState({ carpenterId: lData.data.id, userType: lData.data.userType }, () => {
+                this.setState({ carpenterId: lData.data.id, userType: lData.data.userType || lData?.data?.id }, () => {
                     this.callApi()
                 })
             }
@@ -269,14 +271,14 @@ class CashBatchesScreen extends Component {
         this.setState({ loading: true })
         const formData = new FormData();
 
-        formData.append('carpenterId', this.state.carpenterId);
+        formData.append('distributorId', this.state.carpenterId);
         formData.append('startDate', this.state.frmDate);
         formData.append('endDate', this.state.toDate);
         // formData.append('year', this.state.selectedYear);
         // formData.append('toDate', this.state.toDate);
         // formData.append('offset', this.state.offset);
         // formData.append('redeemType', 'Cash');
-        formData.append('userType', this.state.userType);
+        // formData.append('userType', this.state.userType);
         if (this.props.languageControl) {
             formData.append('language', 'en');
         } else {
@@ -284,17 +286,17 @@ class CashBatchesScreen extends Component {
         }
         console.log(formData);
         console.log(APIKEY);
-        console.log(ACCESSTOKEN);
+        console.log(ACCESSTOKEN, "ACCESSTOKEN");
 
 
-        var lUrl = URL + 'getCashBatchesCarpenter';
+        var lUrl = URL + 'getCashBatches';
         fetch(lUrl, {
             method: 'POST',
             headers: {
                 'Accept': 'application\/json',
                 'Content-Type': 'multipart\/form-data',
                 'apikey': APIKEY,
-                'accesstoken': this.state.accesstoken
+                'accesstoken': ACCESSTOKEN
             },
             body: formData,
         })

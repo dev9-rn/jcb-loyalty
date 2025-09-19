@@ -110,7 +110,7 @@ class Tab1 extends Component {
 		formData.append('toDate', this.state.toDate);
 		formData.append('offset', this.state.offset);
 		formData.append('redeemType', 'Cash');
-		formData.append('userType', this.state.userType);
+		// formData.append('userType', this.state.userType);
 		if (this.props.languageControl) {
 			formData.append('language', 'en');
 		} else {
