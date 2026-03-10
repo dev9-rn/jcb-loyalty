@@ -59,7 +59,7 @@ const OtpVerificationScreen = ({ }: Props) => {
 
         const verifyResponse: AxiosResponse = await verify(getVerifyEndpoint(), verifyOtpFormData, userType as string);
 
-        if ((!verifyResponse.data.accesstoken || !verifyResponse.headers.accesstoken) && verifyResponse.data.status === 200) {
+        if (verifyResponse.data.is_approved != "0") {
             setIsApprovalDialogVisible(true)
             setApprovalDialogContent(verifyResponse.data);
         };

@@ -75,9 +75,9 @@ const SignInScreen = ({ }: Props) => {
             })
         }
 
-        if (loginResponse.data.status != 200) {
+        if (loginResponse.status != 200) {
             setError("userPhone", {
-                type: loginResponse.data.satus,
+                type: loginResponse.status.toString(),
                 message: loginResponse.data.message,
             })
         }

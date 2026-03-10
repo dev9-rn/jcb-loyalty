@@ -4,14 +4,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Daewoo Lubricants",
   slug: "daewoo-seqr-loyalty",
-  version: "1.3.0",
+  version: "1.4.0",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: "myapp",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
-    buildNumber: "8",
+    buildNumber: "9",
     supportsTablet: false,
     googleServicesFile: "./GoogleService-Info.plist",
     infoPlist: {
@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: "com.daewoo.seqrloyalty"
   },
   android: {
-    versionCode: 8,
+    versionCode: 9,
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
@@ -48,13 +48,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-font",
     "expo-web-browser",
     [
-    "expo-splash-screen",
-    {
-      image: "./src/assets/images/splash-icon.png",
-      imageWidth: 200,
-      resizeMode: "contain",
-      backgroundColor: "#ffffff"
-    }
+      "expo-splash-screen",
+      {
+        image: "./src/assets/images/splash-icon.png",
+        imageWidth: 200,
+        resizeMode: "contain",
+        backgroundColor: "#ffffff"
+      }
     ],
     [
       "expo-dev-client",
@@ -66,7 +66,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "expo-build-properties",
       {
         ios: {
-          useFrameworks: "static"
+          useFrameworks: "static",
+          buildReactNativeFromSource: true,
+
         }
       }
     ],

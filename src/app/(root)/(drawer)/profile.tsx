@@ -356,7 +356,7 @@ const ProfileScreen = ({ }: Props) => {
                                         onChangeText={onChange}
                                         onBlur={onBlur}
                                         keyboardType='numeric'
-                                        editable={disabled}
+                                        editable={false}
                                     />
                                 )}
                             />
@@ -668,7 +668,6 @@ const ProfileScreen = ({ }: Props) => {
                     <View className='my-6'>
                         <Button
                             onPress={handleSubmit(handleProfileSubmit)}
-                            disabled={!isDirty}
                         >
                             <Text>Submit</Text>
                         </Button>

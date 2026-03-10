@@ -82,7 +82,7 @@ const AuthProvider = ({ children }: Props) => {
                 return response.data
             };
 
-            if (response.data?.data?.accesstoken || response.headers.accesstoken) {
+            if (response.data.data?.is_approved != "0") {
                 setUserAuthToken(response.data?.data?.accesstoken || response.headers.accesstoken);
                 setUserDetails(response.data?.data);
 

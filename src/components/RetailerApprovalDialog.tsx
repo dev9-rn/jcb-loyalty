@@ -38,7 +38,7 @@ const RetailerApprovalDialog = ({ approvalDialogContent, setIsApprovalDialogVisi
                         asChild
                         onPress={() => {
                             setIsApprovalDialogVisible(false)
-                            router.replace("/(auth)")
+                            setTimeout(() => router.replace("/(auth)"), 200)
                             setColorScheme("light");
                         }}
                     >

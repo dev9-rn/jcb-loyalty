@@ -327,7 +327,7 @@ const SignUpScreen = ({ }: Props) => {
                             </View>
                         )}
 
-                        {userType === t("login.distributor") && userType === "mechaninc" ? (
+                        {userType === t("login.distributor") ? (
                             <View className='gap-1'>
                                 <Text>
                                     {t("signup.fields.companyName")}
