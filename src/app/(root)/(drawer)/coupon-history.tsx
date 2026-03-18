@@ -16,7 +16,7 @@ const TABS = [
     },
     {
         id: 2,
-        name: "FOC",
+        name: "SCHEME",
     }
 ]
 

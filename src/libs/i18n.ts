@@ -2,17 +2,20 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 
-import en from '@/locales/en.json';
-import hi from '@/locales/hi.json';
-import gu from '@/locales/gu.json';
-import kn from '@/locales/kn.json';
-import mr from '@/locales/mr.json';
-import pa from '@/locales/pa.json';
-import te from '@/locales/te.json';
-import ta from '@/locales/ta.json';
-import bn from '@/locales/bn.json';
-import ur from '@/locales/ur.json';
-import or from '@/locales/or.json';
+import en from '@/libs/locales/en.json';
+import hi from '@/libs/locales/hi.json';
+import gu from '@/libs/locales/gu.json';
+import kn from '@/libs/locales/kn.json';
+import mr from '@/libs/locales/mr.json';
+import pa from '@/libs/locales/pn.json';
+import te from '@/libs/locales/tl.json';
+import ta from '@/libs/locales/ta.json';
+import bn from '@/libs/locales/bn.json';
+import ur from '@/libs/locales/ur.json';
+import or from '@/libs/locales/od.json';
+import fr from '@/libs/locales/fr.json';
+import swa from '@/libs/locales/swa.json';
+
 
 import { storage } from '@/utils/storageService';
 import { STORAGE_KEYS } from './constants';
@@ -29,6 +32,9 @@ const resources = {
     bn: { translation: bn },
     ur: { translation: ur },
     or: { translation: or },
+    fr: { translation: fr },
+    swa: { translation: swa }
+
 }
 
 const initI18n = () => {

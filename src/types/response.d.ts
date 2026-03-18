@@ -72,22 +72,17 @@ interface IRetailerDetails {
 interface IDashboardData {
     status: number;
     message: string;
-    totalCouponsRedeemed: number;
-    totalAmountRedeemed: number;
-    totalCouponsRedeemedCash: number;
-    totalCouponsRedeemedFOC: number;
-    totalBalancedPoint: string;
-    totalCouponsRedeemedPoint: number;
-    totalCouponsRedeemedCount: number;
-    totalCouponsScanned: number;
-    totalAmountCouponsScanned: number;
-    schemeDetails: {
-        scheme_name: string;
-        totalFocSchemeCoupons: number;
-        FOCSchemeRedeemedCount: number;
-        FOCPendingSchemesCount: number;
-    }[]
-};
+    totalNoOfCouponsScanned: number;
+    totalValueOfCouponsScanned: number;
+    totalNoOfCashCouponsScanned: number;
+    totalValueOfCashCouponsScanned: number;
+    totalNoOfCashCouponsCredited: number;
+    totalValueOfCashCouponsCredited: number;
+    totalNoOfCashCouponsPending: number;
+    totalValueOfCashCouponsPending: number;
+    totalNoOfFOCCouponsScanned: number;
+    totalValueOfFOCCouponsScanned: number;
+}
 
 interface ICouponDetails {
     id: string;
@@ -130,11 +125,32 @@ interface IValidCoupon {
     redeemMethods: {
         redeem_type: string;
         details: {
+            id: number;
             value: string;
+            title: string;
+            gift: string;
+
+            from_date: string;   // API giving string date
+            to_date: string;     // ✅ FIXED (was to_data)
+
+            product_id: number;
+            product_name: string;
+
+            total_products: number;
+            total_boxes: number;
+
+            no_of_coupons_required: number;
+
+            target: string;
         };
     }[],
     coupon_details: ICouponDetails;
     product_details: IProductDetails | undefined;
+    playstoreUrl: string;
+    appstoreUrl: string
+    show_links: string | number;
+    redeem_api: string | number;
+    alert: string;
 };
 
 interface IRedeemedCoupon extends IValidCoupon {
@@ -306,4 +322,50 @@ interface IFocCouponsHistoryResponse {
     batchesData: IFOCCouponHistoryData[];
     message: string;
     status: number;
+}
+
+interface IFMaintenance {
+    maintenanceStatus: number;
+    systemStatus: string;
+}
+
+interface IFDisplayNotification {
+    showNotification: number;
+    notification: string;
+}
+
+interface ICouponResponse {
+    status: number;
+    message: string;
+    redeemMethods: IRedeemMethod[];
+    playstoreUrl: string;
+    appstoreUrl: string;
+    show_links: number;
+    redeem_api: number;
+    alert: string;
+}
+interface IRedeemMethod {
+    redeem_type: string;
+    details: IRedeemDetails;
+}
+interface IRedeemDetails {
+    value: string;
+    title: string;
+    gift: string;
+    from_date: number;
+    to_date: number;
+    target: string
+}
+
+// Single Scheme Item
+interface IScheme {
+  id: string;
+  value: string;
+}
+
+// Full API Response
+interface ISchemesResponse {
+  status: number;
+  message: string;
+  schemes: Scheme[];
 }

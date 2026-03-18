@@ -9,6 +9,7 @@ import { STORAGE_KEYS } from '@/libs/constants'
 import VersionCheck from 'react-native-version-check-expo'
 import { Alert, AppState, Linking, Platform } from 'react-native'
 import { isUpdateRequired } from '@/utils/isUpdateRequired'
+import { GET_DISTRIBUTOR_PROFILE } from '@/utils/routes'
 
 type Props = {
     children: React.ReactNode
@@ -44,10 +45,10 @@ const UserProvider = ({ children }: Props) => {
     const fetchUserProfileDetails = async () => {
 
         const profileFormData = new FormData();
-        profileFormData.append(getProfileEndpoint(userDetails).user_id, userDetails?.id);
+        profileFormData.append("distributorId", String(userDetails?.id));
 
         try {
-            const response = await axiosInstance.post(getProfileEndpoint(userDetails).endpoint, profileFormData);
+            const response = await axiosInstance.post(GET_DISTRIBUTOR_PROFILE, profileFormData);
 
             if (response.data.status != 200) {
                 (response.data.message)

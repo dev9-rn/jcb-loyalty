@@ -22,8 +22,7 @@ const NotificationScreen = ({ }: Props) => {
 
     const fetchUserNotificaitonHistory = async () => {
         const notificationFormData = new FormData();
-        notificationFormData.append("distributorId", userDetails?.id);
-        notificationFormData.append("userType", userDetails?.userType);
+        notificationFormData.append("distributorId", String(userDetails?.id));
 
         try {
             const response = await axiosInstance.post(GET_USER_NOTIFICATIONS, notificationFormData);

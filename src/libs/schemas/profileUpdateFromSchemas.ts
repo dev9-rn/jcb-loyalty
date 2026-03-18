@@ -5,14 +5,13 @@ import { z } from "zod";
 const createProfileUpdateForm = (t: TFunction<"translation", undefined>) => {
 
     const baseSchema = z.object({
-        userType: z.enum(["distributor", "mechanic", "retailer"]),
-        userName: z.string().nonempty(t("signup.validation.nameRequired")).refine(
+        userName: z.string().nonempty(t("login.profile_distributor_name")).refine(
             (value) => /^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/.test(value ?? ""),
             { message: t("signup.validation.nameOnlyLetters") }
         ),
         userPhoneNumber: z
             .string()
-            .nonempty(t("signup.validation.phoneRequired"))
+            .nonempty(t("login.profile_distributor_phnNo"))
             .min(10, { message: t("signup.validation.phoneInvalid") })
             .max(10, { message: t("signup.validation.phoneInvalid") })
             .refine((value) => /^\d{10}$/.test(value), {
@@ -38,13 +37,9 @@ const createProfileUpdateForm = (t: TFunction<"translation", undefined>) => {
             id: z.string().nonempty(t("signup.validation.cityRequired")),
             name: z.string().nonempty(t("signup.validation.cityRequired")),
         }),
-    });
-
-    const distributorSchema = baseSchema.extend({
-        userType: z.literal("distributor"),
         distributorEmail: z
             .string()
-            .nonempty(t("signup.validation.emailRequired"))
+            .nonempty(t("login.profile_distributor_email"))
             .email({ message: t("signup.validation.emailInvalid") }),
         distributorAddress: z.string().nonempty(t("signup.validation.addressRequired")),
         distributorCompanyName: z.string(),
@@ -53,7 +48,6 @@ const createProfileUpdateForm = (t: TFunction<"translation", undefined>) => {
             .nonempty(t("signup.validation.streetRequired")),
         distributorPanNumber: z
             .string()
-            .optional()
             .refine(
                 (value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value),
                 { message: t("signup.validation.panInvalid") }
@@ -65,29 +59,28 @@ const createProfileUpdateForm = (t: TFunction<"translation", undefined>) => {
         }),
     });
 
-    const mechanicSchema = baseSchema.extend({
-        userType: z.literal("mechanic"),
-        mechanicPanNumber: z
-            .string()
-            .nonempty(t("signup.validation.panRequired"))
-            .refine(
-                (value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value),
-                { message: t("signup.validation.panInvalid") }
-            ),
-    });
+    // const distributorSchema = baseSchema.extend({
+    //     // userType: z.literal("distributor"),
 
-    const retailerSchema = baseSchema.extend({
-        userType: z.literal("retailer"),
-        retailerShopName: z.string().nonempty(t("signup.validation.shopRequired")),
-    });
+    // });
 
-    const profileUpdateForm = z.discriminatedUnion("userType", [
-        distributorSchema,
-        mechanicSchema,
-        retailerSchema
-    ]);
+    // const mechanicSchema = baseSchema.extend({
+    //     // userType: z.literal("mechanic"),
+    //     mechanicPanNumber: z
+    //         .string()
+    //         .nonempty(t("signup.validation.panRequired"))
+    //         .refine(
+    //             (value) => !value || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value),
+    //             { message: t("signup.validation.panInvalid") }
+    //         ),
+    // });
 
-    return profileUpdateForm
+    // const retailerSchema = baseSchema.extend({
+    //     // userType: z.literal("retailer"),
+    //     retailerShopName: z.string().nonempty(t("signup.validation.shopRequired")),
+    // });
+
+    return baseSchema
 };
 
 

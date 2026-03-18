@@ -39,7 +39,19 @@ const StackLayout = ({ }: Props) => {
                 name='camera'
                 options={{
                     // headerShown: false,
-                    title: t('layout.headerTitle.scan_coupons'),
+                    title: 'Scan',
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => router.back()}>
+                            <ArrowLeftIcon color={"#FFF"} />
+                        </TouchableOpacity>
+                    ),
+                }}
+            />
+            <Stack.Screen
+                name='scheme-details'
+                options={{
+                    // headerShown: false,
+                    title: 'Scheme Details',
                     headerLeft: () => (
                         <TouchableOpacity onPress={() => router.back()}>
                             <ArrowLeftIcon color={"#FFF"} />

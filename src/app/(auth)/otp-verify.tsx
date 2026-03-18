@@ -1,182 +1,249 @@
-import { View, StyleSheet, Platform } from 'react-native'
-import React, { useState } from 'react'
-import { useLocalSearchParams } from 'expo-router';
+import { View, StyleSheet, Platform, ActivityIndicator } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
 
 import { OtpInput } from "react-native-otp-entry";
-import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
-import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import useAuth from '@/hooks/useAuth';
-import axios, { AxiosResponse } from 'axios';
-import { MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN, VERIFY_MECHANIC, VERIFY_OTP, VERIFY_RETAILER, VERIFY_VALID_RETAILER } from '@/utils/routes';
-import RetailerApprovalDialog from '@/components/RetailerApprovalDialog';
-import useNotification from '@/hooks/useNotification';
-import { useTranslation } from 'react-i18next';
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import {
+  Controller,
+  FieldValues,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
+import useAuth from "@/hooks/useAuth";
+import axios, { AxiosResponse } from "axios";
+import {
+  MECHANIC_LOGIN,
+  RETAILER_LOGIN,
+  USER_LOGIN,
+  VERIFY_MECHANIC,
+  VERIFY_OTP,
+  VERIFY_RETAILER,
+  VERIFY_VALID_RETAILER,
+} from "@/utils/routes";
+import RetailerApprovalDialog from "@/components/RetailerApprovalDialog";
+import useNotification from "@/hooks/useNotification";
+import { useTranslation } from "react-i18next";
 
-type Props = {}
+type Props = {};
 
 type FormData = {
-    userOtp: string;
-}
+  userOtp: string;
+};
 
-const OtpVerificationScreen = ({ }: Props) => {
+const OtpVerificationScreen = ({}: Props) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [approvalDialogContent, setApprovalDialogContent] = useState<
+    { status: number; message: string } | undefined
+  >(undefined);
 
-    const [isApprovalDialogVisible, setIsApprovalDialogVisible] = useState<boolean>(false);
-    const [approvalDialogContent, setApprovalDialogContent] = useState<{ status: number, message: string } | undefined>(undefined);
+  const { verify, login } = useAuth();
+  const { expoPushToken } = useNotification();
+  const { t } = useTranslation();
+  const [time, setTime] = useState("3:00");
+  const [btnResendOTPEnabled, setBtnResendOTPEnabled] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null | number>(null);
+  const [otpKey, setOtpKey] = useState(0);
+  const { userPhone, userType, methodType } = useLocalSearchParams();
 
-    const { verify, login } = useAuth();
-    const { expoPushToken } = useNotification();
-    const { t } = useTranslation()
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+    reset,
+  } = useForm<FormData | FieldValues>({
+    defaultValues: {
+      userOtp: "",
+    },
+  });
 
-    const { userPhone, userType, methodType } = useLocalSearchParams();
+  const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (
+    formData,
+  ) => {
+    const verifyOtpFormData = new FormData();
+    setIsLoading(true);
 
-    const { control, handleSubmit, setError, formState: { errors } } = useForm<FormData | FieldValues>({
-        defaultValues: {
-            userOtp: ""
+    verifyOtpFormData.append("mobileNo", userPhone as string);
+    verifyOtpFormData.append("otp", formData.userOtp);
+    verifyOtpFormData.append("deviceToken", expoPushToken as string);
+    verifyOtpFormData.append("deviceType", Platform.OS);
+
+    const verifyResponse: AxiosResponse = await verify(
+      VERIFY_OTP,
+      verifyOtpFormData,
+      userType as string,
+    );
+    setIsLoading(false);
+    // if (verifyResponse.data.is_approved != "0") {
+    //     setIsApprovalDialogVisible(true)
+    //     setApprovalDialogContent(verifyResponse.data);
+    // };
+
+    if (axios.isAxiosError(verifyResponse)) {
+      setError("userOtp", {
+        type: verifyResponse.response?.satus,
+        message: verifyResponse.response?.message,
+      });
+    }
+
+    if (verifyResponse.data.status != 200) {
+      setError("userOtp", {
+        type: verifyResponse.data.satus,
+        message: verifyResponse.data.message,
+      });
+    }
+  };
+
+  const handleResendCode = async () => {
+    const resendFormData = new FormData();
+    resendFormData.append("mobileNo", userPhone as string);
+
+    const loginResponse: AxiosResponse = await login(
+      USER_LOGIN,
+      resendFormData,
+    );
+
+    if (loginResponse.status === 200) {
+      reset({ userOtp: "" }); // ✅ clears OTP input
+      setOtpKey((prev) => prev + 1);
+      startCountdown(); // restart timer
+    }
+
+    if (axios.isAxiosError(loginResponse)) {
+      setError("userPhone", {
+        type: loginResponse.response?.data?.status,
+        message: loginResponse.response?.data?.message,
+      });
+    }
+
+    if (loginResponse.data.status != 200) {
+      setError("userPhone", {
+        type: loginResponse.data.status,
+        message: loginResponse.data.message,
+      });
+    }
+  };
+
+  const startCountdown = () => {
+    let minutes = 3;
+    let seconds = 0;
+
+    setBtnResendOTPEnabled(false);
+
+    intervalRef.current = setInterval(() => {
+      if (seconds === 0) {
+        if (minutes === 0) {
+          clearInterval(intervalRef.current!);
+          setBtnResendOTPEnabled(true);
+          setTime("0:00");
+          return;
         }
-    });
+        minutes--;
+        seconds = 59;
+      } else {
+        seconds--;
+      }
 
-    const getVerifyEndpoint = () => {
-        if (userType === t("login.mechanic")) {
-            return VERIFY_MECHANIC
-        };
+      const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+      setTime(`${minutes}:${formattedSeconds}`);
+    }, 1000);
+  };
 
-        if (userType === t("login.distributor")) {
-            return VERIFY_OTP
-        };
+  useEffect(() => {
+    startCountdown();
 
-        return methodType === "registration" ? VERIFY_VALID_RETAILER : VERIFY_RETAILER;
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
+  }, []);
 
-    const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (formData) => {
+  return (
+    <View className="flex-1 bg-white">
+      <View className="p-4 flex-1">
+        <Text className="text-3xl font-semibold">Verify your phone number</Text>
 
-        const verifyOtpFormData = new FormData();
-
-        verifyOtpFormData.append("mobileNo", userPhone as string);
-        verifyOtpFormData.append("otp", formData.userOtp);
-        verifyOtpFormData.append('deviceToken', expoPushToken as string);
-        verifyOtpFormData.append('deviceType', Platform.OS);
-
-        const verifyResponse: AxiosResponse = await verify(getVerifyEndpoint(), verifyOtpFormData, userType as string);
-
-        if (verifyResponse.data.is_approved != "0") {
-            setIsApprovalDialogVisible(true)
-            setApprovalDialogContent(verifyResponse.data);
-        };
-
-        if (axios.isAxiosError(verifyResponse)) {
-            setError("userOtp", {
-                type: verifyResponse.response?.data.satus,
-                message: verifyResponse.response?.data.message,
-            })
-        }
-
-        if (verifyResponse.data.status != 200) {
-            setError("userOtp", {
-                type: verifyResponse.data.satus,
-                message: verifyResponse.data.message,
-            })
-        }
-    };
-
-    const getLoginEndpoint = () => {
-        if (userType === t("login.mechanic")) {
-            return MECHANIC_LOGIN
-        };
-
-        if (userType === t("login.distributor")) {
-            return USER_LOGIN
-        };
-
-        return RETAILER_LOGIN
-    };
-
-    const handleResendCode = async () => {
-        const resendFormData = new FormData();
-
-        resendFormData.append("mobileNo", userPhone as string);
-
-        // setIsLoggingIn(true);
-        const loginResponse: AxiosResponse = await login(getLoginEndpoint(), resendFormData, userType as string);
-        // setIsLoggingIn(false);
-        if (axios.isAxiosError(loginResponse)) {
-            setError("userPhone", {
-                type: loginResponse.response?.data.satus,
-                message: loginResponse.response?.data.message,
-            })
-        }
-
-        if (loginResponse.data.status != 200) {
-            setError("userPhone", {
-                type: loginResponse.data.satus,
-                message: loginResponse.data.message,
-            });
-        };
-    };
-
-    return (
-        <View className='flex-1 bg-white'>
-
-            <View className='p-4 flex-1'>
-                <Text className='text-3xl font-semibold'>
-                    Verify your phone number
-                </Text>
-
-                <View className='my-10 gap-4'>
-                    <Text className='text-lg font-medium'>
-                        Enter the 4-digit code sent to you at{"\n"}
-                        <Text className='text-primary font-semibold text-lg'>
+        <View className="my-10 gap-4">
+          <Text className="text-lg font-medium">
+            OTP has been sent to your mobile number, please enter it below.
+            {"\n"}
+            {/* <Text className='text-primary font-semibold text-lg'>
                             +91 {userPhone}
-                        </Text>
-                    </Text>
-                    <Controller
-                        control={control}
-                        name='userOtp'
-                        render={({ field: { onBlur, onChange, value } }) => (
-                            <OtpInput
-                                numberOfDigits={4}
-                                focusColor={"#14479c"}
-                                blurOnFilled={true}
-                                type='numeric'
-                                onTextChange={onChange}
-                                onBlur={onBlur}
-                                theme={{
-                                    containerStyle: styles.container,
-                                    pinCodeContainerStyle: errors.userOtp ? { ...styles.pinCodeContainer, borderColor: "#ef4444", borderWidth: 2 } : styles.pinCodeContainer,
-                                }}
-                            />
-                        )}
-                    />
-                    {errors.userOtp && <Text className='text-red-500 font-medium'>{errors.userOtp.message?.toString()}</Text>}
-                </View>
+                        </Text> */}
+          </Text>
+          <Controller
+            control={control}
+            name="userOtp"
+            render={({ field: { onBlur, onChange, value } }) => (
+              <OtpInput
+                key={otpKey} // 🔹 important
+                numberOfDigits={4}
+                focusColor={"#14479c"}
+                blurOnFilled={true}
+                type="numeric"
+                onTextChange={onChange}
+                onBlur={onBlur}
+                theme={{
+                  containerStyle: styles.container,
+                  pinCodeContainerStyle: errors.userOtp
+                    ? {
+                        ...styles.pinCodeContainer,
+                        borderColor: "#ef4444",
+                        borderWidth: 2,
+                      }
+                    : styles.pinCodeContainer,
+                }}
+              />
+            )}
+          />
+          {errors.userOtp && (
+            <Text className="text-red-500 font-medium">
+              {errors.userOtp.message?.toString()}
+            </Text>
+          )}
+        </View>
 
-                <View className='gap-4'>
-                    <Button variant={"outline"} onPress={() => handleResendCode()}>
-                        <Text>Resend code via SMS</Text>
-                    </Button>
-                    <Button onPress={handleSubmit(handleUserVerification)}>
-                        <Text>Verify</Text>
-                    </Button>
-                </View>
+        <View className="gap-4">
+          <Button onPress={handleSubmit(handleUserVerification)}>
+            {isLoading ? (
+              <ActivityIndicator size={"small"} color={"#fff"} />
+            ) : (
+              <Text>Verify</Text>
+            )}
+          </Button>
+          <Button
+            variant={"outline"}
+            disabled={!btnResendOTPEnabled}
+            onPress={handleResendCode}
+          >
+            <Text>
+              {btnResendOTPEnabled
+                ? "Resend code via SMS"
+                : `Resend OTP in ${time}`}
+            </Text>
+          </Button>
+        </View>
 
-
-                <RetailerApprovalDialog
+        {/* <RetailerApprovalDialog
                     isApprovalDialogVisible={isApprovalDialogVisible}
                     setIsApprovalDialogVisible={setIsApprovalDialogVisible}
                     approvalDialogContent={approvalDialogContent}
-                />
-            </View>
-        </View>
-    )
-}
+                /> */}
+      </View>
+    </View>
+  );
+};
 
-export default OtpVerificationScreen
+export default OtpVerificationScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        gap: 16,
-    },
-    pinCodeContainer: {
-        flexGrow: 1,
-    },
-})
+  container: {
+    gap: 16,
+  },
+  pinCodeContainer: {
+    flexGrow: 1,
+  },
+});

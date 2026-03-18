@@ -3,6 +3,7 @@ import { storage, tokenStorage, tokenStorageService } from "./storageService";
 import { STORAGE_KEYS } from "@/libs/constants";
 import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
+import { triggerMaintenanceCheck } from "@/libs/maintenanceHandler";
 
 export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 export const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
@@ -10,8 +11,9 @@ export const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 const axiosInstance = axios.create({
     baseURL: BASE_URL, // Set your API base URL
     headers: {
-        "Content-Type": "multipart/form-data",
-        "apikey": API_KEY,
+        'Accept': 'application\/json',
+        'Content-Type': 'multipart\/form-data',
+        "apikey": 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5',
     },
     // timeout: 10000, // Optional: Set a timeout for requests
 });
@@ -30,11 +32,19 @@ axiosInstance.interceptors.request.use(
 
 // Response Interceptor (Optional: Handle Errors Globally)
 axiosInstance.interceptors.response.use(
-    (response) => response,
+  async (response) => {
+
+    // Call maintenance check after every API
+    if (!response.config.headers?.skipMaintenance) {
+      await triggerMaintenanceCheck();
+    }
+
+    return response;
+  },
     (error) => {
         if (axios.isAxiosError(error)) {
             if (error.response?.status === 403 && (!error.config?.url?.includes("/login") && !error.config?.url?.includes("/verifyOtp") && !error.config?.url?.includes("/verifyDealer"))) {
-                
+
                 Toast.show(error.response.data.message, {
                     data: error.response
                 });

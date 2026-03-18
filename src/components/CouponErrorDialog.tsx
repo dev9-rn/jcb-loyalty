@@ -20,9 +20,10 @@ type Props = {
     isCouponInvalid: boolean
     validationData: IValidCoupon | undefined;
     setIsCouponInvalid: Dispatch<SetStateAction<boolean>>
+    setActive?: Dispatch<SetStateAction<boolean>>
 }
 
-const CouponErrorDialog = ({ isCouponInvalid, validationData, setIsCouponInvalid }: Props) => {
+const CouponErrorDialog = ({ isCouponInvalid, validationData, setIsCouponInvalid, setActive }: Props) => {
     return (
         <Dialog open={isCouponInvalid}>
             <DialogContent className='max-w-sm'>
@@ -35,7 +36,7 @@ const CouponErrorDialog = ({ isCouponInvalid, validationData, setIsCouponInvalid
                 </DialogHeader>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button onPress={() => setIsCouponInvalid(false)}>
+                        <Button onPress={() => { setIsCouponInvalid(false), setActive(true) }}>
                             <Text>OK</Text>
                         </Button>
                     </DialogClose>

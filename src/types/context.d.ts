@@ -3,9 +3,11 @@ import { Dispatch } from "react";
 
 interface IAuthContext {
     isAuthenticated: boolean;
-    login: (endpoint: string, loginFormData: FormData, userType: string) => Promise<AxiosResponse>;
+    maintenanceMsg: string;
+    login: (endpoint: string, loginFormData: FormData) => Promise<AxiosResponse>;
     logout: () => void;
     verify: (endpoint: string, verifyFormData: FormData, useType: string) => Promise<AxiosResponse>;
+    fetchisMaintenanceApi: () => Promise<void>;
 };
 
 interface IUserContext {

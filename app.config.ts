@@ -2,8 +2,8 @@ import { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "Daewoo Lubricants",
-  slug: "daewoo-seqr-loyalty",
+  name: "NPL QRScan",
+  slug: "npl-loyalty",
   version: "1.4.0",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
@@ -11,24 +11,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
-    buildNumber: "9",
+    buildNumber: "1",
     supportsTablet: false,
     googleServicesFile: "./GoogleService-Info.plist",
     infoPlist: {
       UIBackgroundModes: ["remote-notification"],
       ITSAppUsesNonExemptEncryption: false
     },
-    bundleIdentifier: "com.daewoo.seqrloyalty"
+    bundleIdentifier: "com.scube.NPL-QRScan"
   },
   android: {
-    versionCode: 9,
+    versionCode: 1,
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff",
     },
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
-    package: "com.daewoo.seqrloyalty",
+    package: "com.npl_seqrloyalty",
     permissions: [
       "android.permission.CAMERA",
       "android.permission.RECORD_AUDIO"
@@ -106,10 +106,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsRTL: true,
     router: {
       origin: false
-    },
-    eas: {
-      projectId: "5390f040-20ce-47a1-bdd8-0a60d5da2a6b"
     }
-  },
-  owner: "kaustubh-scube"
+  }
 });
