@@ -301,5 +301,14 @@
         },
         "checkboxLabel": "હું ઉપરોક્ત વાંચ્યું છે અને સંમત છું.",
         "goBack": "પાછા જાઓ"
+    },
+        "reportHistory": {
+        "from_date": "પ્રારંભ તારીખ",
+        "to_date": "અંત તારીખ",
+        "noDataTitle": "કોઈ માહિતી મળી નથી.",
+        "noDataSubtitle": "કૃપા કરીને બીજી તારીખ પસંદ કરો.",
+        "serialNo": "ક્રમ સંખ્યા",
+        "description": "વર્ણન",
+        "reportedDate": "રિપોર્ટ થયેલી તારીખ"
     }
 }

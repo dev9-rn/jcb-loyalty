@@ -13,7 +13,7 @@ import {
   BarcodeScanningResult,
 } from "expo-camera";
 import BarcodeMask from "react-native-barcode-mask";
-import { useNavigation } from "expo-router";
+import { useNavigation, usePathname } from "expo-router";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useToast } from "react-native-toast-notifications";
@@ -86,6 +86,12 @@ const CameraScreen = ({}: Props) => {
   const { userDetails } = useUser();
   const { t } = useTranslation();
 
+  const pathname = usePathname();
+
+const routeName = pathname.split("/").pop();
+
+console.log(routeName);
+
   const toast = useToast();
 
   const qrSuccessAudio = useAudioPlayer(
@@ -100,7 +106,7 @@ const CameraScreen = ({}: Props) => {
   const navigation = useNavigation();
   useEffect(() => {
     navigation.setOptions({
-      title: t("layout.headerTitle.scan_coupons"),
+      title: t("Scan"),
       headerTransparent: true,
       headerTitleStyle: {
         color: "#FFF",
@@ -121,11 +127,16 @@ const CameraScreen = ({}: Props) => {
         </TouchableOpacity>
       ),
     });
-  }, [flashMode]);
+     return () => {
+    setActive(false);
+  };
+  }, [flashMode, routeName]);
 
   useEffect(() => {
-    requestPermission();
-  }, []);
+  requestPermission();
+}, []);
+
+console.log(navigation, "navigation ---");
 
   const handleBarCodeScanned = ({ bounds, data }: BarcodeScanningResult) => {
     if (scanned || isCouponRedeemed || isCouponInvalid) return;

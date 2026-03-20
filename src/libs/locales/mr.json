@@ -283,5 +283,14 @@
         },
         "addressInformation": "पत्ता माहिती",
         "addressInformationSubtitle": "आयडी प्रमाणे तपशील भरा."
+    },
+        "reportHistory": {
+        "from_date": "प्रारंभ दिनांक",
+        "to_date": "अंतिम दिनांक",
+        "noDataTitle": "कोणताही डेटा नाही.",
+        "noDataSubtitle": "कृपया दुसरी तारीख निवडा.",
+        "serialNo": "सिरीयल नंबर",
+        "description": "वर्णन",
+        "reportedDate": "रिपोर्ट केलेली तारीख"
     }
 }

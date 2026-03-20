@@ -301,5 +301,14 @@
         },
         "checkboxLabel": "আমি উপরেরটি পড়েছি এবং সম্মত।",
         "goBack": "ফিরে যান"
+    },
+        "reportHistory": {
+        "from_date": "শুরুর তারিখ",
+        "to_date": "শেষ তারিখ",
+        "noDataTitle": "কোনো ডেটা পাওয়া যায়নি।",
+        "noDataSubtitle": "দয়া করে অন্য তারিখ নির্বাচন করুন।",
+        "serialNo": "সিরিয়াল নম্বর",
+        "description": "বিবরণ",
+        "reportedDate": "রিপোর্টের তারিখ"
     }
 }

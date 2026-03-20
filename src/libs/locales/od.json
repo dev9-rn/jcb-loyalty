@@ -301,5 +301,14 @@
         },
         "checkboxLabel": "ମୁଁ ଉପରୋକ୍ତ ପଢ଼ିଛି ଏବଂ ସମ୍ମତ।",
         "goBack": "ପଛକୁ ଯାଆନ୍ତୁ"
+    },
+        "reportHistory": {
+        "from_date": "ଆରମ୍ଭ ତାରିଖ",
+        "to_date": "ଶେଷ ତାରିଖ",
+        "noDataTitle": "କୌଣସି ତଥ୍ୟ ମିଳିଲା ନାହିଁ।",
+        "noDataSubtitle": "ଅନ୍ୟ ତାରିଖ ସୀମା ଚେଷ୍ଟା କରନ୍ତୁ।",
+        "serialNo": "କ୍ରମିକ ନମ୍ବର",
+        "description": "ବର୍ଣ୍ଣନା",
+        "reportedDate": "ରିପୋର୍ଟ ତାରିଖ"
     }
 }

@@ -15,6 +15,10 @@ const LANGUAGES = [
         name: "English"
     },
     {
+        langCode: "fr",
+        name: "French"
+    },
+    {
         langCode: "hi",
         name: "हिन्दी"
     },

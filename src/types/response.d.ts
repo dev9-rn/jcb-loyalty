@@ -369,3 +369,22 @@ interface ISchemesResponse {
   message: string;
   schemes: Scheme[];
 }
+
+export interface ICashBatchItem {
+  batch_number: string;
+  start_date: string;
+  end_date: string;
+  batch_id: string;
+  total_coupons_scanned: string;
+  total_amount: string;
+  status: string;
+  credit_note_no: string;
+  credit_note_date: string;
+  credit_note_value: string;
+}
+
+export interface ICashBatchResponse {
+  status: number;
+  message: string;
+  batchesData: ICashBatchItem[];
+}

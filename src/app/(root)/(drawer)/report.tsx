@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { View, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
 
@@ -44,7 +44,7 @@ const ReportCouponScreen = ({ }: Props) => {
 
     const handleCouponReportSubmit: SubmitHandler<ReportFormData | FieldValues> = async (formData) => {
 
-        if (!pickedFrontsideCouponImage || !pickedBacksideCouponImage) {
+        if (!pickedFrontsideCouponImage) {
             toast.show(t("reportCoupon.missingImages"), {
                 data: { status: 400 }
             });
@@ -55,18 +55,14 @@ const ReportCouponScreen = ({ }: Props) => {
 
         uploadReportFormData.append("srNo", formData.couponSerial);
         uploadReportFormData.append("description", formData.couponDescription);
-        uploadReportFormData.append('distributorId', userDetails?.id);
+        uploadReportFormData.append('distributorId', String(userDetails?.id));
         uploadReportFormData.append('couponFile', {
             uri: pickedFrontsideCouponImage,
             type: 'image/jpeg',
             name: "abc.jpeg",
         });
-        uploadReportFormData.append('couponFileBack', {
-            uri: pickedBacksideCouponImage,
-            type: 'image/jpeg',
-            name: "abc_back.jpeg",
-        });
-
+        console.log(uploadReportFormData, "uploadReportFormData");
+        
         try {
             setIsSubmitting(true);
             const response = await axiosInstance.post(POST_REPORT_COUPON, uploadReportFormData);
@@ -123,8 +119,56 @@ const ReportCouponScreen = ({ }: Props) => {
         };
     };
 
-    const handleBacksideCouponImagePicker = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
+    const handleFrontsideCouponImageFromCamera = async () => {
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+        
+        if (!permissionResult.granted) {
+            Alert.alert(t("common.permission"), t("common.cameraPermissionRequired"));
+            return;
+        }
+
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            quality: 0.85,
+        });
+
+        if (!result.canceled) {
+            setPickedFrontsideCouponImage(result.assets[0].uri);
+        };
+    };
+
+    const showFrontsideCouponImageOptions = () => {
+        Alert.alert(
+            t("reportCoupon.selectImage"),
+            t("reportCoupon.chooseOption"),
+            [
+                {
+                    text: t("reportCoupon.camera"),
+                    onPress: handleFrontsideCouponImageFromCamera,
+                },
+                {
+                    text: t("reportCoupon.gallery"),
+                    onPress: handleFrontsideCouponImagePicker,
+                },
+                {
+                    text: t("common.cancel"),
+                    onPress: () => { },
+                    style: "cancel",
+                },
+            ]
+        );
+    };
+
+    const handleBacksideCouponImageFromCamera = async () => {
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+        if (!permissionResult.granted) {
+            Alert.alert(t("common.permission"), t("common.cameraPermissionRequired"));
+            return;
+        }
+
+        let result = await ImagePicker.launchCameraAsync({
             mediaTypes: ['images'],
             allowsEditing: true,
             quality: 0.85,
@@ -134,7 +178,6 @@ const ReportCouponScreen = ({ }: Props) => {
             setPickedBacksideCouponImage(result.assets[0].uri);
         };
     };
-
     return (
         <View className='flex-1 p-4 bg-white'>
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
@@ -143,8 +186,8 @@ const ReportCouponScreen = ({ }: Props) => {
                     <Text className='text-gray-600'>{t("reportCoupon.subtitle")}</Text>
                 </View>
 
-                <View className='flex-row items-center justify-between'>
-                    <TouchableOpacity onPress={() => handleFrontsideCouponImagePicker()}>
+                <View className='flex-1 items-center justify-between'>
+                    <TouchableOpacity onPress={() => showFrontsideCouponImageOptions()}>
                         <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-44 xs:size-48 sm:size-52 border border-dashed border-primary'>
                             {!pickedFrontsideCouponImage ? (
                                 <View className='items-center'>
@@ -157,25 +200,6 @@ const ReportCouponScreen = ({ }: Props) => {
                                         <X className='text-white' />
                                     </Button>
                                     <Image source={{ uri: pickedFrontsideCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
-                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>{t("reportCoupon.editImageHint")}</Text>
-                                </View>
-                            )}
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => handleBacksideCouponImagePicker()}>
-                        <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-44 xs:size-48 sm:size-52 border border-dashed border-primary'>
-                            {!pickedBacksideCouponImage ? (
-                                <View className='items-center'>
-                                    <CloudUploadIcon className='text-primary' height={55} width={55} />
-                                    <Text className='font-medium text-gray-600 text-center'>{t("reportCoupon.backImagePlaceholder")}</Text>
-                                </View>
-                            ) : (
-                                <View className='p-4 gap-2 items-center relative w-full'>
-                                    <Button size={"icon"} variant={"ghost"} className='absolute right-0 m-4' onPress={() => setPickedBacksideCouponImage(null)}>
-                                        <X className='text-white' />
-                                    </Button>
-                                    <Image source={{ uri: pickedBacksideCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
                                     <Text className='font-medium text-gray-600 opacity-40 text-sm'>{t("reportCoupon.editImageHint")}</Text>
                                 </View>
                             )}

@@ -18,16 +18,23 @@ export const GET_BRANDS_BY_IDS = "/api/getBrands";
 export const GET_COUNTRY_LIST = "/api/getCountries";
 export const GET_CITIES_LIST = "/api/getCitiesByState";
 export const GET_STATE_LIST = "/api/getStatesByCountry";
+
 //COUPON HISTOY
 export const GET_REDEEM_HISTORY = "/api/getRedeemHistory";
 export const GET_DISTRIBUTOR_SCHEMES = "/api/getDistributorSchemes"
 export const GET_DISTRIBUTOR_SCHEMES_DETAILS = "/api/getDistributorSchemesDetails"
 
+//CASH BATCH
+export const GET_CASH_BATCH_REPORTS = "/api/getCashBatches";
+export const EXPORT_CASH_BATCH_REPORT = 'api/exportDistCashBatchReport'
+
+//REPORT 
+export const POST_REPORT_COUPON = "/api/reportCoupon";
+export const GET_REPORTED_COUPON_HISTORY = "/api/getReportedCouponHistory";
+
 export const REGISTER_DISTRIBUTOR = "/apiv1/register"
 export const USER_LOGOUT = "/apiv1/logout";
-export const POST_REPORT_COUPON = "/apiv1/reportCoupon";
-export const GET_REPORTED_COUPON_HISTORY = "/apiv1/getReportedCouponHistory";
-export const GET_CASH_BATCH_REPORTS = "/apiv1/getCashBatches";
+
 export const GET_DEALERS_LIST = "/apiv1/getDealersList";
 export const APPROVE_REJECT_DEALER = "/apiv1/approveRejectDealer"
 

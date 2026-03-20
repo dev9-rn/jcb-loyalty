@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, Image } from 'react-native'
+import { View, Text, TouchableOpacity, FlatList, Image, ActivityIndicator } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
@@ -27,6 +27,8 @@ const ReportHistory = ({ }: Props) => {
     const { t } = useTranslation();
 
     const [reportedCouponHistoryData, setReportedCouponHistoryData] = useState<IReportedCouponsHistory | undefined>(undefined);
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const toast = useToast();
 
@@ -100,12 +102,15 @@ const ReportHistory = ({ }: Props) => {
         reportedCouponHistoryFormData.append('offset', "0");
 
         try {
+            setIsLoading(true);
             const response = await axiosInstance.post(GET_REPORTED_COUPON_HISTORY, reportedCouponHistoryFormData);
 
             setReportedCouponHistoryData(response.data);
+            setIsLoading(false);
 
         } catch (error) {
             setReportedCouponHistoryData(undefined);
+            setIsLoading(false);
             if (axios.isAxiosError(error)) {
                 toast.show(error.response?.data.message, {
                     data: error.response
@@ -122,7 +127,7 @@ const ReportHistory = ({ }: Props) => {
                     <View className='items-center'>
                         <TouchableOpacity className='flex-row items-center gap-2 p-2' onPress={() => setShowFromDate(true)}>
                             <CalendarIcon className='text-primary' height={20} width={20} />
-                            <Text>{t("reportHistory.from_date")}:</Text>
+                            <Text>{t("login.report_history_fromDate")}:</Text>
                             <Text className='text-lg font-semibold'>{selectedFromDate.toLocaleDateString()}</Text>
                         </TouchableOpacity>
 
@@ -140,7 +145,7 @@ const ReportHistory = ({ }: Props) => {
                     <View>
                         <TouchableOpacity className='flex-row items-center gap-2 p-2' onPress={() => setShowToDate(true)}>
                             <CalendarIcon className='text-primary' height={20} width={20} />
-                            <Text>{t("reportHistory.to_date")}</Text>
+                            <Text>{t("login.coupon_history_toDate")}</Text>
                             <Text className='text-lg font-semibold'>{selctedToDate.toLocaleDateString()}</Text>
                         </TouchableOpacity>
 
@@ -157,18 +162,24 @@ const ReportHistory = ({ }: Props) => {
                 </View>
             </View>
 
-            <FlatList
-                contentContainerClassName='p-4'
-                data={reportedCouponHistoryData?.reportedCouponHistory}
-                renderItem={renderItem}
-                ItemSeparatorComponent={() => <Separator className='my-4' />}
-                ListEmptyComponent={() => (
-                    <View className='flex-1 items-center justify-center'>
-                        <Text className='text-xl font-medium'>{t("reportHistory.noDataTitle")}</Text>
-                        <Text className='text-base text-muted-foreground'>{t("reportHistory.noDataSubtitle")}</Text>
-                    </View>
-                )}
-            />
+            {isLoading ? (
+                <View className='flex-1 items-center justify-center'>
+                    <ActivityIndicator size="large" color="#000" />
+                </View>
+            ) : (
+                <FlatList
+                    contentContainerClassName='p-4'
+                    data={reportedCouponHistoryData?.reportedCouponHistory}
+                    renderItem={renderItem}
+                    ItemSeparatorComponent={() => <Separator className='my-4' />}
+                    ListEmptyComponent={() => (
+                        <View className='flex-1 items-center justify-center'>
+                            <Text className='text-xl font-medium'>{t("reportHistory.noDataTitle")}</Text>
+                            <Text className='text-base text-muted-foreground'>{t("reportHistory.noDataSubtitle")}</Text>
+                        </View>
+                    )}
+                />
+            )}
 
             <ImageView
                 imageIndex={0}
