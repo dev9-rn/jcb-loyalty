@@ -32,8 +32,10 @@ export const EXPORT_CASH_BATCH_REPORT = 'api/exportDistCashBatchReport'
 export const POST_REPORT_COUPON = "/api/reportCoupon";
 export const GET_REPORTED_COUPON_HISTORY = "/api/getReportedCouponHistory";
 
-export const REGISTER_DISTRIBUTOR = "/apiv1/register"
-export const USER_LOGOUT = "/apiv1/logout";
+//SIGN UP
+export const REGISTER_DISTRIBUTOR = "/api/register"
+export const VALIDATE_BRAND = '/api/validateBrand'
+export const USER_LOGOUT = "/api/logout";
 
 export const GET_DEALERS_LIST = "/apiv1/getDealersList";
 export const APPROVE_REJECT_DEALER = "/apiv1/approveRejectDealer"

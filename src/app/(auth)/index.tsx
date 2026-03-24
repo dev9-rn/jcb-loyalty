@@ -15,11 +15,12 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import axios, { AxiosResponse } from "axios";
 import { router } from "expo-router";
-import { DISPLAY_NOTIFICATION_DASHBOARD, MECHANIC_LOGIN, RETAILER_LOGIN, USER_LOGIN } from "@/utils/routes";
+import { DISPLAY_NOTIFICATION_DASHBOARD, MECHANIC_LOGIN, REGISTER_DISTRIBUTOR, RETAILER_LOGIN, USER_LOGIN, VALIDATE_BRAND } from "@/utils/routes";
 import { useTranslation } from "react-i18next";
 import UserSelectionDropdown from "@/components/UserSelectionDropdown";
 import CustomModal from "@/components/CustomModel";
 import axiosInstance from "@/utils/axiosInstance";
+import { useToast } from "react-native-toast-notifications";
 
 type Props = {};
 
@@ -30,6 +31,10 @@ type FormData = {
 const SignInScreen = ({ }: Props) => {
     const { t } = useTranslation();
     const [modalVisible, setModalVisible] = useState(false);
+    const [brandCode, setBrandCode] = useState<string>('')
+    const [showError, setShowError] = useState<string>('')
+
+    const toast = useToast();
 
     const capitalize = (str: string) =>
         str.charAt(0).toUpperCase() + str.slice(1);
@@ -114,8 +119,48 @@ const SignInScreen = ({ }: Props) => {
         }
     };
 
-    const handleChangeBarcode = (e: string) => {
-        console.log(e, "TEXT BARCODE");
+    const handleValidateBarcode = async () => {
+        try {
+            const formData = new FormData();
+            formData.append("brandCode", brandCode);
+            setIsLoggingIn(true)
+
+            const response = await axiosInstance.post(VALIDATE_BRAND, formData)
+
+            if (response.data?.status !== 200) {
+                setShowError(response.data.message)
+                setIsLoggingIn(false)
+                toast.show(response.data.message, {
+                    data: {
+                        status: 400,
+                    },
+                });
+            }
+            toast.show(response?.data?.message, {
+                data: {
+                    status: 200
+                }
+            })
+            
+            setIsLoggingIn(false)
+            setModalVisible(false)
+            router.navigate({
+                pathname: '/(auth)/sign-up',
+                params: {
+                    brandId: response?.data?.brand_id
+                }
+            })
+
+        } catch (error) {
+            console.log(error);
+            setIsLoggingIn(false)
+            if (axios.isAxiosError(error)) {
+                setShowError(error.response?.data.message)
+                toast.show(error.response?.data.message, {
+                    data: error.response,
+                });
+            }
+        }
     };
 
     const fetchDisplayNotification = async () => {
@@ -177,14 +222,14 @@ const SignInScreen = ({ }: Props) => {
                         <Controller
                             control={control}
                             rules={{
-                                required: t("login.errors.phoneRequired"),
+                                required: t("login.phoneRequired"),
                                 maxLength: {
                                     value: 10,
-                                    message: t("login.errors.phoneInvalid"),
+                                    message: t("login.phoneInvalid"),
                                 },
                                 minLength: {
                                     value: 10,
-                                    message: t("login.errors.phoneInvalid"),
+                                    message: t("login.phoneInvalid"),
                                 },
                             }}
                             render={({ field: { onBlur, onChange, value } }) => (
@@ -272,16 +317,17 @@ const SignInScreen = ({ }: Props) => {
                                 {t("login.brandCode")} :{" "}
                             </Text>
                             <Input
-                                onChangeText={handleChangeBarcode}
+                                onChangeText={(text)=>setBrandCode(text)}
                                 maxLength={4}
                                 placeholder={t("login.brandCode")}
                             />
+                            {showError && <Text className="text-[14px] text-red-600">{showError}</Text>}
                             <Button
                                 className="my-4"
-                                // onPress={handleSubmit(handleUserLogin)}
+                                onPress={handleValidateBarcode}
                                 disabled={isLoggingIn}
                             >
-                                <Text>{t("login.profileScreenSubmit")}</Text>
+                               {isLoggingIn ? <ActivityIndicator size={'small'}/> : <Text>{t("login.profileScreenSubmit")}</Text>}
                             </Button>
                         </View>
                     </CustomModal>

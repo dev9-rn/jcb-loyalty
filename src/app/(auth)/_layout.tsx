@@ -30,7 +30,7 @@ const AuthLayout = ({ }: Props) => {
                     headerBackButtonDisplayMode: "minimal",
                     headerTitle: "Sign Up",
                     headerTitleAlign: 'center',
-                    headerTintColor: "#FFF",
+                    headerTintColor: "#000",
                 }}
             />
 

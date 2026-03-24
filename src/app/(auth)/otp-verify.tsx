@@ -32,7 +32,7 @@ type FormData = {
   userOtp: string;
 };
 
-const OtpVerificationScreen = ({}: Props) => {
+const OtpVerificationScreen = ({ }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [approvalDialogContent, setApprovalDialogContent] = useState<
     { status: number; message: string } | undefined
@@ -59,40 +59,60 @@ const OtpVerificationScreen = ({}: Props) => {
     },
   });
 
-  const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (
-    formData,
-  ) => {
-    const verifyOtpFormData = new FormData();
-    setIsLoading(true);
+  const handleUserVerification: SubmitHandler<FormData | FieldValues> = async (formData) => {
+    try {
+      setIsLoading(true);
 
-    verifyOtpFormData.append("mobileNo", userPhone as string);
-    verifyOtpFormData.append("otp", formData.userOtp);
-    verifyOtpFormData.append("deviceToken", expoPushToken as string);
-    verifyOtpFormData.append("deviceType", Platform.OS);
+      const verifyOtpFormData = new FormData();
+      verifyOtpFormData.append("mobileNo", userPhone as string);
+      verifyOtpFormData.append("otp", formData.userOtp);
+      verifyOtpFormData.append("deviceToken", expoPushToken as string);
+      verifyOtpFormData.append("deviceType", Platform.OS);
 
-    const verifyResponse: AxiosResponse = await verify(
-      VERIFY_OTP,
-      verifyOtpFormData,
-      userType as string,
-    );
-    setIsLoading(false);
-    // if (verifyResponse.data.is_approved != "0") {
-    //     setIsApprovalDialogVisible(true)
-    //     setApprovalDialogContent(verifyResponse.data);
-    // };
+      const verifyResponse = await verify(
+        VERIFY_OTP,
+        verifyOtpFormData,
+        userType as string
+      );
 
-    if (axios.isAxiosError(verifyResponse)) {
-      setError("userOtp", {
-        type: verifyResponse.response?.satus,
-        message: verifyResponse.response?.message,
-      });
-    }
+      setIsLoading(false);
 
-    if (verifyResponse.data.status != 200) {
-      setError("userOtp", {
-        type: verifyResponse.data.satus,
-        message: verifyResponse.data.message,
-      });
+      // ✅ check if response exists
+      if (!verifyResponse || !verifyResponse.data) {
+        setError("userOtp", {
+          type: "manual",
+          message: "Something went wrong. Please try again.",
+        });
+        return;
+      }
+
+      // ❌ status check
+      if (verifyResponse.data.status !== 200) {
+        setError("userOtp", {
+          type: "manual",
+          message: verifyResponse.data.message,
+        });
+        return;
+      }
+
+      // ✅ success case
+      console.log("OTP Verified Success", verifyResponse.data);
+
+    } catch (error: any) {
+      setIsLoading(false);
+
+      // ✅ axios error handling
+      if (axios.isAxiosError(error)) {
+        setError("userOtp", {
+          type: "manual",
+          message: error.response?.data?.message || "Verification failed",
+        });
+      } else {
+        setError("userOtp", {
+          type: "manual",
+          message: "Unexpected error occurred",
+        });
+      }
     }
   };
 
@@ -190,10 +210,10 @@ const OtpVerificationScreen = ({}: Props) => {
                   containerStyle: styles.container,
                   pinCodeContainerStyle: errors.userOtp
                     ? {
-                        ...styles.pinCodeContainer,
-                        borderColor: "#ef4444",
-                        borderWidth: 2,
-                      }
+                      ...styles.pinCodeContainer,
+                      borderColor: "#ef4444",
+                      borderWidth: 2,
+                    }
                     : styles.pinCodeContainer,
                 }}
               />

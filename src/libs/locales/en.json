@@ -282,7 +282,10 @@
             "selectBrand": "Please select a brand",
             "panRequired": "Please enter a PAN Number",
             "shopNameRequired": "Please enter a shop name",
-            "codeRequired": "Please enter a code"
+            "codeRequired": "Please enter a code",
+            "cityRequired": "Please select city",
+            "countryRequired" :"Please select country",
+            "stateRequired" : "Please select state"
         },
         "addressInformation": "Address Information",
         "addressInformationSubtitle": "Enter details as per your ID proof."
