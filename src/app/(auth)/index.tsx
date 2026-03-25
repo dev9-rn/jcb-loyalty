@@ -229,7 +229,7 @@ const SignInScreen = ({ }: Props) => {
                                 },
                                 minLength: {
                                     value: 10,
-                                    message: t("login.phoneInvalid"),
+                                    message: t("login.phoneInvalid"), 
                                 },
                             }}
                             render={({ field: { onBlur, onChange, value } }) => (
