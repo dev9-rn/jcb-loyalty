@@ -13,7 +13,7 @@ import {
   BarcodeScanningResult,
 } from "expo-camera";
 import BarcodeMask from "react-native-barcode-mask";
-import { useNavigation, usePathname } from "expo-router";
+import { useFocusEffect, useNavigation, usePathname } from "expo-router"; // ✅ added useFocusEffect
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useToast } from "react-native-toast-notifications";
@@ -45,39 +45,25 @@ import CustomModal from "@/components/CustomModel";
 import { getRelativeTime } from "@/libs/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
+import { IRedeemedCoupon } from "@/types/response";
+
 type Props = {};
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-// Define the mask size
 const MASK_WIDTH = SCREEN_WIDTH * 0.7;
 const MASK_HEIGHT = SCREEN_WIDTH * 0.7;
 
-// const RADIO_VALUES = [
-//   {
-//     value: "0",
-//     label: "CASH",
-//   },
-//   {
-//     value: "1",
-//     label: "FOC",
-//   },
-// ];
-
-const CameraScreen = ({}: Props) => {
+const CameraScreen = ({ }: Props) => {
   const [flashMode, setFlashMode] = useState<boolean>(false);
   const [scanned, setScanned] = useState(false);
-  const [active, setActive] = useState<boolean>(true);
+  const [active, setActive] = useState<boolean>(false); // ✅ start as false, useFocusEffect will activate
 
-  const [couponValidationData, setCouponValidationData] = useState<
-    IValidCoupon | undefined
-  >(undefined);
+  const [couponValidationData, setCouponValidationData] = useState(undefined);
   const [isCouponInvalid, setIsCouponInvalid] = useState<boolean>(false);
   const [isCouponRedeemed, setIsCouponRedeem] = useState<boolean>(false);
-  const [coupondRedeemedData, setCouponRedeemedData] = useState<
-    IRedeemedCoupon | undefined
-  >(undefined);
+  const [coupondRedeemedData, setCouponRedeemedData] = useState<IRedeemedCoupon | undefined> (undefined);
   const [isCouponTypeMultiple, setIsCouponTypeMultiple] =
     useState<boolean>(false);
   const [qrData, setQrData] = useState<string>("");
@@ -87,23 +73,36 @@ const CameraScreen = ({}: Props) => {
   const { t } = useTranslation();
 
   const pathname = usePathname();
-
-const routeName = pathname.split("/").pop();
-
-console.log(routeName);
+  const routeName = pathname.split("/").pop();
 
   const toast = useToast();
 
   const qrSuccessAudio = useAudioPlayer(
-    require("@/assets/sounds/qr-scan-success_1.wav"),
+    require("@/assets/sounds/qr-scan-success_1.wav")
   );
   const qrErrorAudio = useAudioPlayer(
-    require("@/assets/sounds/qr-scan-error_2.mp3"),
+    require("@/assets/sounds/qr-scan-error_2.mp3")
   );
 
   const [permission, requestPermission] = useCameraPermissions();
-
   const navigation = useNavigation();
+
+  // ✅ FIX: Activate camera only when screen is focused, deactivate on blur
+  useFocusEffect(
+    React.useCallback(() => {
+      // Screen is focused — turn camera on
+      setActive(true);
+      setScanned(false);
+
+      return () => {
+        // Screen is blurred/unmounted — turn camera OFF immediately
+        setActive(false);
+        setScanned(false);
+        setShowModel(false);
+      };
+    }, [])
+  );
+
   useEffect(() => {
     navigation.setOptions({
       title: t("Scan"),
@@ -114,9 +113,9 @@ console.log(routeName);
       headerTintColor: "white",
       headerRight: () => (
         <TouchableOpacity
-          className="p-4"
+          className="p-2 rounded-lg active:bg-white/20"
           onPress={() => {
-            setFlashMode(!flashMode);
+            setFlashMode((prev) => !prev); // ✅ use functional update to avoid stale closure
           }}
         >
           {flashMode ? (
@@ -127,16 +126,14 @@ console.log(routeName);
         </TouchableOpacity>
       ),
     });
-     return () => {
-    setActive(false);
-  };
-  }, [flashMode, routeName]);
+  }, [flashMode, routeName, navigation, t]);
+
+  // ✅ REMOVED the old useEffect that set active(false) on unmount only —
+  //    useFocusEffect above handles both focus AND blur/unmount correctly.
 
   useEffect(() => {
-  requestPermission();
-}, []);
-
-console.log(navigation, "navigation ---");
+    requestPermission();
+  }, []);
 
   const handleBarCodeScanned = ({ bounds, data }: BarcodeScanningResult) => {
     if (scanned || isCouponRedeemed || isCouponInvalid) return;
@@ -144,10 +141,9 @@ console.log(navigation, "navigation ---");
     setScanned(true);
     setQrData(data);
     fetchBarCodeDataValidation(data);
-    setTimeout(() => setScanned(false), 2000); // Enable scanning after 2 seconds
+    setTimeout(() => setScanned(false), 2000);
   };
 
-  // Check if the coupon is valid via API
   const fetchBarCodeDataValidation = async (data: string) => {
     const barCodeFormData = new FormData();
 
@@ -163,13 +159,9 @@ console.log(navigation, "navigation ---");
           data: response,
         });
       }
-      // console.log(
-      //   response?.data?.redeemMethods?.[0]?.details,
-      //   "VALID COUPON CHECK",
-      // );
+
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setCouponValidationData(response?.data);
-      // showTitle(response?.data)
       setShowModel(true);
       setActive(false);
     } catch (error) {
@@ -181,18 +173,14 @@ console.log(navigation, "navigation ---");
         setIsCouponTypeMultiple(false);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
-      // setTimeout(() => setActive(true), 2000);
       setActive(false);
     }
   };
 
-  // Check if the coupon can be redeemed and offer type
   const fetchCouponRedeemResults = async (
     data: string,
-    redeemedType?: string,
+    redeemedType?: string
   ) => {
-    // if (couponValidationData?.status != 200) return;
-
     const redeemFormData = new FormData();
     redeemFormData.append("qrText", data);
     redeemFormData.append("distributorId", String(userDetails?.id));
@@ -230,12 +218,10 @@ console.log(navigation, "navigation ---");
   };
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View className="flex-1 bg-white items-center justify-center gap-4">
         <Text className="font-medium">
@@ -250,11 +236,11 @@ console.log(navigation, "navigation ---");
 
   return (
     <View className="flex-1 relative">
+      {/* ✅ CameraView only mounts when active — ensures hardware camera releases on nav away */}
       {active && (
         <CameraView
           style={styles.camera}
           enableTorch={flashMode}
-          flash="on"
           onBarcodeScanned={handleBarCodeScanned}
         />
       )}
@@ -284,52 +270,30 @@ console.log(navigation, "navigation ---");
         />
       )}
 
-      {couponValidationData?.status != 200 && (
-        <CouponErrorDialog
-          isCouponInvalid={isCouponInvalid}
-          validationData={couponValidationData}
-          setIsCouponInvalid={setIsCouponInvalid}
-          setActive={setActive}
-        />
-      )}
-      <BarcodeMask
-        width={MASK_WIDTH}
-        height={MASK_HEIGHT}
-        showAnimatedLine={false}
-        edgeRadius={8}
-      />
-      {couponValidationData?.status != 200 && (
-        <CouponErrorDialog
-          isCouponInvalid={isCouponInvalid}
-          validationData={couponValidationData}
-          setIsCouponInvalid={setIsCouponInvalid}
-          setActive={setActive}
-        />
-      )}
-
       <CustomModal
         onClose={() => {
-          (setShowModel(false), setActive(true));
+          setShowModel(false);
+          setActive(true);
         }}
         visible={showModel}
         showIcon={couponValidationData?.show_links == 1}
-        title={`${couponValidationData?.redeemMethods?.[0]?.redeem_type === "1" && couponValidationData?.show_links == 1 ? "Alert" : "Coupon Details"}`}
+        title={`${couponValidationData?.redeemMethods?.[0]?.redeem_type === "1" &&
+            couponValidationData?.show_links == 1
+            ? "Alert"
+            : "Coupon Details"
+          }`}
       >
         {couponValidationData?.show_links == 1 ? (
           <View className="bg-white rounded-xl p-5">
-            {/* Alert Message */}
             <Text className="text-[16px] text-gray-800 text-center leading-6 mb-5">
               {couponValidationData?.alert}
             </Text>
 
-            {/* Divider */}
             <View className="border-b border-gray-300 mb-5" />
 
-            {/* Play Store Button */}
             {couponValidationData?.show_links === 1 &&
               couponValidationData.playstoreUrl !== "" && (
                 <>
-                  {/* Play Store Button */}
                   <TouchableOpacity
                     className="w-full flex-row items-center justify-center py-3 bg-[#E8F0FE] rounded-lg mb-3 gap-2"
                     onPress={() =>
@@ -342,8 +306,12 @@ console.log(navigation, "navigation ---");
                     </Text>
                   </TouchableOpacity>
 
-                  {/* App Store Button */}
                   <TouchableOpacity
+                    disabled={couponValidationData.appstoreUrl == ""}
+                    style={{
+                      opacity:
+                        couponValidationData.appstoreUrl === "" ? 0.5 : 1,
+                    }}
                     className="w-full flex-row items-center justify-center py-3 bg-[#E8F0FE] rounded-lg gap-2"
                     onPress={() =>
                       Linking.openURL(couponValidationData.appstoreUrl)
@@ -363,7 +331,6 @@ console.log(navigation, "navigation ---");
           </View>
         ) : couponValidationData?.redeemMethods?.[0]?.redeem_type == "1" ? (
           <View className="mt-4 px-3">
-            {/* Reusable Row */}
             {[
               {
                 label: t("login.tit"),
@@ -394,32 +361,24 @@ console.log(navigation, "navigation ---");
               },
             ].map((item, index) => (
               <View key={index} className="flex-row mb-3">
-                {/* Star */}
                 <Text className="text-gray-500 mr-1">*</Text>
-
-                {/* Label */}
                 <Text className="text-gray-500 text-[14px] w-[40%]">
                   {item.label} :
                 </Text>
-
-                {/* Value */}
                 <Text
                   className="text-black text-[14px] flex-1 flex-wrap"
-                  numberOfLines={2} // remove if unlimited lines needed
+                  numberOfLines={2}
                 >
                   {item.value || "-"}
                 </Text>
               </View>
             ))}
 
-            {/* Validity */}
             <View className="flex-row mb-3">
               <Text className="text-gray-500 mr-1">*</Text>
-
               <Text className="text-gray-500 text-[14px] w-[40%]">
                 {t("login.validity")} :
               </Text>
-
               <Text className="text-black text-[14px] flex-1 flex-wrap">
                 {t("login.offer")}{" "}
                 <Text className="text-green-600">
@@ -432,39 +391,36 @@ console.log(navigation, "navigation ---");
               </Text>
             </View>
 
-            {/* Divider */}
             <View className="border-b border-gray-400 mt-5" />
             <View className="rounded-md p-5 gap-4">
-            <View className="flex-row gap-3">
-              {/* Redeem Button */}
-              <Button
-                onPress={() => {
-                  setShowModel(false);
-                  fetchCouponRedeemResults(
-                    qrData,
-                    couponValidationData?.redeemMethods?.[0]?.redeem_type,
-                  );
-                }}
-              >
-                <Text className="text-white font-bold text-[16px]">
-                  {t("login.REDEEM")}
-                </Text>
-              </Button>
+              <View className="flex-row gap-3">
+                <Button
+                  onPress={() => {
+                    setShowModel(false);
+                    fetchCouponRedeemResults(
+                      qrData,
+                      couponValidationData?.redeemMethods?.[0]?.redeem_type
+                    );
+                  }}
+                >
+                  <Text className="text-white font-bold text-[16px]">
+                    {t("login.REDEEM")}
+                  </Text>
+                </Button>
 
-              {/* Cancel Button */}
-              <Button
-                onPress={() => {
-                  setShowModel(false);
-                  setActive(true);
-                }}
-                className="flex-1 bg-gray-300 py-3 rounded-lg items-center justify-center"
-              >
-                <Text className="font-bold text-[16px] text-grey-600">
-                  {t("login.CANCEL")}
-                </Text>
-              </Button>
+                <Button
+                  onPress={() => {
+                    setShowModel(false);
+                    setActive(true);
+                  }}
+                  className="flex-1 bg-gray-300 py-3 rounded-lg items-center justify-center"
+                >
+                  <Text className="font-bold text-[16px] text-grey-600">
+                    {t("login.CANCEL")}
+                  </Text>
+                </Button>
+              </View>
             </View>
-          </View>
           </View>
         ) : (
           <View className="rounded-md p-5 gap-4">
@@ -473,13 +429,12 @@ console.log(navigation, "navigation ---");
             </Text>
 
             <View className="flex-row gap-3">
-              {/* Redeem Button */}
               <Button
                 onPress={() => {
                   setShowModel(false);
                   fetchCouponRedeemResults(
                     qrData,
-                    couponValidationData?.redeemMethods?.[0]?.redeem_type,
+                    couponValidationData?.redeemMethods?.[0]?.redeem_type
                   );
                 }}
               >
@@ -488,7 +443,6 @@ console.log(navigation, "navigation ---");
                 </Text>
               </Button>
 
-              {/* Cancel Button */}
               <Button
                 onPress={() => {
                   setShowModel(false);

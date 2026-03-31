@@ -87,6 +87,8 @@ const AuthProvider = ({ children }: Props) => {
 
             return response.data;
         } catch (error) {
+            console.log(error.response.data, "error");
+            
             return error;
         }
     };

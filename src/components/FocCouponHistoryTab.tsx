@@ -73,7 +73,7 @@ const FocCouponHistoryTab = () => {
     const [selectedToDate, setSelectedToDate] = useState(new Date());
     const [showFromDate, setShowFromDate] = useState(false);
     const [showToDate, setShowToDate] = useState(false);
-
+    const today = new Date()
     // ==================== SCHEMES LOADING ====================
     const getDistributorSchemes = async () => {
         const formData = new FormData();
@@ -169,40 +169,77 @@ const FocCouponHistoryTab = () => {
     }, [selectedSchemeId, selectedFromDate, selectedToDate]);
 
     // ==================== ORIGINAL DATE PICKER HANDLERS + TO DATE VALIDATION ====================
-    const onFromDateChange = (event: DateTimePickerEvent, date?: Date) => {
+    // const onFromDateChange = (event: DateTimePickerEvent, date?: Date) => {
+    //     setShowFromDate(false);
+
+    //     if (event.type === "set" && date) {
+    //         if (date.getTime() !== selectedFromDate.getTime()) {
+    //             setSelectedFromDate(date);
+
+    //             // Auto-adjust To Date if it becomes earlier than new From Date
+    //             if (date.getTime() > selectedToDate.getTime()) {
+    //                 setSelectedToDate(date);
+    //             }
+    //         }
+    //     }
+    // };
+
+    // const onToDateChange = (event: DateTimePickerEvent, date?: Date) => {
+    //     setShowToDate(false);
+
+    //     if (event.type === "set" && date) {
+    //         if (date.getTime() !== selectedToDate.getTime()) {
+    //             // VALIDATION: To Date cannot be before From Date
+    //             if (date.getTime() < selectedFromDate.getTime()) {
+    //                 toast.show("To Date cannot be earlier than From Date",
+    //                     {
+    //                         data: {
+    //                             status: 400
+    //                         }
+    //                     });
+    //                 setSelectedToDate(selectedFromDate);   // Force To Date = From Date
+    //             } else {
+    //                 setSelectedToDate(date);
+    //             }
+    //         }
+    //     }
+    // };
+
+    const onFromDateChange = (event?: DateTimePickerEvent, date?: Date) => {
         setShowFromDate(false);
 
-        if (event.type === "set" && date) {
-            if (date.getTime() !== selectedFromDate.getTime()) {
-                setSelectedFromDate(date);
+        if (!date) return;
 
-                // Auto-adjust To Date if it becomes earlier than new From Date
-                if (date.getTime() > selectedToDate.getTime()) {
-                    setSelectedToDate(date);
-                }
-            }
+        if (date > selectedToDate) {
+            toast.show("From date cannot be greater than To date", {
+                placement: "top",
+            });
+            return;
         }
+
+        setSelectedFromDate(date);
     };
 
-    const onToDateChange = (event: DateTimePickerEvent, date?: Date) => {
+    const onToDateChange = (event?: DateTimePickerEvent, date?: Date) => {
         setShowToDate(false);
 
-        if (event.type === "set" && date) {
-            if (date.getTime() !== selectedToDate.getTime()) {
-                // VALIDATION: To Date cannot be before From Date
-                if (date.getTime() < selectedFromDate.getTime()) {
-                    toast.show("To Date cannot be earlier than From Date",
-                        {
-                            data: {
-                                status: 400
-                            }
-                        });
-                    setSelectedToDate(selectedFromDate);   // Force To Date = From Date
-                } else {
-                    setSelectedToDate(date);
-                }
-            }
+        if (!date) return;
+
+        if (date < selectedFromDate) {
+            toast.show("To date cannot be less than From date", {
+                placement: "top",
+            });
+            return;
         }
+
+        if (date > today) {
+            toast.show("To date cannot be greater than today", {
+                placement: "top",
+            });
+            return;
+        }
+
+        setSelectedToDate(date);
     };
 
     const handleSchemeSelect = (scheme: Scheme) => {
@@ -259,11 +296,19 @@ const FocCouponHistoryTab = () => {
 
                     {showFromDate && (
                         <DateTimePicker
+                            testID="fromDatePicker"
                             value={selectedFromDate}
                             mode="date"
+                            is24Hour={true}
+                            display="default"
+                            maximumDate={
+                                selectedToDate > today ? today : selectedToDate
+                            } // ✅ min(today, toDate)
                             onChange={onFromDateChange}
                         />
                     )}
+
+
                 </View>
 
                 <View className="items-center">
@@ -280,8 +325,13 @@ const FocCouponHistoryTab = () => {
 
                     {showToDate && (
                         <DateTimePicker
+                            testID="toDatePicker"
                             value={selectedToDate}
                             mode="date"
+                            is24Hour={true}
+                            display="default"
+                            minimumDate={selectedFromDate} // ✅ cannot go below From Date
+                            maximumDate={today} // ✅ cannot go beyond today
                             onChange={onToDateChange}
                         />
                     )}

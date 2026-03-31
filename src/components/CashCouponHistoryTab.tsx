@@ -11,12 +11,14 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { formatDateForAPI } from '@/libs/utils';
 import { useFocusEffect } from 'expo-router';
+import { useToast } from 'react-native-toast-notifications';
 
 type Props = {};
 
-const CashCouponHistoryTab = ({}: Props) => {
+const CashCouponHistoryTab = ({ }: Props) => {
     const { userDetails } = useUser();
     const { t } = useTranslation();
+    const toast = useToast();
 
     const [couponHistoryData, setCouponHistoryData] = useState<IRedeemedCouponDetails[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -28,7 +30,7 @@ const CashCouponHistoryTab = ({}: Props) => {
     const [selectedToDate, setSelectedToDate] = useState(new Date());
     const [showFromDate, setShowFromDate] = useState<boolean>(false);
     const [showToDate, setShowToDate] = useState<boolean>(false);
-
+    const today = new Date();
     // Reset and fetch on screen focus (initial load only)
     useFocusEffect(
         useCallback(() => {
@@ -82,18 +84,40 @@ const CashCouponHistoryTab = ({}: Props) => {
 
     const onFromDateChange = (event?: DateTimePickerEvent, date?: Date) => {
         setShowFromDate(false);
-        if (date && date.toDateString() !== selectedFromDate.toDateString()) {
-            setSelectedFromDate(date);
+
+        if (!date) return;
+
+        if (date > selectedToDate) {
+            toast.show("From date cannot be greater than To date", {
+                placement: "top",
+            });
+            return;
         }
+
+        setSelectedFromDate(date);
     };
 
     const onToDateChange = (event?: DateTimePickerEvent, date?: Date) => {
         setShowToDate(false);
-        if (date && date.toDateString() !== selectedToDate.toDateString()) {
-            setSelectedToDate(date);
-        }
-    };
 
+        if (!date) return;
+
+        if (date < selectedFromDate) {
+            toast.show("To date cannot be less than From date", {
+                placement: "top",
+            });
+            return;
+        }
+
+        if (date > today) {
+            toast.show("To date cannot be greater than today", {
+                placement: "top",
+            });
+            return;
+        }
+
+        setSelectedToDate(date);
+    };
     const fetchCouponHistories = async ({ pageOffset = 0, force = false }: { pageOffset?: number; force?: boolean } = {}) => {
         if (!force && (!hasMore || loading)) return;
 
@@ -157,6 +181,10 @@ const CashCouponHistoryTab = ({}: Props) => {
                             value={selectedFromDate}
                             mode="date"
                             is24Hour={true}
+                            display="default"
+                            maximumDate={
+                                selectedToDate > today ? today : selectedToDate
+                            } // ✅ min(today, toDate)
                             onChange={onFromDateChange}
                         />
                     )}
@@ -178,8 +206,10 @@ const CashCouponHistoryTab = ({}: Props) => {
                             value={selectedToDate}
                             mode="date"
                             is24Hour={true}
+                            display="default"
+                            minimumDate={selectedFromDate} // ✅ cannot go below From Date
+                            maximumDate={today} // ✅ cannot go beyond today
                             onChange={onToDateChange}
-                            accentColor="#144799"
                         />
                     )}
                 </View>

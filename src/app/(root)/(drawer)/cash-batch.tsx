@@ -5,6 +5,7 @@ import {
   FlatList,
   Pressable,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 
@@ -39,7 +40,7 @@ const CashBatchScreen = ({}: Props) => {
   const toast = useToast();
 
   const [cashBatchReportData, setCashBatchReportData] = useState();
-  // Mananging user's date selection
+  // Managing user's date selection
   const [selectedFromDate, setSelectedFromDate] = useState(new Date());
   const [selctedToDate, setSelectedToDate] = useState(new Date());
   const [showFromDate, setShowFromDate] = useState<boolean>(false);
@@ -47,13 +48,15 @@ const CashBatchScreen = ({}: Props) => {
   const [showInfoModel, setShowInfoModel] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<ICashBatchItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isLoadingBatchReport, setIsLoadingBatchReport] =
+    useState<boolean>(false);
+  const today = new Date();
 
   const formatDate = (date: string) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
-
     return `${day}-${month}-${year}`;
   };
 
@@ -119,23 +122,49 @@ const CashBatchScreen = ({}: Props) => {
   };
 
   const onFromDateChange = (event?: DateTimePickerEvent, date?: Date) => {
-    const currentDate = date;
     setShowFromDate(false);
-    setSelectedFromDate(currentDate as Date);
+
+    if (!date) return;
+
+    if (date > selctedToDate) {
+      toast.show("From date cannot be greater than To date", {
+        placement: "top",
+      });
+      return;
+    }
+
+    setSelectedFromDate(date);
   };
 
   const onToDateChange = (event?: DateTimePickerEvent, date?: Date) => {
     setShowToDate(false);
-    setSelectedToDate(date as Date);
+
+    if (!date) return;
+
+    if (date < selectedFromDate) {
+      toast.show("To date cannot be less than From date", {
+        placement: "top",
+      });
+      return;
+    }
+
+    if (date > today) {
+      toast.show("To date cannot be greater than today", {
+        placement: "top",
+      });
+      return;
+    }
+
+    setSelectedToDate(date);
   };
 
   const fetchCachBatchReports = async () => {
     const cashBatchReportsFormData = new FormData();
-
+    setIsLoadingBatchReport(true);
     cashBatchReportsFormData.append("distributorId", String(userDetails?.id));
     cashBatchReportsFormData.append(
       "startDate",
-      formatDateForAPI(selectedFromDate),
+      formatDateForAPI(selectedFromDate)
     );
     cashBatchReportsFormData.append("endDate", formatDateForAPI(selctedToDate));
     cashBatchReportsFormData.append("userType", "0");
@@ -143,19 +172,23 @@ const CashBatchScreen = ({}: Props) => {
     try {
       const response = await axiosInstance.post(
         GET_CASH_BATCH_REPORTS,
-        cashBatchReportsFormData,
+        cashBatchReportsFormData
       );
 
       if (response.data.status !== 200) {
         toast.show(response.data.message, {
           data: response,
         });
+        setIsLoadingBatchReport(false);
+        return;
       }
 
       setCashBatchReportData(response.data.batchesData);
+      setIsLoadingBatchReport(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setCashBatchReportData(undefined);
+        setIsLoadingBatchReport(false);
         toast.show(error.response?.data.message, {
           data: error.response,
         });
@@ -163,27 +196,69 @@ const CashBatchScreen = ({}: Props) => {
     }
   };
 
-  // 🔹 Download File
+  // ─── FIX: Encode URL spaces, resolve correct path per platform ───────────
   const getLocalPath = (url: string) => {
-    const filename = url.split("/").pop();
-    return `${RNFS.DownloadDirectoryPath}/${filename}`;
+    // Extract filename from URL (handles spaces and special chars)
+    const filename = url.split("/").pop() ?? "report.xls";
+    const decodedFilename = decodeURIComponent(filename);
+
+    // Android: save to Downloads folder (visible in file manager)
+    // iOS: save to Documents directory (accessible via Files app)
+    const dir =
+      Platform.OS === "android"
+        ? RNFS.DownloadDirectoryPath
+        : RNFS.DocumentDirectoryPath;
+
+    return `${dir}/${decodedFilename}`;
   };
 
   const downloadFile = async (fileUrl: string) => {
     try {
       setLoading(true);
+
+      // ✅ FIX: encode spaces and special characters in the URL
+      const encodedUrl = fileUrl
+        .split("/")
+        .map((segment, index) =>
+          // Don't encode the protocol + domain parts (first 3 segments of https://domain/...)
+          index < 3 ? segment : encodeURIComponent(segment)
+        )
+        .join("/");
+
       const localFile = getLocalPath(fileUrl);
 
-      await RNFS.downloadFile({
-        fromUrl: fileUrl,
+      const result = await RNFS.downloadFile({
+        fromUrl: encodedUrl,
         toFile: localFile,
+        // ✅ Background download support
+        background: true,
+        discretionary: true,
       }).promise;
 
       setLoading(false);
-      FileViewer.open(localFile);
+
+      if (result.statusCode === 200) {
+        try {
+          // ✅ FIX: provide mimeType hint for .xls files so iOS opens correctly
+          await FileViewer.open(localFile, {
+            showOpenWithDialog: true,
+            mimeType:
+              "application/vnd.ms-excel",
+          });
+        } catch (viewerError) {
+          console.log("FileViewer error:", viewerError);
+          toast.show(
+            "File downloaded successfully. Open it from your Files app.",
+            { placement: "top" }
+          );
+        }
+      } else {
+        toast.show("Download failed. Please try again.", { placement: "top" });
+      }
     } catch (error) {
       setLoading(false);
       console.log("Download Error:", error);
+      toast.show("Download failed. Please try again.", { placement: "top" });
     }
   };
 
@@ -207,6 +282,7 @@ const CashBatchScreen = ({}: Props) => {
             status: 400,
           },
         });
+        return;
       }
 
       if (res.data?.reportLink) {
@@ -227,7 +303,7 @@ const CashBatchScreen = ({}: Props) => {
 
   return (
     <View className="bg-white flex-1">
-      <View className="shadow-sm android:shaodw-md bg-white">
+      <View className="shadow-sm android:shadow-md bg-white">
         <View className="flex-row items-center justify-around py-4 border-b border-muted">
           <View className="items-center">
             <TouchableOpacity
@@ -247,7 +323,9 @@ const CashBatchScreen = ({}: Props) => {
                 value={selectedFromDate}
                 mode="date"
                 is24Hour={true}
-                onValueChange={onFromDateChange}
+                display="default"
+                maximumDate={selctedToDate > today ? today : selctedToDate} // ✅ min(today, toDate)
+                onChange={onFromDateChange}
               />
             )}
           </View>
@@ -270,13 +348,16 @@ const CashBatchScreen = ({}: Props) => {
                 value={selctedToDate}
                 mode="date"
                 is24Hour={true}
-                onValueChange={onToDateChange}
-                accentColor="#144799"
+                display="default"
+                minimumDate={selectedFromDate} // ✅ cannot go below From Date
+                maximumDate={today} // ✅ cannot go beyond today
+                onChange={onToDateChange}
               />
             )}
           </View>
         </View>
       </View>
+
       {cashBatchReportData?.length > 0 && (
         <View className="justify-end items-center">
           {loading ? (
@@ -299,11 +380,18 @@ const CashBatchScreen = ({}: Props) => {
         ItemSeparatorComponent={() => <Separator className="" />}
         ListEmptyComponent={() => (
           <View className="flex-1 items-center justify-center">
-            <Text className="text-xl font-medium">
-              No Data found. Try another date range.
-            </Text>
+            {isLoadingBatchReport ? (
+              <ActivityIndicator size={"small"} />
+            ) : (
+              <Text className="text-xl font-medium">
+                No Data found. Try another date range.
+              </Text>
+            )}
           </View>
         )}
+        ListFooterComponent={() =>
+          isLoadingBatchReport && <ActivityIndicator size={"small"} />
+        }
       />
 
       <CustomModal
