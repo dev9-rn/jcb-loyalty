@@ -1,11 +1,13 @@
 import {
   Dimensions,
   Linking,
+  Platform,
+  Pressable,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import {
   CameraView,
@@ -13,7 +15,7 @@ import {
   BarcodeScanningResult,
 } from "expo-camera";
 import BarcodeMask from "react-native-barcode-mask";
-import { useFocusEffect, useNavigation, usePathname } from "expo-router"; // ✅ added useFocusEffect
+import { useFocusEffect, useNavigation, usePathname } from "expo-router";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useToast } from "react-native-toast-notifications";
@@ -55,15 +57,17 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MASK_WIDTH = SCREEN_WIDTH * 0.7;
 const MASK_HEIGHT = SCREEN_WIDTH * 0.7;
 
-const CameraScreen = ({ }: Props) => {
+const CameraScreen = ({}: Props) => {
   const [flashMode, setFlashMode] = useState<boolean>(false);
   const [scanned, setScanned] = useState(false);
-  const [active, setActive] = useState<boolean>(false); // ✅ start as false, useFocusEffect will activate
+  const [active, setActive] = useState<boolean>(false);
 
   const [couponValidationData, setCouponValidationData] = useState(undefined);
   const [isCouponInvalid, setIsCouponInvalid] = useState<boolean>(false);
   const [isCouponRedeemed, setIsCouponRedeem] = useState<boolean>(false);
-  const [coupondRedeemedData, setCouponRedeemedData] = useState<IRedeemedCoupon | undefined> (undefined);
+  const [coupondRedeemedData, setCouponRedeemedData] = useState<
+    IRedeemedCoupon | undefined
+  >(undefined);
   const [isCouponTypeMultiple, setIsCouponTypeMultiple] =
     useState<boolean>(false);
   const [qrData, setQrData] = useState<string>("");
@@ -76,6 +80,7 @@ const CameraScreen = ({ }: Props) => {
   const routeName = pathname.split("/").pop();
 
   const toast = useToast();
+  const insets = useSafeAreaInsets();
 
   const qrSuccessAudio = useAudioPlayer(
     require("@/assets/sounds/qr-scan-success_1.wav")
@@ -87,49 +92,30 @@ const CameraScreen = ({ }: Props) => {
   const [permission, requestPermission] = useCameraPermissions();
   const navigation = useNavigation();
 
-  // ✅ FIX: Activate camera only when screen is focused, deactivate on blur
+  // ✅ useLayoutEffect — fires before paint, no Android lag
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: t("Scan"),
+      headerTransparent: true,
+      headerTitleStyle: { color: "#FFF" },
+      headerTintColor: "white",
+      headerRight: () => null,
+    });
+  }, [navigation, t]);
+
+  // ✅ Activate camera only when screen is focused, deactivate on blur
   useFocusEffect(
     React.useCallback(() => {
-      // Screen is focused — turn camera on
       setActive(true);
       setScanned(false);
 
       return () => {
-        // Screen is blurred/unmounted — turn camera OFF immediately
         setActive(false);
         setScanned(false);
         setShowModel(false);
       };
     }, [])
   );
-
-  useEffect(() => {
-    navigation.setOptions({
-      title: t("Scan"),
-      headerTransparent: true,
-      headerTitleStyle: {
-        color: "#FFF",
-      },
-      headerTintColor: "white",
-      headerRight: () => (
-        <TouchableOpacity
-          className="p-2 rounded-lg active:bg-white/20"
-          onPress={() => {
-            setFlashMode((prev) => !prev); // ✅ use functional update to avoid stale closure
-          }}
-        >
-          {flashMode ? (
-            <ZapIcon color={"#FFF"} />
-          ) : (
-            <ZapOffIcon color={"#FFF"} />
-          )}
-        </TouchableOpacity>
-      ),
-    });
-  }, [flashMode, routeName, navigation, t]);
-
-  // ✅ REMOVED the old useEffect that set active(false) on unmount only —
-  //    useFocusEffect above handles both focus AND blur/unmount correctly.
 
   useEffect(() => {
     requestPermission();
@@ -250,7 +236,42 @@ const CameraScreen = ({ }: Props) => {
         height={MASK_HEIGHT}
         showAnimatedLine={false}
         edgeRadius={8}
+        edgeColor="rgba(255,255,255,0.3)"
+        maskOpacity={0.5}
       />
+
+      {/* ✅ Flash button — absolute positioned, top-right, floats OVER mask */}
+      <View
+        style={{
+          position: "absolute",
+          top: Platform.OS == 'ios'? insets.top: insets.top + 12,
+          right: 16,
+          zIndex: 1000,
+        }}
+        pointerEvents="box-none"
+      >
+        <TouchableOpacity
+          onPress={() => setFlashMode((prev) => !prev)}
+          activeOpacity={0.75}
+          style={[
+            styles.flashButton,
+            // {
+            //   backgroundColor: flashMode
+            //     ? "rgba(255, 213, 0, 0.25)"
+            //     : "rgba(0, 0, 0, 0.4)",
+            //   borderColor: flashMode
+            //     ? "rgba(255, 213, 0, 0.6)"
+            //     : "rgba(255,255,255,0.25)",
+            // },
+          ]}
+        >
+          {flashMode ? (
+            <ZapIcon color="#FFD500" size={22} />
+          ) : (
+            <ZapOffIcon color="#FFF" size={22} />
+          )}
+        </TouchableOpacity>
+      </View>
 
       {couponValidationData?.status != 200 && (
         <CouponErrorDialog
@@ -277,11 +298,12 @@ const CameraScreen = ({ }: Props) => {
         }}
         visible={showModel}
         showIcon={couponValidationData?.show_links == 1}
-        title={`${couponValidationData?.redeemMethods?.[0]?.redeem_type === "1" &&
-            couponValidationData?.show_links == 1
+        title={`${
+          couponValidationData?.redeemMethods?.[0]?.redeem_type === "1" &&
+          couponValidationData?.show_links == 1
             ? "Alert"
             : "Coupon Details"
-          }`}
+        }`}
       >
         {couponValidationData?.show_links == 1 ? (
           <View className="bg-white rounded-xl p-5">
@@ -466,6 +488,14 @@ export default CameraScreen;
 
 const styles = StyleSheet.create({
   camera: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
+  },
+  flashButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
   },
 });

@@ -223,7 +223,7 @@ const HomeScreen = ({}: Props) => {
         <Button
           className="flex-row gap-4"
           size="lg"
-          onPress={() => router.navigate("/(root)/(stack)/camera")}
+          onPress={() => router.navigate("/(root)/(drawer)/camera")}
         >
           <QrCodeIcon className="text-white" />
           <Text>{t("login.scan_button")}</Text>

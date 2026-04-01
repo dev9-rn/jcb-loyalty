@@ -6,8 +6,11 @@ import {
   Pressable,
   ActivityIndicator,
   Platform,
+  PermissionsAndroid,
+  Alert,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
 
 import useUser from "@/hooks/useUser";
 import DateTimePicker, {
@@ -40,7 +43,6 @@ const CashBatchScreen = ({}: Props) => {
   const toast = useToast();
 
   const [cashBatchReportData, setCashBatchReportData] = useState();
-  // Managing user's date selection
   const [selectedFromDate, setSelectedFromDate] = useState(new Date());
   const [selctedToDate, setSelectedToDate] = useState(new Date());
   const [showFromDate, setShowFromDate] = useState<boolean>(false);
@@ -51,6 +53,14 @@ const CashBatchScreen = ({}: Props) => {
   const [isLoadingBatchReport, setIsLoadingBatchReport] =
     useState<boolean>(false);
   const today = new Date();
+
+  // Reset dates when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedFromDate(new Date());
+      setSelectedToDate(new Date());
+    }, [])
+  );
 
   const formatDate = (date: string) => {
     const d = new Date(date);
@@ -196,64 +206,122 @@ const CashBatchScreen = ({}: Props) => {
     }
   };
 
-  // ─── FIX: Encode URL spaces, resolve correct path per platform ───────────
-  const getLocalPath = (url: string) => {
-    // Extract filename from URL (handles spaces and special chars)
+  // ─── Request Android storage permission (needed for Android < 13) ────────
+  const requestAndroidStoragePermission = async (): Promise<boolean> => {
+    // Android 13+ (API 33+) does NOT need WRITE_EXTERNAL_STORAGE for Downloads
+    // Only needed for Android 12 and below
+    if (Platform.OS !== "android") return true;
+
+    const androidVersion = Platform.Version as number;
+
+    if (androidVersion >= 33) {
+      // Android 13+ — no permission needed for app-specific Downloads
+      return true;
+    }
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: "Storage Permission",
+          message: "App needs access to storage to download the report.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn("Permission error:", err);
+      return false;
+    }
+  };
+
+  // ─── Build safe local file path per platform ─────────────────────────────
+  const getLocalPath = (url: string): string => {
     const filename = url.split("/").pop() ?? "report.xls";
     const decodedFilename = decodeURIComponent(filename);
 
-    // Android: save to Downloads folder (visible in file manager)
-    // iOS: save to Documents directory (accessible via Files app)
-    const dir =
-      Platform.OS === "android"
-        ? RNFS.DownloadDirectoryPath
-        : RNFS.DocumentDirectoryPath;
-
-    return `${dir}/${decodedFilename}`;
+    if (Platform.OS === "android") {
+      // ✅ Use DownloadDirectoryPath on Android so it appears in Downloads folder
+      return `${RNFS.DownloadDirectoryPath}/${decodedFilename}`;
+    } else {
+      // iOS: DocumentDirectoryPath is accessible via Files app
+      return `${RNFS.DocumentDirectoryPath}/${decodedFilename}`;
+    }
   };
 
+  // ─── Encode URL safely (handles spaces and special chars in path) ─────────
+  const buildEncodedUrl = (fileUrl: string): string => {
+    return fileUrl
+      .split("/")
+      .map((segment, index) =>
+        // Skip protocol + domain (first 3 parts of https://domain/...)
+        index < 3 ? segment : encodeURIComponent(decodeURIComponent(segment))
+      )
+      .join("/");
+  };
+
+  // ─── Core download + open logic ───────────────────────────────────────────
   const downloadFile = async (fileUrl: string) => {
     try {
+      // ✅ Request storage permission on Android < 13 before downloading
+      const hasPermission = await requestAndroidStoragePermission();
+      if (!hasPermission) {
+        toast.show(
+          "Storage permission denied. Please allow it in app settings.",
+          { placement: "top" }
+        );
+        return;
+      }
+
       setLoading(true);
 
-      // ✅ FIX: encode spaces and special characters in the URL
-      const encodedUrl = fileUrl
-        .split("/")
-        .map((segment, index) =>
-          // Don't encode the protocol + domain parts (first 3 segments of https://domain/...)
-          index < 3 ? segment : encodeURIComponent(segment)
-        )
-        .join("/");
-
+      const encodedUrl = buildEncodedUrl(fileUrl);
       const localFile = getLocalPath(fileUrl);
+
+      // ✅ Delete existing file first to avoid RNFS stale cache issues on Android
+      const fileExists = await RNFS.exists(localFile);
+      if (fileExists) {
+        await RNFS.unlink(localFile);
+      }
 
       const result = await RNFS.downloadFile({
         fromUrl: encodedUrl,
         toFile: localFile,
-        // ✅ Background download support
-        background: true,
-        discretionary: true,
+        background: true,    // allow download when app is backgrounded
+        discretionary: true, // iOS: system decides best time (battery/wifi)
+        cacheable: false,    // ✅ always fetch fresh file
       }).promise;
 
       setLoading(false);
 
       if (result.statusCode === 200) {
+        if (Platform.OS === "android") {
+          // ✅ On Android, trigger MediaStore scan so file appears in Downloads app
+          await RNFS.scanFile(localFile);
+        }
+
         try {
-          // ✅ FIX: provide mimeType hint for .xls files so iOS opens correctly
           await FileViewer.open(localFile, {
             showOpenWithDialog: true,
-            mimeType:
-              "application/vnd.ms-excel",
+            mimeType: "application/vnd.ms-excel",
           });
         } catch (viewerError) {
           console.log("FileViewer error:", viewerError);
+          // File was downloaded successfully even if no app can open it
           toast.show(
-            "File downloaded successfully. Open it from your Files app.",
+            Platform.OS === "android"
+              ? "File saved to Downloads folder."
+              : "File downloaded. Open it from your Files app.",
             { placement: "top" }
           );
         }
       } else {
-        toast.show("Download failed. Please try again.", { placement: "top" });
+        toast.show(
+          `Download failed (status: ${result.statusCode}). Please try again.`,
+          { placement: "top" }
+        );
       }
     } catch (error) {
       setLoading(false);
@@ -262,7 +330,7 @@ const CashBatchScreen = ({}: Props) => {
     }
   };
 
-  // 🔹 API call for download link
+  // ─── Fetch download link from API then trigger download ──────────────────
   const downloadReport = async () => {
     try {
       setLoading(true);
@@ -278,9 +346,7 @@ const CashBatchScreen = ({}: Props) => {
 
       if (res.data.status !== 200) {
         toast.show(res.data.message, {
-          data: {
-            status: 400,
-          },
+          data: { status: 400 },
         });
         return;
       }
@@ -324,7 +390,7 @@ const CashBatchScreen = ({}: Props) => {
                 mode="date"
                 is24Hour={true}
                 display="default"
-                maximumDate={selctedToDate > today ? today : selctedToDate} // ✅ min(today, toDate)
+                maximumDate={selctedToDate > today ? today : selctedToDate}
                 onChange={onFromDateChange}
               />
             )}
@@ -349,8 +415,8 @@ const CashBatchScreen = ({}: Props) => {
                 mode="date"
                 is24Hour={true}
                 display="default"
-                minimumDate={selectedFromDate} // ✅ cannot go below From Date
-                maximumDate={today} // ✅ cannot go beyond today
+                minimumDate={selectedFromDate}
+                maximumDate={today}
                 onChange={onToDateChange}
               />
             )}

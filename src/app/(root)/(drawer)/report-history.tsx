@@ -31,6 +31,7 @@ const ReportHistory = ({ }: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const toast = useToast();
+    const today = new Date()
 
     // Mananging user's date selection
     const [selectedFromDate, setSelectedFromDate] = useState(new Date());
@@ -83,14 +84,40 @@ const ReportHistory = ({ }: Props) => {
     }, [reportedCouponHistoryData]);
 
     const onFromDateChange = (event?: DateTimePickerEvent, date?: Date) => {
-        const currentDate = date;
         setShowFromDate(false);
-        setSelectedFromDate(currentDate as Date);
+
+        if (!date) return;
+
+        if (date > selctedToDate) {
+            toast.show("From date cannot be greater than To date", {
+                placement: "top",
+            });
+            return;
+        }
+
+        setSelectedFromDate(date);
     };
 
     const onToDateChange = (event?: DateTimePickerEvent, date?: Date) => {
         setShowToDate(false);
-        setSelectedToDate(date as Date);
+
+        if (!date) return;
+
+        if (date < selectedFromDate) {
+            toast.show("To date cannot be less than From date", {
+                placement: "top",
+            });
+            return;
+        }
+
+        if (date > today) {
+            toast.show("To date cannot be greater than today", {
+                placement: "top",
+            });
+            return;
+        }
+
+        setSelectedToDate(date);
     };
 
     const fetchReportedCouponsHistory = async () => {
@@ -133,10 +160,12 @@ const ReportHistory = ({ }: Props) => {
 
                         {showFromDate && (
                             <DateTimePicker
-                                testID="dateTimePicker"
+                                testID="fromDatePicker"
                                 value={selectedFromDate}
-                                mode={"date"}
+                                mode="date"
                                 is24Hour={true}
+                                display="default"
+                                maximumDate={selctedToDate > today ? today : selctedToDate}
                                 onChange={onFromDateChange}
                             />
                         )}
@@ -151,10 +180,13 @@ const ReportHistory = ({ }: Props) => {
 
                         {showToDate && (
                             <DateTimePicker
-                                testID="dateTimePicker"
-                                value={selectedFromDate}
-                                mode={"date"}
+                                testID="toDatePicker"
+                                value={selctedToDate}
+                                mode="date"
                                 is24Hour={true}
+                                display="default"
+                                minimumDate={selectedFromDate}
+                                maximumDate={today}
                                 onChange={onToDateChange}
                             />
                         )}

@@ -42,7 +42,7 @@ const StackLayout = ({ }: Props) => {
                     title: 'Scan',
                     headerLeft: () => (
                         <TouchableOpacity onPress={() => router.back()}>
-                            <ArrowLeftIcon color={"#FFF"} />
+                            <ArrowLeftIcon color={"#FFF"} size={30}/>
                         </TouchableOpacity>
                     ),
                 }}
