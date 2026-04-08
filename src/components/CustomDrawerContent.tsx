@@ -15,6 +15,7 @@ import { LogOutIcon } from "@/libs/icons/LogoutIcon";
 import useAuth from "@/hooks/useAuth";
 import MultiLangualDropdown from "./MultiLangualDropdown";
 import { useTranslation } from "react-i18next";
+import { FileDownIcon } from "lucide-react-native";
 // import VersionCheck from 'react-native-version-check-expo';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
@@ -23,7 +24,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { t } = useTranslation();
   // const currentVersion = VersionCheck.getCurrentVersion()
   // VersionCheck.getCountry().then(country => console.log(country))
-console.log(userDetails, "userDetails");
+  console.log(userDetails, "userDetails");
 
   return (
     <View className="flex-1">
@@ -38,7 +39,7 @@ console.log(userDetails, "userDetails");
         </Button>
         <View className="items-center mb-4 rounded-md p-4 pt-0">
           <Image
-            source={{uri: userDetails?.brand_logo}}
+            source={{ uri: userDetails?.brand_logo }}
             className="size-40"
             resizeMode="contain"
           />
@@ -54,13 +55,13 @@ console.log(userDetails, "userDetails");
         </View>
         <DrawerItemList {...props} />
 
-        {/* <DrawerItem
-                    label="Manual"
-                    icon={({ color, focused }) => (
-                        <FileDownIcon color={focused ? "#FFF" : color} />
-                    )}
-                    onPress={() => Linking.openURL('https://mywebsite.com/help')}
-                /> */}
+        <DrawerItem
+          label="Manual"
+          icon={({ color, focused }) => (
+            <FileDownIcon color={focused ? "#FFF" : color} />
+          )}
+          onPress={() => Linking.openURL('https://seqrloyalty.com/developer/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf')}
+        />
 
         <DrawerItem
           label="Logout"
