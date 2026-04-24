@@ -13,6 +13,8 @@ import { useToast } from 'react-native-toast-notifications';
 import ImageView from "react-native-image-viewing";
 import { ImageSource } from 'react-native-image-viewing/dist/@types';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IReportedCoupon, IReportedCouponsHistory } from '@/types/response';
 
 type Props = {}
 
@@ -25,6 +27,7 @@ const ReportHistory = ({ }: Props) => {
 
     const { userDetails } = useUser();
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
 
     const [reportedCouponHistoryData, setReportedCouponHistoryData] = useState<IReportedCouponsHistory | undefined>(undefined);
 
@@ -147,7 +150,7 @@ const ReportHistory = ({ }: Props) => {
     };
 
     return (
-        <View className='bg-white flex-1'>
+        <View className='bg-white flex-1' style={{paddingBottom: insets.bottom}}>
 
             <View className='shadow-sm android:shaodw-md bg-white'>
                 <View className='flex-row items-center justify-around py-4 border-b border-muted'>

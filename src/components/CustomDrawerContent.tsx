@@ -16,6 +16,7 @@ import useAuth from "@/hooks/useAuth";
 import MultiLangualDropdown from "./MultiLangualDropdown";
 import { useTranslation } from "react-i18next";
 import { FileDownIcon } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 // import VersionCheck from 'react-native-version-check-expo';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
@@ -27,7 +28,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   console.log(userDetails, "userDetails");
 
   return (
-    <View className="flex-1">
+    <SafeAreaView className="flex-1">
       <DrawerContentScrollView {...props}>
         <Button
           size={"icon"}
@@ -60,7 +61,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           icon={({ color, focused }) => (
             <FileDownIcon color={focused ? "#FFF" : color} />
           )}
-          onPress={() => Linking.openURL('https://seqrloyalty.com/developer/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf')}
+          onPress={() => Linking.openURL('https://seqrloyalty.com/jcb/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf')}
         />
 
         <DrawerItem
@@ -77,7 +78,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         {/* <Text className='mb-2 text-primary font-medium'>V {currentVersion}</Text> */}
         <MultiLangualDropdown />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -16,6 +16,7 @@ import { POST_REPORT_COUPON } from '@/utils/routes';
 import { useToast } from 'react-native-toast-notifications';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {}
 
@@ -34,6 +35,7 @@ const ReportCouponScreen = ({ }: Props) => {
     const { t } = useTranslation();
 
     const toast = useToast();
+    const insets = useSafeAreaInsets();
 
     const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<ReportFormData | FieldValues>({
         defaultValues: {
@@ -179,7 +181,7 @@ const ReportCouponScreen = ({ }: Props) => {
         };
     };
     return (
-        <View className='flex-1 p-4 bg-white'>
+        <View className='flex-1 p-4 bg-white' style={{paddingBottom: insets.bottom}}>
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
                 <View className='gap-2'>
                     <Text className='text-3xl font-bold text-primary'>{t("reportCoupon.title")}</Text>

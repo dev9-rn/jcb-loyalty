@@ -6,6 +6,7 @@ import { Text } from '@/components/ui/text';
 
 import CashCouponHistoryTab from '@/components/CashCouponHistoryTab';
 import FocCouponHistoryTab from '@/components/FocCouponHistoryTab';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {};
 
@@ -25,6 +26,7 @@ const CouponHistoryScreen = ({ }: Props) => {
     const [activePagerTab, setActivePagerTab] = useState<number>(0);
 
     const pagerRef = useRef<PagerView>(null);
+    const insets = useSafeAreaInsets();
 
     const handleTabSwitch = (index: number) => {
         setActivePagerTab(index);
@@ -32,7 +34,7 @@ const CouponHistoryScreen = ({ }: Props) => {
     };
 
     return (
-        <View className='flex-1 bg-white'>
+        <View className='flex-1 bg-white' style={{paddingBottom: insets.bottom}}>
 
             <View className='bg-white'>
                 <View className='flex-row items-center justify-around pt-4'>

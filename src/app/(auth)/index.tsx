@@ -1,7 +1,7 @@
 import { View, Image, ActivityIndicator, StatusBar } from "react-native";
 import React, { useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ const SignInScreen = ({ }: Props) => {
     const [showError, setShowError] = useState<string>('')
 
     const toast = useToast();
+    const insets = useSafeAreaInsets();
 
     const capitalize = (str: string) =>
         str.charAt(0).toUpperCase() + str.slice(1);
@@ -184,13 +185,13 @@ const SignInScreen = ({ }: Props) => {
     }, [])
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 bg-white" style={{paddingBottom: insets.bottom}}>
             <StatusBar backgroundColor={"#FFF"} barStyle={"dark-content"} />
             <KeyboardAwareScrollView>
                 <View className="items-center justify-center">
                     <View>
                         <Image
-                            source={require("@/assets/images/logo_NPL_2.png")}
+                            source={require("@/assets/images/playstore.png")}
                             className="size-64"
                             resizeMode="contain"
                         />
@@ -263,7 +264,7 @@ const SignInScreen = ({ }: Props) => {
                         {isLoggingIn ? (
                             <View className="flex-row gap-2">
                                 <ActivityIndicator color={"#FFF"} />
-                                <Text>
+                                <Text className="text-white">
                                     {t("login.distributorLogin")}
                                     {/* <Text className='capitalize'>
                                         {selectedSignInType.label}
@@ -271,7 +272,7 @@ const SignInScreen = ({ }: Props) => {
                                 </Text>
                             </View>
                         ) : (
-                            <Text>
+                            <Text className="text-white">
                                 {t("login.distributorLogin")}{" "}
                                 {/* <Text className='capitalize'>
                                     {selectedSignInType.label}
@@ -290,7 +291,7 @@ const SignInScreen = ({ }: Props) => {
                             className="p-0"
                             onPress={() => setModalVisible(true)}
                         >
-                            <Text>{t("login.clickHereToSignUp")}</Text>
+                            <Text >{t("login.clickHereToSignUp")}</Text>
                         </Button>
                     </View>
                     <CustomModal
@@ -342,7 +343,7 @@ const SignInScreen = ({ }: Props) => {
                     resizeMode='contain'
                 />
             </View> */}
-        </SafeAreaView>
+        </View>
     );
 };
 

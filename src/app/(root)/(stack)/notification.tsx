@@ -6,6 +6,7 @@ import useUser from '@/hooks/useUser'
 import { FlatList } from 'react-native-gesture-handler'
 import formatDateTime from '@/utils/formatDateTime'
 import { useToast } from 'react-native-toast-notifications'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type Props = {}
 
@@ -15,6 +16,7 @@ const NotificationScreen = ({ }: Props) => {
 
     const { userDetails } = useUser();
     const toast = useToast();
+    const insets = useSafeAreaInsets();
 
     useEffect(() => {
         fetchUserNotificaitonHistory();
@@ -40,7 +42,7 @@ const NotificationScreen = ({ }: Props) => {
     };
 
     return (
-        <ScrollView className='flex-1 bg-white p-4'>
+        <ScrollView className='flex-1 bg-white p-4' style={{paddingBottom: insets.bottom}}>
             <Text className='text-2xl font-semibold mb-4'>
                 Notification history
             </Text>

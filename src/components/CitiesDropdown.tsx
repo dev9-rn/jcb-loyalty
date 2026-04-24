@@ -15,6 +15,7 @@ import { Input } from './ui/input';
 import { Text } from './ui/text';
 import { Option } from '@rn-primitives/select';
 import { useRoute } from '@react-navigation/native';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react-native';
 
 type Props = {
     options: ILocationData[];
@@ -57,6 +58,7 @@ const CitiesDropdown = ({ options, selected, onSelect, placeholder }: Props) => 
                 <Text style={styles.triggerText}>
                     {selectedOption ? selectedOption.name : placeholder || 'Select an option'}
                 </Text>
+                {visible ? <ChevronUpIcon size={20} color="#666" /> : <ChevronDownIcon size={20} color="#666" />}
             </TouchableOpacity>
 
             <Modal visible={visible} animationType='fade' transparent>
@@ -100,6 +102,9 @@ const CitiesDropdown = ({ options, selected, onSelect, placeholder }: Props) => 
 
 const styles = StyleSheet.create({
     trigger: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         padding: 12,
         borderWidth: 1,
         borderRadius: 8,

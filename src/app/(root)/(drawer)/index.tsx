@@ -28,6 +28,7 @@ import { TriangleAlert } from "@/libs/icons/TriangleAlert";
 import { X } from "@/libs/icons/X";
 import useAuth from "@/hooks/useAuth";
 import CustomModal from "@/components/CustomModel";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 type Props = {};
 
 const HomeScreen = ({}: Props) => {
@@ -43,6 +44,7 @@ const HomeScreen = ({}: Props) => {
   const { userDetails } = useUser();
   const { fetchisMaintenanceApi } = useAuth();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const toast = useToast();
 
@@ -112,7 +114,7 @@ const HomeScreen = ({}: Props) => {
   };
 
   return (
-    <View className="p-4 flex-1 bg-white">
+    <View className="p-4 flex-1 bg-white" style={{paddingBottom: insets.bottom}}>
       <StatusBar className="bg-primary" barStyle="dark-content" />
       <CustomModal
         visible={showDisplayNotification}

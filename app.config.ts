@@ -2,8 +2,8 @@ import { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "NPL QRScan",
-  slug: "npl-loyalty",
+  name: "Hextech SEQR Loyalty",
+  slug: "jcb-loyalty",
   version: "1.4.0",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
@@ -18,7 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       UIBackgroundModes: ["remote-notification"],
       ITSAppUsesNonExemptEncryption: false
     },
-    bundleIdentifier: "com.scube.NPL-QRScan"
+    bundleIdentifier: "org.reactjs.native.example.jcb-seqr-loyality"
   },
   android: {
     versionCode: 1,
@@ -28,7 +28,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#ffffff",
     },
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
-    package: "com.npl_seqrloyalty",
+    package: "com.jcb_seqr_loyality_new",
     permissions: [
       "android.permission.CAMERA",
       "android.permission.RECORD_AUDIO"

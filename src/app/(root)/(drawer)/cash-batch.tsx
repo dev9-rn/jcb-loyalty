@@ -33,12 +33,14 @@ import CustomModal from "@/components/CustomModel";
 import { ICashBatchItem } from "@/types/response";
 import RNFS from "react-native-fs";
 import FileViewer from "react-native-file-viewer";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {};
 
 const CashBatchScreen = ({}: Props) => {
   const { userDetails } = useUser();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const toast = useToast();
 
@@ -368,7 +370,7 @@ const CashBatchScreen = ({}: Props) => {
   };
 
   return (
-    <View className="bg-white flex-1">
+    <View className="bg-white flex-1" style={{paddingBottom: insets.bottom}}>
       <View className="shadow-sm android:shadow-md bg-white">
         <View className="flex-row items-center justify-around py-4 border-b border-muted">
           <View className="items-center">

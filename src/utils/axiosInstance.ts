@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
     headers: {
         'Accept': 'application\/json',
         'Content-Type': 'multipart\/form-data',
-        "apikey": 'c4o_LTJIez6XfnH^r=$l&!FAN@MM]5',
+        "apikey": 'eIrJLF5;&B:cVh30WDlh1}Ww_BtId@',
     },
     // timeout: 10000, // Optional: Set a timeout for requests
 });

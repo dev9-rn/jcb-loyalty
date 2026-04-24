@@ -27,6 +27,10 @@ const StackLayout = ({ }: Props) => {
                 name='notification'
                 options={{
                     title: "Notification",
+                    headerStyle: {
+                        backgroundColor: '#F4AE2B'
+                    },
+                    headerTintColor: '#fff',
                     headerLeft: () => (
                         <TouchableOpacity onPress={() => router.back()}>
                             <ArrowLeftIcon color={"#FFF"} />

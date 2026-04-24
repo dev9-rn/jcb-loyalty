@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     KeyboardAwareScrollView,
     KeyboardToolbar,
@@ -31,6 +31,7 @@ import StateDropdown from "@/components/StateDropdown";
 import CitiesDropdown from "@/components/CitiesDropdown";
 import { useTranslation } from "react-i18next";
 import { router, useFocusEffect } from "expo-router";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {};
 
@@ -52,19 +53,24 @@ const ProfileScreen = ({ }: Props) => {
     const [isFormDisabled, setIsFormDisabled] = useState<boolean>(false);
     const [discardChanges, setDiscardChanges] = useState<boolean>(true);
 
+    // Track whether we are in the initial pre-fill flow so we don't reset
+    // dependent fields while restoring saved values from the API.
+    const isPrefillingRef = useRef(false);
+
     const { userDetails, fetchUserProfileDetails } = useUser();
     const { t } = useTranslation();
 
     const toast = useToast();
+    const insets = useSafeAreaInsets();
 
     const signUpFormprofileUpdateForm = createProfileUpdateForm(t);
     type ProfileUpdateFormValues = z.infer<typeof signUpFormprofileUpdateForm>;
+
     useFocusEffect(
         useCallback(() => {
             fetchCountryList();
             fetchUserProfile();
         }, []),
-        // fetchBrands();
     );
 
     const {
@@ -74,6 +80,7 @@ const ProfileScreen = ({ }: Props) => {
         getValues,
         resetField,
         watch,
+        setValue,
         formState: { errors },
     } = useForm<ProfileUpdateFormValues>({
         resolver: zodResolver(signUpFormprofileUpdateForm),
@@ -109,41 +116,90 @@ const ProfileScreen = ({ }: Props) => {
     const watchedCountry = watch("userCountry");
     const watchedState = watch("userState");
 
+    // ─── Country change → fetch states ───────────────────────────────────────
     useEffect(() => {
-        if (!watchedCountry.id && !userDetails?.country_id) return;
+        const countryId = watchedCountry?.id;
+        if (!countryId) return;
 
-        fetchStateList();
-    }, [watchedCountry.id, userDetails?.country_id]);
+        // Clear state & city whenever a new country is picked by the user.
+        // Skip clearing during the initial pre-fill sequence.
+        if (!isPrefillingRef.current) {
+            setValue("userState", { id: "", name: "" });
+            setValue("userCity", { id: "", name: "" });
+            setStateList([]);
+            setCitiesList([]);
+        }
 
+        fetchStateList(countryId);
+    }, [watchedCountry?.id]);
+
+    // ─── State change → fetch cities ─────────────────────────────────────────
     useEffect(() => {
-        if (!watchedState.id && !userDetails?.state_id) return;
+        const stateId = watchedState?.id;
+        if (!stateId) return;
 
-        fetchCitiesList();
-    }, [watchedState.id]);
+        // Clear city whenever a new state is picked by the user.
+        if (!isPrefillingRef.current) {
+            setValue("userCity", { id: "", name: "" });
+            setCitiesList([]);
+        }
 
+        fetchCitiesList(stateId);
+    }, [watchedState?.id]);
+
+    // ─── Pre-fill form once all data is available ─────────────────────────────
+    // We use a staged approach:
+    //   Stage 1 – countryList + profileDetails + brands are ready → set country
+    //   Stage 2 – stateList is populated → set state
+    //   Stage 3 – citiesList is populated → set city + rest of form
+    //
+    // `isPrefillingRef` prevents the country/state watchers from wiping
+    // dependent fields while we are still restoring saved values.
+
+    // Stage 1: set country as soon as countryList arrives
     useEffect(() => {
-        if (
-            !profileDetails ||
-            !brands ||
-            countryList.length === 0 ||
-            stateList.length === 0 ||
-            citiesList.length === 0
-        )
-            return;
+        if (!profileDetails || countryList.length === 0) return;
+        if (!userDetails?.country_id) return;
+
+        const matchedCountry = countryList.find(
+            (c) => c.id == userDetails.country_id,
+        );
+        if (!matchedCountry) return;
+
+        isPrefillingRef.current = true;
+        setValue("userCountry", matchedCountry);
+        // isPrefillingRef will be cleared after city is set (Stage 3)
+    }, [profileDetails, countryList]);
+
+    // Stage 2: set state once stateList is populated after Stage 1
+    useEffect(() => {
+        if (!isPrefillingRef.current) return;
+        if (!profileDetails || stateList.length === 0) return;
+        if (!userDetails?.state_id) return;
+
+        const matchedState = stateList.find(
+            (s) => s.id == userDetails.state_id,
+        );
+        if (!matchedState) return;
+
+        setValue("userState", matchedState);
+    }, [stateList]);
+
+    // Stage 3: set city + full form once citiesList is populated after Stage 2
+    useEffect(() => {
+        if (!isPrefillingRef.current) return;
+        if (!profileDetails || citiesList.length === 0) return;
+        if (!userDetails?.city_id) return;
+
+        const matchedCity = citiesList.find(
+            (c) => c.id == userDetails.city_id,
+        );
 
         const currentUserBrand = brands.find(
             (brand) => brand.id === profileDetails.brand_id,
         );
-        const matchedCountry = countryList.find(
-            (country) => country.id == userDetails?.country_id,
-        );
-        const matchedState = stateList.find(
-            (state) => state.id == userDetails?.state_id,
-        );
-        const matchedCity = citiesList.find(
-            (city) => city.id == userDetails?.city_id,
-        );
 
+        // Restore the full form (country & state are already set above)
         reset({
             userName: profileDetails.name || profileDetails.dealer_name,
             distributorAddress: profileDetails.address,
@@ -155,81 +211,61 @@ const ProfileScreen = ({ }: Props) => {
             distributorPanNumber: profileDetails.pan_no,
             distributorStreetAddress: profileDetails.street,
             userPincode: profileDetails.pincode || profileDetails.pin_code,
-            userCountry: matchedCountry || { id: "", name: "" },
-            userState: matchedState || { id: "", name: "" },
+            userCountry: countryList.find((c) => c.id == userDetails.country_id) || { id: "", name: "" },
+            userState: stateList.find((s) => s.id == userDetails.state_id) || { id: "", name: "" },
             userCity: matchedCity || { id: "", name: "" },
         });
-    }, [profileDetails, brands, countryList, stateList, citiesList]);
 
-    // Get the list of the COUNTRIES for dropdown
+        // Pre-fill sequence complete – re-enable cascade clearing for user edits
+        isPrefillingRef.current = false;
+    }, [citiesList]);
+
+    // ─── API helpers ──────────────────────────────────────────────────────────
+
     const fetchCountryList = async () => {
         try {
             const response = await axiosInstance.post(GET_COUNTRY_LIST);
-
             if (response.data.status != 200) {
-                toast.show(response.data.message, {
-                    data: response,
-                });
+                toast.show(response.data.message, { data: response });
             }
             setCountryList(response.data.countries);
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, {
-                    data: error.response,
-                });
+                toast.show(error.response?.data.message, { data: error.response });
             }
         }
     };
 
-    // Get the list of the STATES for dropdown
-    const fetchStateList = async () => {
+    const fetchStateList = async (countryId: string) => {
         const stateListFormData = new FormData();
-        stateListFormData.append(
-            "countryId",
-            watchedCountry.id || userDetails?.country_id,
-        );
+        stateListFormData.append("countryId", countryId);
 
         try {
-            const response = await axiosInstance.post(
-                GET_STATE_LIST,
-                stateListFormData,
-            );
-
+            const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
             if (response.data.status != 200) {
-                toast.show(response.data.message, {
-                    data: response,
-                });
+                toast.show(response.data.message, { data: response });
             }
-
             setStateList(response.data.states);
         } catch (error) {
-            error;
+            if (axios.isAxiosError(error)) {
+                toast.show(error.response?.data.message, { data: error.response });
+            }
         }
     };
 
-    // Get the list of the CITIES for dropdown
-    const fetchCitiesList = async () => {
+    const fetchCitiesList = async (stateId: string) => {
         const citiesFormData = new FormData();
-        citiesFormData.append("stateId", watchedState.id || userDetails?.state_id);
+        citiesFormData.append("stateId", stateId);
 
         try {
-            const response = await axiosInstance.post(
-                GET_CITIES_LIST,
-                citiesFormData,
-            );
-
+            const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
             if (response.data.status != 200) {
-                toast.show(response.data.message, {
-                    data: response,
-                });
+                toast.show(response.data.message, { data: response });
             }
-
             setCitiesList(response.data.cities);
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, {
-                    data: error.response,
-                });
+                toast.show(error.response?.data.message, { data: error.response });
             }
         }
     };
@@ -246,9 +282,7 @@ const ProfileScreen = ({ }: Props) => {
             const brandResponse = await axiosInstance.post(GET_BRANDS_BY_IDS);
 
             if (response.data.status != 200) {
-                toast.show(response.data.message, {
-                    data: { response },
-                });
+                toast.show(response.data.message, { data: { response } });
             }
 
             setBrands(brandResponse.data.brands);
@@ -256,10 +290,7 @@ const ProfileScreen = ({ }: Props) => {
             return response.data.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, {
-                    data: error.response,
-                });
-                return;
+                toast.show(error.response?.data.message, { data: error.response });
             }
         }
     };
@@ -267,11 +298,9 @@ const ProfileScreen = ({ }: Props) => {
     const handleProfileSubmit: SubmitHandler<ProfileUpdateFormValues> = async (
         formData,
     ) => {
-
         console.log(formData, "formData ---");
 
         const updateProfileFormData = new FormData();
-
         updateProfileFormData.append("distributorId", String(userDetails?.id));
         updateProfileFormData.append("name", formData.userName);
         updateProfileFormData.append("mobileNo", formData.userPhoneNumber);
@@ -283,14 +312,9 @@ const ProfileScreen = ({ }: Props) => {
         updateProfileFormData.append("countryId", formData.userCountry.id);
         updateProfileFormData.append("stateId", formData.userState.id);
         updateProfileFormData.append("cityId", formData.userCity.id);
-        updateProfileFormData.append(
-            "companyName",
-            formData.distributorCompanyName,
-        );
+        updateProfileFormData.append("companyName", formData.distributorCompanyName);
         updateProfileFormData.append("panNo", formData.distributorPanNumber as string);
         updateProfileFormData.append("gstNo", formData.distributorGstNumber);
-
-
 
         try {
             const response = await axiosInstance.post(
@@ -303,15 +327,11 @@ const ProfileScreen = ({ }: Props) => {
                 return;
             }
 
-            toast.show(response.data.message, {
-                data: response,
-            });
+            toast.show(response.data.message, { data: response });
             fetchUserProfileDetails();
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, {
-                    data: error.response,
-                });
+                toast.show(error.response?.data.message, { data: error.response });
             }
         }
     };
@@ -322,7 +342,7 @@ const ProfileScreen = ({ }: Props) => {
 
     return (
         <>
-            <View className="bg-white p-4 flex-1">
+            <View className="bg-white p-4 flex-1" style={{paddingBottom: insets.bottom}}>
                 <KeyboardAwareScrollView
                     bottomOffset={100}
                     showsVerticalScrollIndicator={false}
@@ -332,15 +352,7 @@ const ProfileScreen = ({ }: Props) => {
                             <Text className="text-2xl font-semibold capitalize">
                                 {t("login.profile_distributor_title")}
                             </Text>
-                            {/* <Text className='text-gray-500 text-sm'>{t("signup.subtitle")}</Text> */}
                         </View>
-
-                        {/* <Button className='flex-row items-center gap-4' onPress={() => toggleFormState()} variant={isFormDisabled ? "default" : "destructive"}>
-                            <PencilLineIcon className='text-white' height={20} width={20} />
-                            <Text>
-                                {isFormDisabled ? "Edit" : "Discard"}
-                            </Text>
-                        </Button> */}
                     </View>
 
                     <View className="mt-4 gap-3">
@@ -442,103 +454,13 @@ const ProfileScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-
                             {errors.distributorAddress && (
                                 <Text className="text-red-500 font-medium">
                                     {errors.distributorAddress.message}
                                 </Text>
                             )}
                         </View>
-                        {/* {userDetails?.userType === 0 ? (
-                            <View className='gap-1'>
-                                <Text>
-                                    {t("signup.fields.companyName")}
-                                </Text>
 
-                                <Controller
-                                    control={control}
-                                    name='distributorCompanyName'
-                                    disabled={disabled}
-                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
-                                        <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.distributorCompanyName && "border-red-500"}`}
-                                            placeholder={t("signup.fields.companyNamePlaceholder")}
-                                            value={value}
-                                            onChangeText={onChange}
-                                            onBlur={onBlur}
-                                            editable={disabled}
-                                        />
-                                    )}
-                                />
-                            </View>
-                        ) : (
-                            <View className='gap-1'>
-                                <Text>
-                                    {t("signup.fields.shopName")}
-                                </Text>
-
-                                <Controller
-                                    control={control}
-                                    name='retailerShopName'
-                                    disabled={disabled}
-                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
-                                        <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.retailerShopName && "border-red-500"}`}
-                                            placeholder={t("signup.fields.shopNamePlaceholder")}
-                                            value={value}
-                                            onChangeText={onChange}
-                                            onBlur={onBlur}
-                                            editable={disabled}
-                                        />
-                                    )}
-                                />
-                                {errors.retailerShopName && <Text className='text-red-500 font-medium'>{errors.retailerShopName.message}</Text>}
-                            </View>
-                        )} */}
-
-                        {/* {userDetails?.userType === 0 ? (
-                            <View className='gap-1'>
-                                <Text>{t("signup.fields.panNumber")}</Text>
-
-                                <Controller
-                                    control={control}
-                                    name='distributorPanNumber'
-                                    disabled={disabled}
-                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
-                                        <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.distributorPanNumber && "border-red-500"}`}
-                                            placeholder={t("signup.fields.panNumberPlaceholder")}
-                                            value={value}
-                                            onChangeText={onChange}
-                                            onBlur={onBlur}
-                                            editable={disabled}
-                                        />
-                                    )}
-                                />
-                                {errors.distributorPanNumber && <Text className='text-red-500 font-medium'>{errors.distributorPanNumber.message}</Text>}
-                            </View>
-                        ) : (
-                            <View className='gap-1'>
-                                <Text>{t("signup.fields.panNumber")}</Text>
-
-                                <Controller
-                                    control={control}
-                                    name='mechanicPanNumber'
-                                    disabled={disabled}
-                                    render={({ field: { onBlur, onChange, value, disabled } }) => (
-                                        <Input
-                                            className={`focus:border-2 focus:border-primary ${errors.mechanicPanNumber && "border-red-500"}`}
-                                            placeholder={t("signup.fields.panNumberPlaceholder")}
-                                            value={value}
-                                            onChangeText={onChange}
-                                            onBlur={onBlur}
-                                            editable={disabled}
-                                        />
-                                    )}
-                                />
-                                {errors.mechanicPanNumber && <Text className='text-red-500 font-medium'>{errors.mechanicPanNumber.message}</Text>}
-                            </View>
-                        )} */}
                         <View className="gap-1">
                             <Text className="">{t("signup.fields.street")}</Text>
 
@@ -589,8 +511,6 @@ const ProfileScreen = ({ }: Props) => {
                             )}
                         </View>
 
-                        {/* 
-                        {userDetails?.userType === 0 && ( */}
                         <View className="gap-1">
                             <Text>{t("signup.fields.selectBrand")}</Text>
 
@@ -609,18 +529,16 @@ const ProfileScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-
                             {errors.distributorBrand && (
                                 <Text className="text-red-500 font-medium">
                                     {errors.distributorBrand.id?.message}
                                 </Text>
                             )}
                         </View>
-
-                        {/* )} */}
                     </View>
 
                     <View className="gap-3">
+                        {/* ── Country ── */}
                         <View className="gap-1">
                             <Text>{t("signup.fields.selectCountry")}</Text>
 
@@ -645,13 +563,14 @@ const ProfileScreen = ({ }: Props) => {
                             )}
                         </View>
 
+                        {/* ── State (only shown after a country is selected) ── */}
                         <View className="gap-1">
                             <Text>{t("signup.fields.selectState")}</Text>
 
                             <Controller
                                 control={control}
                                 name="userState"
-                                render={({ field: { onBlur, onChange, value, disabled } }) => (
+                                render={({ field: { onBlur, onChange, value } }) => (
                                     <StateDropdown
                                         onSelect={onChange}
                                         options={stateList}
@@ -669,13 +588,14 @@ const ProfileScreen = ({ }: Props) => {
                             )}
                         </View>
 
+                        {/* ── City (only shown after a state is selected) ── */}
                         <View className="gap-1">
                             <Text>{t("signup.fields.selectCity")}</Text>
 
                             <Controller
                                 control={control}
                                 name="userCity"
-                                render={({ field: { onBlur, onChange, value, disabled } }) => (
+                                render={({ field: { onBlur, onChange, value } }) => (
                                     <CitiesDropdown
                                         onSelect={onChange}
                                         options={citiesList}
@@ -699,7 +619,7 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name="distributorCompanyName"
-                                render={({ field: { onBlur, onChange, value, disabled } }) => (
+                                render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.distributorCompanyName && "border-red-500"}`}
                                         placeholder={t("signup.fields.companyNamePlaceholder")}
@@ -740,7 +660,7 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name="distributorGstNumber"
-                                render={({ field: { onBlur, onChange, value, disabled } }) => (
+                                render={({ field: { onBlur, onChange, value } }) => (
                                     <Input
                                         className={`focus:border-2 focus:border-primary ${errors.distributorGstNumber && "border-red-500"}`}
                                         placeholder={t("signup.fields.gstNumberPlaceholder")}
@@ -750,7 +670,6 @@ const ProfileScreen = ({ }: Props) => {
                                     />
                                 )}
                             />
-
                             {errors.distributorGstNumber && (
                                 <Text className="text-red-500 font-medium">
                                     {errors.distributorGstNumber.message}
@@ -778,11 +697,6 @@ const ProfileScreen = ({ }: Props) => {
                         </Button>
                     </View>
                 </KeyboardAwareScrollView>
-                {/* <DiscardFormDialog
-                    open={discardChanges}
-                    setIsFormDisabled={setIsFormDisabled}
-                    setDiscardChanges={setDiscardChanges}
-                /> */}
             </View>
             <KeyboardToolbar />
         </>

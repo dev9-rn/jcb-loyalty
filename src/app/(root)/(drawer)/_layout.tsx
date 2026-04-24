@@ -63,9 +63,9 @@ const DrawerLayout = ({}: Props) => {
       screenOptions={({ route }) => ({
         headerTitleAlign: "center",
         drawerActiveTintColor: "#FFF",
-        drawerActiveBackgroundColor: "#0064AF",
+        drawerActiveBackgroundColor: "#F4AE2B",
         headerStyle: {
-          backgroundColor: "#0064AF",
+          backgroundColor: "#F4AE2B",
         },
         headerTintColor: "#FFF",
         headerTitleStyle: {
