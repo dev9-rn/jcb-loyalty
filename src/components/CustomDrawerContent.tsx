@@ -61,7 +61,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           icon={({ color, focused }) => (
             <FileDownIcon color={focused ? "#FFF" : color} />
           )}
-          onPress={() => Linking.openURL('https://seqrloyalty.com/jcb/usermanual/Coupon_Management_System_User_Manual_(Velvex).pdf')}
+          onPress={() => Linking.openURL('https://seqrloyalty.com/jcb/usermanual/JCB_mobile%20user_doc_28.11.2024.pdf')}
         />
 
         <DrawerItem

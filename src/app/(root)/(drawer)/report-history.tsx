@@ -15,6 +15,7 @@ import { ImageSource } from 'react-native-image-viewing/dist/@types';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IReportedCoupon, IReportedCouponsHistory } from '@/types/response';
+import { formatDateForAPI } from '@/libs/utils';
 
 type Props = {}
 
@@ -127,8 +128,8 @@ const ReportHistory = ({ }: Props) => {
 
         const reportedCouponHistoryFormData = new FormData();
         reportedCouponHistoryFormData.append('distributorId', userDetails?.id);
-        reportedCouponHistoryFormData.append('fromDate', selectedFromDate.toDateString());
-        reportedCouponHistoryFormData.append('toDate', selctedToDate.toDateString());
+        reportedCouponHistoryFormData.append('fromDate', formatDateForAPI(selectedFromDate));
+        reportedCouponHistoryFormData.append('toDate', formatDateForAPI(selctedToDate));
         reportedCouponHistoryFormData.append('offset', "0");
 
         try {

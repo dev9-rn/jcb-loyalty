@@ -206,7 +206,7 @@ const HomeScreen = ({}: Props) => {
             />
           </View>
         </DashboardCard>
-        <DashboardCard title={t("login.foc_Coupons")}>
+        {/* <DashboardCard title={t("login.foc_Coupons")}>
           <View className="gap-2">
             <CouponChip
               title={t("login.No_of_Coupons_Scanned")}
@@ -221,7 +221,7 @@ const HomeScreen = ({}: Props) => {
               showRupee
             />
           </View>
-        </DashboardCard>
+        </DashboardCard> */}
         <Button
           className="flex-row gap-4"
           size="lg"

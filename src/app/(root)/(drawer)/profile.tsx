@@ -1,5 +1,5 @@
-import { View } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     KeyboardAwareScrollView,
     KeyboardToolbar,
@@ -31,6 +31,8 @@ import StateDropdown from "@/components/StateDropdown";
 import CitiesDropdown from "@/components/CitiesDropdown";
 import { useTranslation } from "react-i18next";
 import { router, useFocusEffect } from "expo-router";
+import { IBrandsDetails, IDistributorProfileDetails, ILocationData, IRetailerDetails } from "@/types/response";
+import i18n from "@/libs/i18n";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {};
@@ -43,7 +45,7 @@ const userTypeMap: Record<number, "distributor" | "mechanic" | "retailer"> = {
 
 const ProfileScreen = ({ }: Props) => {
     const [profileDetails, setProfileDetails] = useState<
-        | (IDistributorProfileDetails & IMechanicDetails & IRetailerDetails)
+        | (IDistributorProfileDetails & IRetailerDetails)
         | undefined
     >(undefined);
     const [countryList, setCountryList] = useState<ILocationData[]>([]);
@@ -52,25 +54,24 @@ const ProfileScreen = ({ }: Props) => {
     const [brands, setBrands] = useState<IBrandsDetails[]>([]);
     const [isFormDisabled, setIsFormDisabled] = useState<boolean>(false);
     const [discardChanges, setDiscardChanges] = useState<boolean>(true);
-
-    // Track whether we are in the initial pre-fill flow so we don't reset
-    // dependent fields while restoring saved values from the API.
-    const isPrefillingRef = useRef(false);
+    const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
     const { userDetails, fetchUserProfileDetails } = useUser();
     const { t } = useTranslation();
 
     const toast = useToast();
+
     const insets = useSafeAreaInsets();
 
     const signUpFormprofileUpdateForm = createProfileUpdateForm(t);
     type ProfileUpdateFormValues = z.infer<typeof signUpFormprofileUpdateForm>;
-
     useFocusEffect(
         useCallback(() => {
+            setIsInitialized(false); // Reset initialization flag to allow form refresh
             fetchCountryList();
             fetchUserProfile();
         }, []),
+        // fetchBrands()
     );
 
     const {
@@ -116,157 +117,149 @@ const ProfileScreen = ({ }: Props) => {
     const watchedCountry = watch("userCountry");
     const watchedState = watch("userState");
 
-    // ─── Country change → fetch states ───────────────────────────────────────
     useEffect(() => {
-        const countryId = watchedCountry?.id;
-        if (!countryId) return;
+        if (!watchedCountry.id && !userDetails?.country_id) return;
 
-        // Clear state & city whenever a new country is picked by the user.
-        // Skip clearing during the initial pre-fill sequence.
-        if (!isPrefillingRef.current) {
-            setValue("userState", { id: "", name: "" });
-            setValue("userCity", { id: "", name: "" });
-            setStateList([]);
-            setCitiesList([]);
-        }
+        fetchStateList();
+    }, [watchedCountry.id, userDetails?.country_id]);
 
-        fetchStateList(countryId);
-    }, [watchedCountry?.id]);
-
-    // ─── State change → fetch cities ─────────────────────────────────────────
     useEffect(() => {
-        const stateId = watchedState?.id;
-        if (!stateId) return;
+        if (!watchedState.id && !userDetails?.state_id) return;
 
-        // Clear city whenever a new state is picked by the user.
-        if (!isPrefillingRef.current) {
-            setValue("userCity", { id: "", name: "" });
-            setCitiesList([]);
-        }
+        fetchCitiesList();
+    }, [watchedState.id, userDetails?.state_id]);
 
-        fetchCitiesList(stateId);
-    }, [watchedState?.id]);
-
-    // ─── Pre-fill form once all data is available ─────────────────────────────
-    // We use a staged approach:
-    //   Stage 1 – countryList + profileDetails + brands are ready → set country
-    //   Stage 2 – stateList is populated → set state
-    //   Stage 3 – citiesList is populated → set city + rest of form
-    //
-    // `isPrefillingRef` prevents the country/state watchers from wiping
-    // dependent fields while we are still restoring saved values.
-
-    // Stage 1: set country as soon as countryList arrives
     useEffect(() => {
-        if (!profileDetails || countryList.length === 0) return;
-        if (!userDetails?.country_id) return;
-
-        const matchedCountry = countryList.find(
-            (c) => c.id == userDetails.country_id,
-        );
-        if (!matchedCountry) return;
-
-        isPrefillingRef.current = true;
-        setValue("userCountry", matchedCountry);
-        // isPrefillingRef will be cleared after city is set (Stage 3)
-    }, [profileDetails, countryList]);
-
-    // Stage 2: set state once stateList is populated after Stage 1
-    useEffect(() => {
-        if (!isPrefillingRef.current) return;
-        if (!profileDetails || stateList.length === 0) return;
-        if (!userDetails?.state_id) return;
-
-        const matchedState = stateList.find(
-            (s) => s.id == userDetails.state_id,
-        );
-        if (!matchedState) return;
-
-        setValue("userState", matchedState);
-    }, [stateList]);
-
-    // Stage 3: set city + full form once citiesList is populated after Stage 2
-    useEffect(() => {
-        if (!isPrefillingRef.current) return;
-        if (!profileDetails || citiesList.length === 0) return;
-        if (!userDetails?.city_id) return;
-
-        const matchedCity = citiesList.find(
-            (c) => c.id == userDetails.city_id,
-        );
+        if (
+            !profileDetails ||
+            !brands ||
+            countryList.length === 0
+        )
+            return;
 
         const currentUserBrand = brands.find(
-            (brand) => brand.id === profileDetails.brand_id,
+            (brand) => String(brand.id) === String(profileDetails.brand_id),
+        );
+        const matchedCountry = countryList.find(
+            (country) => String(country.id) === String(profileDetails?.country_id),
         );
 
-        // Restore the full form (country & state are already set above)
         reset({
-            userName: profileDetails.name || profileDetails.dealer_name,
-            distributorAddress: profileDetails.address,
-            userPhoneNumber: profileDetails.mobile || profileDetails.mobile_no,
+             userName: profileDetails?.name || profileDetails?.dealer_name,
+            distributorAddress: profileDetails?.address,
+            userPhoneNumber: profileDetails?.mobile || profileDetails?.mobile_no,
             distributorBrand: currentUserBrand || { id: "", name: "" },
-            distributorCompanyName: profileDetails.company_name,
-            distributorEmail: profileDetails.email,
-            distributorGstNumber: profileDetails.gst_no,
-            distributorPanNumber: profileDetails.pan_no,
-            distributorStreetAddress: profileDetails.street,
-            userPincode: profileDetails.pincode || profileDetails.pin_code,
-            userCountry: countryList.find((c) => c.id == userDetails.country_id) || { id: "", name: "" },
-            userState: stateList.find((s) => s.id == userDetails.state_id) || { id: "", name: "" },
-            userCity: matchedCity || { id: "", name: "" },
+            distributorCompanyName: profileDetails?.company_name,
+            distributorEmail: profileDetails?.email,
+            distributorGstNumber: profileDetails?.gst_no,
+            distributorPanNumber: profileDetails?.pan_no,
+            distributorStreetAddress: profileDetails?.street,
+            userPincode: profileDetails?.pincode || profileDetails?.pin_code,
+            userCountry: matchedCountry || { id: "", name: "" },
+            userState: { id: "", name: "" },
+            userCity: { id: "", name: "" },
         });
 
-        // Pre-fill sequence complete – re-enable cascade clearing for user edits
-        isPrefillingRef.current = false;
-    }, [citiesList]);
+        setIsInitialized(true);
+    }, [profileDetails, brands, countryList, reset]);
+    
 
-    // ─── API helpers ──────────────────────────────────────────────────────────
+    // Separate effect to update state and city options based on watched values
+    useEffect(() => {
+        if (!isInitialized) return;
 
+        const matchedState = stateList.find(
+            (state) => String(state.id) === String(profileDetails?.state_id),
+        );
+        const matchedCity = citiesList.find(
+            (city) => String(city.id) === String(profileDetails?.city_id),
+        );
+
+        // Update state/city with matched values from profile data
+        const currentStateValue = getValues("userState");
+        const currentCityValue = getValues("userCity");
+
+        if (!currentStateValue?.id && matchedState) {
+            resetField("userState", { defaultValue: matchedState });
+        }
+
+        if (!currentCityValue?.id && matchedCity) {
+            resetField("userCity", { defaultValue: matchedCity });
+        }
+    }, [stateList, citiesList, isInitialized, userDetails?.state_id, userDetails?.city_id, getValues, resetField]);
+
+    // Get the list of the COUNTRIES for dropdown
     const fetchCountryList = async () => {
         try {
             const response = await axiosInstance.post(GET_COUNTRY_LIST);
+
             if (response.data.status != 200) {
-                toast.show(response.data.message, { data: response });
+                toast.show(response.data.message, {
+                    data: response,
+                });
             }
-            setCountryList(response.data.countries);
+            setCountryList((response.data.countries || []).map((c: any) => ({ ...c, id: String(c.id) })));
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, { data: error.response });
+                toast.show(error.response?.data.message, {
+                    data: error.response,
+                });
             }
+            setCountryList([]);
         }
     };
 
-    const fetchStateList = async (countryId: string) => {
+    // Get the list of the STATES for dropdown
+    const fetchStateList = async () => {
         const stateListFormData = new FormData();
-        stateListFormData.append("countryId", countryId);
+        stateListFormData.append(
+            "countryId",
+            watchedCountry.id || String(profileDetails?.country_id || userDetails?.country_id || ""),
+        );
 
         try {
-            const response = await axiosInstance.post(GET_STATE_LIST, stateListFormData);
+            const response = await axiosInstance.post(
+                GET_STATE_LIST,
+                stateListFormData,
+            );
+
             if (response.data.status != 200) {
-                toast.show(response.data.message, { data: response });
+                toast.show(response.data.message, {
+                    data: response,
+                });
             }
-            setStateList(response.data.states);
+
+            setStateList((response.data.states || []).map((s: any) => ({ ...s, id: String(s.id) })));
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, { data: error.response });
-            }
+            setStateList([]);
         }
     };
 
-    const fetchCitiesList = async (stateId: string) => {
+    // Get the list of the CITIES for dropdown
+    const fetchCitiesList = async () => {
         const citiesFormData = new FormData();
-        citiesFormData.append("stateId", stateId);
+        citiesFormData.append("stateId", watchedState.id || String(profileDetails?.state_id || userDetails?.state_id || ""));
 
         try {
-            const response = await axiosInstance.post(GET_CITIES_LIST, citiesFormData);
+            const response = await axiosInstance.post(
+                GET_CITIES_LIST,
+                citiesFormData,
+            );
+
             if (response.data.status != 200) {
-                toast.show(response.data.message, { data: response });
+                toast.show(response.data.message, {
+                    data: response,
+                });
             }
-            setCitiesList(response.data.cities);
+
+            setCitiesList((response.data.cities || []).map((c: any) => ({ ...c, id: String(c.id) })));
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, { data: error.response });
+                toast.show(error.response?.data.message, {
+                    data: error.response,
+                });
             }
+            setCitiesList([]);
         }
     };
 
@@ -342,7 +335,7 @@ const ProfileScreen = ({ }: Props) => {
 
     return (
         <>
-            <View className="bg-white p-4 flex-1" style={{paddingBottom: insets.bottom}}>
+            <View className="bg-white p-4 flex-1"  style={{paddingBottom: insets.bottom}}>
                 <KeyboardAwareScrollView
                     bottomOffset={100}
                     showsVerticalScrollIndicator={false}
@@ -697,8 +690,22 @@ const ProfileScreen = ({ }: Props) => {
                         </Button>
                     </View>
                 </KeyboardAwareScrollView>
+                {/* <DiscardFormDialog
+                    open={discardChanges}
+                    setIsFormDisabled={setIsFormDisabled}
+                    setDiscardChanges={setDiscardChanges}
+                /> */}
             </View>
-            <KeyboardToolbar />
+
+            
+            {userDetails?.userType == 2 && <View className="mt-6 px-6 mb-5">
+                <TouchableOpacity className="w-full py-3 border border-red-500 rounded-lg items-center justify-center" onPress={() => router.navigate('/remove-account')}>
+                    <Text className="text-base text-red-600 font-semibold">
+                        Remove My Account
+                    </Text>
+                </TouchableOpacity>
+            </View>}
+            {userDetails?.userType !== 2 && <KeyboardToolbar />}
         </>
     );
 };
