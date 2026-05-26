@@ -145,7 +145,7 @@ const ProfileScreen = ({ }: Props) => {
         );
 
         reset({
-             userName: profileDetails?.name || profileDetails?.dealer_name,
+            userName: profileDetails?.name || profileDetails?.dealer_name,
             distributorAddress: profileDetails?.address,
             userPhoneNumber: profileDetails?.mobile || profileDetails?.mobile_no,
             distributorBrand: currentUserBrand || { id: "", name: "" },
@@ -162,7 +162,7 @@ const ProfileScreen = ({ }: Props) => {
 
         setIsInitialized(true);
     }, [profileDetails, brands, countryList, reset]);
-    
+
 
     // Separate effect to update state and city options based on watched values
     useEffect(() => {
@@ -293,6 +293,11 @@ const ProfileScreen = ({ }: Props) => {
     ) => {
         console.log(formData, "formData ---");
 
+        // Disabled fields are excluded from formData by RHF, so fall back to getValues
+        const country = formData.userCountry ?? getValues("userCountry");
+        const state = formData.userState ?? getValues("userState");
+        const city = formData.userCity ?? getValues("userCity");
+
         const updateProfileFormData = new FormData();
         updateProfileFormData.append("distributorId", String(userDetails?.id));
         updateProfileFormData.append("name", formData.userName);
@@ -302,9 +307,9 @@ const ProfileScreen = ({ }: Props) => {
         updateProfileFormData.append("street", formData.distributorStreetAddress);
         updateProfileFormData.append("pinCode", formData.userPincode);
         updateProfileFormData.append("brandId", userDetails?.brand_id);
-        updateProfileFormData.append("countryId", formData.userCountry.id);
-        updateProfileFormData.append("stateId", formData.userState.id);
-        updateProfileFormData.append("cityId", formData.userCity.id);
+        updateProfileFormData.append("countryId", country.id); 
+        updateProfileFormData.append("stateId", state.id);      
+        updateProfileFormData.append("cityId", city.id);        
         updateProfileFormData.append("companyName", formData.distributorCompanyName);
         updateProfileFormData.append("panNo", formData.distributorPanNumber as string);
         updateProfileFormData.append("gstNo", formData.distributorGstNumber);
@@ -335,7 +340,7 @@ const ProfileScreen = ({ }: Props) => {
 
     return (
         <>
-            <View className="bg-white p-4 flex-1"  style={{paddingBottom: insets.bottom}}>
+            <View className="bg-white p-4 flex-1" style={{ paddingBottom: insets.bottom }}>
                 <KeyboardAwareScrollView
                     bottomOffset={100}
                     showsVerticalScrollIndicator={false}
@@ -538,6 +543,7 @@ const ProfileScreen = ({ }: Props) => {
                             <Controller
                                 control={control}
                                 name="userCountry"
+                                disabled={true}
                                 render={({ field: { onBlur, onChange, value } }) => (
                                     <CountryDropdown
                                         onSelect={onChange}
@@ -546,8 +552,10 @@ const ProfileScreen = ({ }: Props) => {
                                             label: value.name,
                                             value: value.id,
                                         }}
+                                        disabled={true}
                                     />
                                 )}
+
                             />
                             {errors.userCountry && (
                                 <Text className="text-red-500 font-medium">
@@ -697,7 +705,7 @@ const ProfileScreen = ({ }: Props) => {
                 /> */}
             </View>
 
-            
+
             {userDetails?.userType == 2 && <View className="mt-6 px-6 mb-5">
                 <TouchableOpacity className="w-full py-3 border border-red-500 rounded-lg items-center justify-center" onPress={() => router.navigate('/remove-account')}>
                     <Text className="text-base text-red-600 font-semibold">

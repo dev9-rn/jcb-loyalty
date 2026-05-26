@@ -185,7 +185,7 @@ const SignInScreen = ({ }: Props) => {
     }, [])
 
     return (
-        <View className="flex-1 bg-white" style={{paddingBottom: insets.bottom}}>
+        <SafeAreaView className="flex-1 bg-white" style={{paddingBottom: insets.bottom}}>
             <StatusBar backgroundColor={"#FFF"} barStyle={"dark-content"} />
             <KeyboardAwareScrollView>
                 <View className="items-center justify-center">
@@ -343,7 +343,7 @@ const SignInScreen = ({ }: Props) => {
                     resizeMode='contain'
                 />
             </View> */}
-        </View>
+        </SafeAreaView>
     );
 };
 

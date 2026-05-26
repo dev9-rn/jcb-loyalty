@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Hextech SEQR Loyalty",
   slug: "jcb-loyalty",
-  version: "1.4.0",
+  version: "1.4.2",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: "myapp",
@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: "org.reactjs.native.example.jcb-seqr-loyality"
   },
   android: {
-    versionCode: 1,
+    versionCode: 8,
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
@@ -45,7 +45,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "@react-native-firebase/crashlytics",
     "@react-native-community/datetimepicker",
     "expo-router",
-    "expo-audio",
+    [
+      "expo-audio",
+      {
+        "enableBackgroundPlayback": false
+      }
+    ],
     "expo-font",
     "expo-web-browser",
     [
@@ -99,12 +104,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "expo-localization"
     ],
+    "./plugins/removePermissions"
   ],
   experiments: {
     typedRoutes: true
   },
   extra: {
     supportsRTL: true,
+    eas: {
+        projectId: "78888378-db0e-4fdb-b2d2-c42762cd519b"
+      },
     router: {
       origin: false
     }

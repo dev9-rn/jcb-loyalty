@@ -26,7 +26,7 @@ const UserProvider = ({ children }: Props) => {
         // Handler for app state changes
         const handleAppStateChange = (nextAppState: string) => {
             if (nextAppState === "active") {
-                checkForVersionUpdate();
+                // checkForVersionUpdate();
             }
         };
 
@@ -34,7 +34,7 @@ const UserProvider = ({ children }: Props) => {
         const subscription = AppState.addEventListener("change", handleAppStateChange);
 
         // Initial check on mount
-        checkForVersionUpdate();
+        // checkForVersionUpdate();
 
         // Cleanup
         return () => {
@@ -71,14 +71,14 @@ const UserProvider = ({ children }: Props) => {
 
     const checkForVersionUpdate = async () => {
         try {
-            const latestAvailableVersion = Platform.OS === 'ios' ? await fetch(`https://itunes.apple.com/lookup?id=6744676763&country=IN`)
+            const latestAvailableVersion = Platform.OS === 'ios' ? await fetch(`https://itunes.apple.com/lookup?id=6686404481&country=IN`)
                 .then(r => r.json())
                 .then((res) => {
                     return res?.results[0]?.version
                 })
                 : await VersionCheck.getLatestVersion({
                     provider: 'playStore',
-                    packageName: 'com.daewoo.seqrloyalty',
+                    packageName: 'com.jcb_seqr_loyality_new',
                     ignoreErrors: true,
                 });
 
@@ -94,8 +94,8 @@ const UserProvider = ({ children }: Props) => {
                             onPress: async () => {
                                 Linking.openURL(
                                     Platform.OS === 'ios'
-                                        ? await VersionCheck.getAppStoreUrl({ appID: '6744676763' })
-                                        : await VersionCheck.getPlayStoreUrl({ packageName: 'com.daewoo.seqrloyalty' })
+                                        ? await VersionCheck.getAppStoreUrl({ appID: '6686404481' })
+                                        : await VersionCheck.getPlayStoreUrl({ packageName: 'com.jcb_seqr_loyality_new' })
                                 );
                             },
                         },

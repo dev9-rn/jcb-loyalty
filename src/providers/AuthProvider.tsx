@@ -185,9 +185,9 @@ const AuthProvider = ({ children }: Props) => {
             console.log(error, "MAINTENANCE_API");
         }
     };
-    useEffect(() => {
-        setMaintenanceHandler(fetchisMaintenanceApi);
-    }, []);
+    // useEffect(() => {
+    //     setMaintenanceHandler(fetchisMaintenanceApi);
+    // }, []);
 
     return (
         <AuthContext.Provider

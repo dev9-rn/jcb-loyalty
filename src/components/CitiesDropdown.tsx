@@ -29,15 +29,17 @@ const CitiesDropdown = ({ options, selected, onSelect, placeholder }: Props) => 
     const [search, setSearch] = useState('');
 
     const filtered = useMemo(() => {
+        if (!options) return [];
         if (!search) return options;
 
         return options.filter(opt =>
-            opt.name.toLowerCase().includes(search.toLowerCase())
+            opt?.name?.toLowerCase()?.includes(search.toLowerCase())
         );
     }, [search, options]);
 
     const selectedOption = useMemo(() => {
-        return options.find(option => option.id === selected?.value);
+        if (!options) return undefined;
+        return options.find(option => option?.id === selected?.value);
     }, [selected, options]);
 
     const handleSelect = (option: Option) => {

@@ -142,11 +142,11 @@ const ReportHistory = ({ }: Props) => {
         } catch (error) {
             setReportedCouponHistoryData(undefined);
             setIsLoading(false);
-            if (axios.isAxiosError(error)) {
-                toast.show(error.response?.data.message, {
-                    data: error.response
-                });
-            }
+            // if (axios.isAxiosError(error)) {
+            //     toast.show(error.response?.data.message, {
+            //         data: error.response
+            //     });
+            // }
         }
     };
 

@@ -20,9 +20,10 @@ type Props = {
     selected: Option | null;
     onSelect: (...event: any[]) => void;
     placeholder?: string;
+    disabled?: boolean;
 };
 
-const CountryDropdown = ({ options, selected, onSelect, placeholder }: Props) => {
+const CountryDropdown = ({ options, selected, onSelect, placeholder, disabled }: Props) => {
     const [visible, setVisible] = useState(false);
     const [search, setSearch] = useState('');
 
@@ -50,8 +51,9 @@ const CountryDropdown = ({ options, selected, onSelect, placeholder }: Props) =>
     return (
         <>
             <TouchableOpacity
-                style={styles.trigger}
-                onPress={() => setVisible(true)}
+                style={[styles.trigger, disabled && styles.disabledTrigger]}
+                onPress={() => !disabled && setVisible(true)}
+                disabled={disabled}
             >
                 <Text style={styles.triggerText}>
                     {selectedOption ? selectedOption.name : placeholder || 'Select an option'}
@@ -108,6 +110,10 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderColor: '#ccc',
         backgroundColor: '#fff',
+    },
+    disabledTrigger: {
+        backgroundColor: '#f5f5f5',
+        opacity: 0.6,
     },
     triggerText: {
         fontSize: 16,

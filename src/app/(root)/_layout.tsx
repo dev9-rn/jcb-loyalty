@@ -16,7 +16,7 @@ const HomeLayout = ({ }: Props) => {
     useEffect(() => {
         const subscription = AppState.addEventListener("change", (state) => {
             if (state === "active") {
-                fetchisMaintenanceApi();
+                // fetchisMaintenanceApi();
             }
         });
 

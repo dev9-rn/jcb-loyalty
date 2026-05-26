@@ -64,7 +64,7 @@ const ReportCouponScreen = ({ }: Props) => {
             name: "abc.jpeg",
         });
         console.log(uploadReportFormData, "uploadReportFormData");
-        
+
         try {
             setIsSubmitting(true);
             const response = await axiosInstance.post(POST_REPORT_COUPON, uploadReportFormData);
@@ -123,7 +123,7 @@ const ReportCouponScreen = ({ }: Props) => {
 
     const handleFrontsideCouponImageFromCamera = async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-        
+
         if (!permissionResult.granted) {
             Alert.alert(t("common.permission"), t("common.cameraPermissionRequired"));
             return;
@@ -180,8 +180,9 @@ const ReportCouponScreen = ({ }: Props) => {
             setPickedBacksideCouponImage(result.assets[0].uri);
         };
     };
+
     return (
-        <View className='flex-1 p-4 bg-white' style={{paddingBottom: insets.bottom}}>
+        <View className='flex-1 p-4 bg-white' style={{ paddingBottom: insets.bottom }}>
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
                 <View className='gap-2'>
                     <Text className='text-3xl font-bold text-primary'>{t("reportCoupon.title")}</Text>
@@ -189,7 +190,14 @@ const ReportCouponScreen = ({ }: Props) => {
                 </View>
 
                 <View className='flex-1 items-center justify-between'>
-                    <TouchableOpacity onPress={() => showFrontsideCouponImageOptions()}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (!pickedFrontsideCouponImage) {
+                                showFrontsideCouponImageOptions();
+                            }
+                        }}
+                        activeOpacity={pickedFrontsideCouponImage ? 1 : 0.7}
+                    >
                         <View className='bg-primary/20 rounded-lg items-center justify-center my-6 size-44 xs:size-48 sm:size-52 border border-dashed border-primary'>
                             {!pickedFrontsideCouponImage ? (
                                 <View className='items-center'>
@@ -198,11 +206,24 @@ const ReportCouponScreen = ({ }: Props) => {
                                 </View>
                             ) : (
                                 <View className='p-4 gap-2 items-center relative w-full'>
-                                    <Button size={"icon"} variant={"ghost"} className='absolute right-0 m-4' onPress={() => setPickedFrontsideCouponImage(null)}>
-                                        <X className='text-white' />
-                                    </Button>
-                                    <Image source={{ uri: pickedFrontsideCouponImage }} className='w-48 h-36 rounded-lg' resizeMode='contain' />
-                                    <Text className='font-medium text-gray-600 opacity-40 text-sm'>{t("reportCoupon.editImageHint")}</Text>
+                                    <TouchableOpacity
+                                        className='absolute right-2 top-2 z-10 bg-primary rounded-full p-1'
+                                        onPress={(e) => {
+                                            e.stopPropagation();
+                                            setPickedFrontsideCouponImage(null);
+                                        }}
+                                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                    >
+                                        <X className='text-white' width={16} height={16} />
+                                    </TouchableOpacity>
+                                    <Image
+                                        source={{ uri: pickedFrontsideCouponImage }}
+                                        className='w-48 h-36 rounded-lg'
+                                        resizeMode='contain'
+                                    />
+                                    <TouchableOpacity onPress={showFrontsideCouponImageOptions}>
+                                        <Text className='font-medium text-gray-600 opacity-40 text-sm'>{t("reportCoupon.editImageHint")}</Text>
+                                    </TouchableOpacity>
                                 </View>
                             )}
                         </View>
@@ -261,7 +282,7 @@ const ReportCouponScreen = ({ }: Props) => {
                     )}
                 </Button>
             </KeyboardAwareScrollView>
-        </View >
+        </View>
     )
 }
 

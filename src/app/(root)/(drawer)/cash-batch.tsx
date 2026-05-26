@@ -201,9 +201,9 @@ const CashBatchScreen = ({}: Props) => {
       if (axios.isAxiosError(error)) {
         setCashBatchReportData(undefined);
         setIsLoadingBatchReport(false);
-        toast.show(error.response?.data.message, {
-          data: error.response,
-        });
+        // toast.show(error.response?.data.message, {
+        //   data: error.response,
+        // });
       }
     }
   };
