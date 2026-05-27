@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Hextech SEQR Loyalty",
   slug: "jcb-loyalty",
-  version: "1.4.2",
+  version: "1.2.0",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: "myapp",

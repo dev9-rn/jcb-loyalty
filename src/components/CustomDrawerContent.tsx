@@ -25,7 +25,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { t } = useTranslation();
   // const currentVersion = VersionCheck.getCurrentVersion()
   // VersionCheck.getCountry().then(country => console.log(country))
-  console.log(userDetails, "userDetails");
+  // console.log(userDetails, "userDetails");
 
   return (
     <SafeAreaView className="flex-1">
